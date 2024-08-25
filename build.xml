@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<!DOCTYPE xml>
+<project name="EternalAdventure" default="Build">
+    <target name="Build">
+        <jar jarfile="/home/sebastian/Pulpit/SerwerMinecraft/plugins/${ant.project.name}.jar"
+             basedir="./target/classes/" includes="**/*">
+            <zipfileset
+                    src="/home/sebastian/.m2/repository/io/github/skytasul/glowingentities/1.3.2/glowingentities-1.3.2.jar"
+                    includes="**/*"/>
+        </jar>
+    </target>
+
+</project>

@@ -1,0 +1,107 @@
+name: EternalAdventurePlugin
+main: pl.eadventure.plugin.EternalAdventurePlugin
+version: 3.0
+description: Plugin dedykowany dla EternalAdventure
+author: JrDesmond aka sebaqq6
+website: https://eadventure.pl
+depend: [Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, ProtocolLib, ProtectionStones, MobArena, VentureChat, ComplexTurrets]
+api-version: '1.20'
+commands:
+   eap:
+      description: "Zarządzanie pluginem Eternal Adventure"
+      usage: "Użyj /<command> [argument]"
+      permission: eadventureplugin.eap
+   a:
+      description: "AdminPanel Eternal Adventure"
+      usage: "Użyj /<command> [target]"
+      permission: eadventureplugin.adminpanel
+   evtools:
+      description: "Narzędzia eventowe."
+      usage: "Użyj /<command> [randomplayer|countplayers|teamplayers|ann]"
+      permission: eadventureplugin.cmd.evtools
+   ban:
+      description: "Banowanie gracza."
+      usage: "Użyj /<command> [target] [reason]"
+      permission: eadventureplugin.cmd.ban
+   unban:
+      description: "Odbanowanie gracza."
+      usage: "Użyj /<command> [target] [reason]"
+      permission: eadventureplugin.cmd.unban
+   banlist:
+      description: "Lista banów."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.banlist
+   warn:
+      description: "Nadanie ostrzeżenia."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.warn
+   warns:
+      description: "Nadane ostrzeżenia."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.warns
+   warnlist:
+      description: "Zarządzanie warnami."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.warnlist
+   mute:
+      description: "Uciszanie gracza."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.mute
+   unmute:
+      description: "Odciszanie gracza."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.unmute
+   mutelist:
+      description: "Lista uciszonych graczy."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.mutelist
+   kick:
+      description: "Wyrzucanie gracza."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.kick
+   viewlog:
+      description: "Przeglądanie logów serwera za pomocą przeglądarki."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.viewlog
+   excellentcratesproxy:
+      description: "PROXY dla komendy: /excellentcrates"
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.excellentcratesproxy
+   kartoteka:
+      description: "Kartoteka graczy."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.kartoteka
+   chunkhunt:
+      description: "Sprawdzanie zasobożernych chunków."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.chunkhunt
+   rozsypanka:
+      description: "Ułóż słowo z podanych liter "
+      usage: "Użyj /<command> [target]"
+      aliases: [moderator-uloz-slowo]
+      permission: eadventureplugin.rozsypanka
+   dzialka:
+      description: "Zarządzanie działkami."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.dzialka
+   fe:
+      description: "Komenda główna zabaw."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.fe
+   vconsole:
+      description: "Wykonywanie komend z konsoli proxy velocity."
+      usage: "Użyj /<command>"
+      permission: eadventureplugin.cmd.vconsole
+permissions:
+   eadventureplugin.apanel:
+      description: "Dostęp do GUI admina."
+   eadventureplugin.mpanel:
+      description: "Dostęp do GUI moda."
+   eadventureplugin.gpanel:
+      description: "Dostęp do GUI gamemastera."
+   eadventureplugin.spanel:
+      description: "Dostęp do GUI supporta."
+   eadventureplugin.syncplayedtime:
+      description: "Dostęp do /eap syncplayedtime"
+   eadventureplugin.unwarn:
+      description: "Możliwość usuwanie warna gracza przez /warnlist."
