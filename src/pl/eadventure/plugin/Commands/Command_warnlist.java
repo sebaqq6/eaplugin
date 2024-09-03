@@ -26,7 +26,7 @@ public class Command_warnlist implements TabExecutor {
 			}
 			String targetName = args[0];
 			if (!PunishmentSystem.getListPlayersAll().contains(targetName)) {
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Gracz &c%s &7nie istnieje.", targetName)));
+				sender.sendMessage(Utils.color(String.format("&7Gracz &c%s &7nie istnieje.", targetName)));
 				return true;
 			}
 			PunishmentSystem.showWarnListGUI(player, targetName);

@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE xml>
-<project name="EternalAdventure" default="Build">
+<project name="EternalAdventurePlugin" default="Build">
     <target name="Build">
         <jar jarfile="/home/sebastian/Pulpit/SerwerMinecraft/plugins/${ant.project.name}.jar"
              basedir="./target/classes/" includes="**/*">

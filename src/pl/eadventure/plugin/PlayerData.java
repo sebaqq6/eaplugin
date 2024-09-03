@@ -14,7 +14,7 @@ import java.util.UUID;
 public class PlayerData {
 	//head
 	private Player player = null;
-    private static HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
+	private static HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
 	//temp data
 	public boolean eventAnnChat = false;//player in Annuance chat mode
 	public boolean decayDebug = false;
@@ -27,7 +27,10 @@ public class PlayerData {
 	public int sessionOnlineSeconds = 0;
 	public PunishmentSystem.WarnData warnData = null;
 	public HomesInterface homesInterface = null;
+	public String clientBrand = "null";
+	public RegionCommandLooper regionCommandLooper = null;
 	//MySQL data
+	String nick;
 	public int dbid = 0;//database ID
 	public int registerDate = 0;
 	public boolean immunity = false; //
@@ -36,61 +39,66 @@ public class PlayerData {
 	public int mutedExpire = 0;
 	public String mutedBy = " ";
 	public String mutedReason = " ";
-	public String clientBrand = "null";
+
+
 	//end variables
-	public PlayerData(Player player)
-	{
-		if(player == null) return;
+	public PlayerData(Player player) {
+		if (player == null) return;
 		this.player = player;
 		players.put(player.getUniqueId(), this);
 		print.debug("Gracz: " + player.getName() + " - stworzono instancje danych!");
 		loadDataFromMySQL(player);
 	}
-    public static PlayerData get(Player player) {
-        if(players.containsKey(player.getUniqueId())) return players.get(player.getUniqueId());
-        else return new PlayerData(player);
-    }
-    public static void free(Player player)
-    {
-    	if(players.containsKey(player.getUniqueId())) players.remove(player.getUniqueId());
-    	else print.error("Gracz: " + player.getName() + " - Brak instancji danych! Coś jest nie tak!");
-    }
-    public void loadDataFromMySQL(Player player) {
+
+	public static PlayerData get(Player player) {
+		if (players.containsKey(player.getUniqueId())) return players.get(player.getUniqueId());
+		else return new PlayerData(player);
+	}
+
+	public static void free(Player player) {
+		if (players.containsKey(player.getUniqueId())) players.remove(player.getUniqueId());
+		else print.error("Gracz: " + player.getName() + " - Brak instancji danych! Coś jest nie tak!");
+	}
+
+	public void loadDataFromMySQL(Player player) {
 		//load WarnData
 		warnData = new PunishmentSystem.WarnData();
 		warnData.load(player.getUniqueId());
+		regionCommandLooper = new RegionCommandLooper(player);
 
-        MySQLStorage storage = EternalAdventurePlugin.getMySQL();
-        if (storage.isConnect()) {
-            UUID uuid = player.getUniqueId();
-            String sql = "SELECT * FROM `players` WHERE `uuid`='" + uuid + "';";
-           
-            storage.query(sql, queryResult -> {
-                if (queryResult != null) {
-                    int numRows = (int) queryResult.get("num_rows");
-                    //ArrayList<HashMap<Object, Object>> rows = (ArrayList<HashMap<Object, Object>>) queryResult.get("rows");
-                    if (numRows >= 1) {
-                        handleExistingPlayer(queryResult);
-                    } else {
-                    	registerNewPlayer(storage);
-                    }
-                } else {
-                    print.error("PlayerData->loadDataFromMySQL - błąd zapytania:");
-                    print.error(sql);
-                }
-            });
-        } else {
-            print.error("PlayerData->loadDataFromMySQL - nie udało się ustanowić połączenia!");
-        }
-    }
-    //Player Exist - Load data...
-    private void handleExistingPlayer(HashMap<Object, Object> queryResult) {
 		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
-        HashMap<?, ?> row = (HashMap<?, ?>) queryResult.get("row");
+		if (storage.isConnect()) {
+			UUID uuid = player.getUniqueId();
+			String sql = "SELECT * FROM `players` WHERE `uuid`='" + uuid + "';";
 
-        dbid = (int) row.get("id");
-        print.debug("Gracz: " + player.getName() + " - posiada konto EAP(ID: " + dbid + ").");
-        //Load data start
+			storage.query(sql, queryResult -> {
+				if (queryResult != null) {
+					int numRows = (int) queryResult.get("num_rows");
+					//ArrayList<HashMap<Object, Object>> rows = (ArrayList<HashMap<Object, Object>>) queryResult.get("rows");
+					if (numRows >= 1) {
+						handleExistingPlayer(queryResult);
+					} else {
+						registerNewPlayer(storage);
+					}
+				} else {
+					print.error("PlayerData->loadDataFromMySQL - błąd zapytania:");
+					print.error(sql);
+				}
+			});
+		} else {
+			print.error("PlayerData->loadDataFromMySQL - nie udało się ustanowić połączenia!");
+		}
+	}
+
+	//Player Exist - Load data...
+	private void handleExistingPlayer(HashMap<Object, Object> queryResult) {
+		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+		HashMap<?, ?> row = (HashMap<?, ?>) queryResult.get("row");
+
+		dbid = (int) row.get("id");
+		print.debug("Gracz: " + player.getName() + " - posiada konto EAP(ID: " + dbid + ").");
+		//Load data start
+		nick = (String) row.get("nick");
 		registerDate = (int) row.get("registerdate");
 		immunity = ((int) row.get("immunity") == 1);
 		onlineHours = (int) row.get("onlineHours");
@@ -106,28 +114,35 @@ public class PlayerData {
 		parameters.add(player.getAddress().getAddress().getHostAddress());
 		parameters.add(player.getName());
 		parameters.add(dbid);
+		if (!nick.equalsIgnoreCase(player.getName())) {//player change nick detect
+			print.info(String.format("Wykryto zmianę nicku %s -> %s", player.getName(), nick));
+			PunishmentSystem.reloadFastCacheBanList();
+			nick = player.getName();
+		}
 		storage.executeSafe("UPDATE players SET ip=?, nick=? WHERE id=?;", parameters);
 	}
-    //Register
-    private void registerNewPlayer(MySQLStorage storage) {
-        print.debug("Gracz: " + player.getName() + " - nie posiada konta EAP...");
+
+	//Register
+	private void registerNewPlayer(MySQLStorage storage) {
+		print.debug("Gracz: " + player.getName() + " - nie posiada konta EAP...");
 
 		//Add to punish system
-		PunishmentSystem.getListPlayersCanBeBanned().add(player.getName());;
+		PunishmentSystem.getListPlayersCanBeBanned().add(player.getName());
+		
 		PunishmentSystem.getListPlayersAll().add(player.getName());
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                //dbid = storage.executeGetInsertID("INSERT INTO `players`(`nick`, `uuid`, `registerdate`, `ip`) VALUES ('" + player.getName() + "', '" + uuid + "' , '" + Utils.getUnixTimestamp() + "', '" + player.getAddress().getAddress() + "');");
-                ArrayList<Object> parameters = new ArrayList<>();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				//dbid = storage.executeGetInsertID("INSERT INTO `players`(`nick`, `uuid`, `registerdate`, `ip`) VALUES ('" + player.getName() + "', '" + uuid + "' , '" + Utils.getUnixTimestamp() + "', '" + player.getAddress().getAddress() + "');");
+				ArrayList<Object> parameters = new ArrayList<>();
 				parameters.add(player.getName());
 				parameters.add(player.getUniqueId().toString());
 				parameters.add(Utils.getUnixTimestamp());
 				parameters.add(player.getAddress().getAddress().getHostAddress());
 				dbid = storage.executeGetInsertID("INSERT INTO `players`(`nick`, `uuid`, `registerdate`, `ip`) VALUES (?, ?, ?, ?);", parameters);
-                print.debug("Gracz: " + player.getName() + " - zarejestrowano konto EAP o ID: " + dbid + ".");
-            }
-        }.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
-    }
+				print.debug("Gracz: " + player.getName() + " - zarejestrowano konto EAP o ID: " + dbid + ".");
+			}
+		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
+	}
 }

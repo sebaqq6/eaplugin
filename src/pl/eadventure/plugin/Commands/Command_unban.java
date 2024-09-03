@@ -31,11 +31,11 @@ public class Command_unban implements TabExecutor {
 			return true;
 		}
 		if(PunishmentSystem.getListPlayersCanBeUnbanned().contains(args[0])) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',String.format("&7Gracz &2%s &7został &2pomyślnie &7odbanowany.", args[0])));
+			sender.sendMessage(Utils.color(String.format("&7Gracz &2%s &7został &2pomyślnie &7odbanowany.", args[0])));
 			PunishmentSystem.unbanPlayer(args[0]);
 		}
 		else {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',String.format("&c%s nie jest zbanowany.", args[0])));
+			sender.sendMessage(Utils.color(String.format("&c%s nie jest zbanowany.", args[0])));
 		}
 		return true;
 	}

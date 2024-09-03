@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.Commands;
 
+import com.sk89q.worldedit.world.RegenOptions;
 import ct.ajneb97.utils.UtilsPlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,7 +37,8 @@ public class Command_eap implements TabExecutor {
 					"addcustomitem",
 					"getcustomitem",
 					"armorfixreload",
-					"plist");
+					"plist",
+					"rcl");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
 		return Collections.emptyList();
@@ -134,58 +136,54 @@ public class Command_eap implements TabExecutor {
 				}
 				String testid = args[1];
 
-				if(testid.equalsIgnoreCase("on")) {
-					Player player = (Player)sender;
+				if (testid.equalsIgnoreCase("on")) {
+					Player player = (Player) sender;
 					sender.sendMessage("Włączone");
 					player.setMetadata("eapenabledturrets", new FixedMetadataValue(EternalAdventurePlugin.getInstance(), true));
-				} else if(testid.equalsIgnoreCase("off")) {
-					Player player = (Player)sender;
+				} else if (testid.equalsIgnoreCase("off")) {
+					Player player = (Player) sender;
 					sender.sendMessage("Wyłączone");
 					Iterator<MetadataValue> var2 = player.getMetadata("eapenabledturrets").iterator();
 
-					while(var2.hasNext()) {
+					while (var2.hasNext()) {
 						MetadataValue var1 = var2.next();
 						Plugin ownPlugin = var1.getOwningPlugin();
 						print.debug(ownPlugin.toString());
 						player.removeMetadata("eapenabledturrets", ownPlugin);
 					}
 
-				} else if(testid.equalsIgnoreCase("status")) {
-					Player player = (Player)sender;
-					if(!player.hasMetadata("eapenabledturrets")) {
+				} else if (testid.equalsIgnoreCase("status")) {
+					Player player = (Player) sender;
+					if (!player.hasMetadata("eapenabledturrets")) {
 						sender.sendMessage("Brak metadanych eapenabledturrets");
 						return true;
 					}
 					MetadataValue metadataValue = player.getMetadata("eapenabledturrets").get(0);
-					if(metadataValue.asBoolean()) {
+					if (metadataValue.asBoolean()) {
 						sender.sendMessage("Metadata eapenabledturrets: TRUE");
 					} else {
 						sender.sendMessage("Metadata eapenabledturrets: FALSE");
 					}
-				} else if(testid.equalsIgnoreCase("hack")) {
+				} else if (testid.equalsIgnoreCase("hack")) {
 					try {
 						CrackComplexTurret.crack();
 					} catch (IOException e) {
 						throw new RuntimeException(e);
 					}
-				}
-				else if(testid.equalsIgnoreCase("survival")) {
-					Player player = (Player)sender;
-					print.debug("IsSurvival; "+ UtilsPlayers.isSurvival(player));
-				}
-				else if(testid.equalsIgnoreCase("list"))
-				{
-					Player player = (Player)sender;
+				} else if (testid.equalsIgnoreCase("survival")) {
+					Player player = (Player) sender;
+					print.debug("IsSurvival; " + UtilsPlayers.isSurvival(player));
+				} else if (testid.equalsIgnoreCase("list")) {
+					Player player = (Player) sender;
 					Iterator var2 = player.getMetadata("eapenabledturrets").iterator();
 
-					while(var2.hasNext()) {
-						MetadataValue var1 = (MetadataValue)var2.next();
+					while (var2.hasNext()) {
+						MetadataValue var1 = (MetadataValue) var2.next();
 						sender.sendMessage(var1.asString());
 					}
-				}
-				else if(testid.equalsIgnoreCase("disablebs")) {
+				} else if (testid.equalsIgnoreCase("disablebs")) {
 					CrackComplexTurret.disabledBypass = true;
-				}  else if(testid.equalsIgnoreCase("enablebs")) {
+				} else if (testid.equalsIgnoreCase("enablebs")) {
 					CrackComplexTurret.disabledBypass = false;
 				}
 				break;
@@ -320,15 +318,63 @@ public class Command_eap implements TabExecutor {
 				break;
 			}
 			case "fabric": {
-					if(gVar.antiBot) {
-						gVar.antiBot = false;
-						sender.sendMessage("antiBot: DISABLED!");
-					}
-					else {
-						gVar.antiBot = true;
-						sender.sendMessage("antiBot: ENABLED!");
-					}
+				if (gVar.antiBot) {
+					gVar.antiBot = false;
+					sender.sendMessage("antiBot: DISABLED!");
+				} else {
+					gVar.antiBot = true;
+					sender.sendMessage("antiBot: ENABLED!");
+				}
 				break;
+			}
+			case "rcl": {
+				RegionCommandLooper.reload();
+				sender.sendMessage("Przeładowano config RegionCommandLooper!");
+				/*if (args.length == 1) {
+					sender.sendMessage("Użyj: /eap rcl [set/del] [regionName] [reLoopSeconds] [command]");
+					return true;
+				}
+				String option = args[1];
+				if (!option.equalsIgnoreCase("set") && !option.equalsIgnoreCase("del") && !option.equalsIgnoreCase("reload")) {
+					sender.sendMessage("Użyj: /eap rcl [set/del] [regionName] [reLoopSeconds] [command]");
+					return true;
+				}
+				if (option.equalsIgnoreCase("reload")) {
+					RegionCommandLooper.reload();
+					sender.sendMessage("Przeładowano config RegionCommandLooper!");
+					return true;
+				}
+				if (args.length == 2) {
+					sender.sendMessage(String.format("Użyj: /eap rcl %s [regionName] [reLoopSeconds] [command]", option));
+					return true;
+				}
+				String regionName = args[2];
+				if (args.length == 3) {
+					sender.sendMessage(String.format("Użyj: /eap rcl %s %s [reLoopSeconds] [command]", option, regionName));
+					return true;
+				}
+				int seconds = Utils.isNumber(args[3]);
+				if (seconds < 0) {
+					sender.sendMessage("Niepoprawna ilość sekund");
+					return true;
+				}
+				if (args.length == 4) {
+					sender.sendMessage(String.format("Użyj: /eap rcl %s %s %d [command]", option, regionName, seconds));
+					return true;
+				}
+				StringBuilder reasonBuilder = new StringBuilder();
+				for (int i = 4; i < args.length; i++) {
+					reasonBuilder.append(args[i]).append(" ");
+				}
+				String command = reasonBuilder.toString().trim(); // Remove spaces
+				print.debug(String.format("%s %s %d %s", option, regionName, seconds, command));
+				if (option.equalsIgnoreCase("set")) {
+					RegionCommandLooper.set(regionName, command, seconds);
+					sender.sendMessage("Ustawiono nowy wpis dla RegionCommandLooper!");
+					return true;
+				}
+*/
+				return true;
 			}
 			default: {
 				usage(sender);

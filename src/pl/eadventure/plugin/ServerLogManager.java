@@ -57,6 +57,9 @@ public class ServerLogManager extends AbstractFilter {
 		if(disabled) return Result.NEUTRAL;
 		if(storage == null) return Result.NEUTRAL;
 		String m = removeAnsiEscapeCodes(event.getMessage().getFormattedMessage());//message
+		if(m.contains("terra:reimagend/reimagend/")) {//block console spam terra generator
+			return Result.DENY;
+		}
 		//String sender = event.getLoggerName();
 		/*if(m.contains("mfnalex")) {
 			return Result.DENY; // mfnalex is a ninja

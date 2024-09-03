@@ -27,11 +27,11 @@ public class ProtocolLibAPI {
 	public ProtocolLibAPI(ProtocolManager protocolManager, Plugin plugin) {
 		this.protocolManager = protocolManager;
 		this.plugin = plugin;
-		fabricPacketListener();
+		//fabricPacketListener();
 		initGearScoreLore();
 	}
 
-	public void fabricPacketListener() {
+	/*public void fabricPacketListener() {
 		protocolManager.addPacketListener(new PacketAdapter(
 				plugin,
 				ListenerPriority.NORMAL,
@@ -71,7 +71,7 @@ public class ProtocolLibAPI {
 				}
 			}
 		});
-	}
+	}*/
 
 	private void initGearScoreLore() {
 		protocolManager.addPacketListener(new PacketAdapter(
@@ -80,6 +80,7 @@ public class ProtocolLibAPI {
 				PacketType.Play.Server.SET_SLOT,
 				PacketType.Play.Server.WINDOW_ITEMS
 		) {
+
 			@Override
 			public void onPacketSending(PacketEvent event) {
 				if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;//disable for creative
@@ -87,24 +88,32 @@ public class ProtocolLibAPI {
 				if (packet.getType() == PacketType.Play.Server.SET_SLOT || packet.getType() == PacketType.Play.Server.WINDOW_ITEMS) {
 					//----------------------------------------SEND PACKET WINDOW ITEMSd
 					if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
-						print.debug(packet.getType().toString());
+						//print.debug(packet.getType().toString());
 						List<ItemStack> itemStacks = packet.getItemListModifier().read(0);
 						for (ItemStack itemStack : itemStacks) {
+							if (itemStack.getType() == Material.AIR) continue;
 							print.debug(itemStack.toString());
-							if (itemStack != null && itemStack.getType() != Material.AIR) {
+							GearScoreCalculator gsc = new GearScoreCalculator();
+							int gs = gsc.calcGearScore(itemStack);
+							if (gs == 0) continue;
+							if (itemStack != null) {
 								ItemMeta meta = itemStack.getItemMeta();
-								if (meta != null && meta.getLore() != null) {
+								if (meta != null && meta.getLore() != null) {//with lore
 									//WIP filter gearscore items, and guis?
 									List<String> loreLines = new ArrayList<>();
 									loreLines.addAll(meta.getLore());
 									ListIterator<String> iterator = loreLines.listIterator();
 									while (iterator.hasNext()) {
 										String loreLine = iterator.next();
-										String newLore = loreLine.replaceAll("\\{gs\\}", Utils.color("&rGearScore: 321"));
+										String newLore = loreLine.replaceAll("\\{gs\\}", Utils.color("&r" + gs));
 										iterator.set(newLore);
 									}
-
 									meta.setLore(loreLines);
+									itemStack.setItemMeta(meta);
+									packet.getItemListModifier().write(0, itemStacks);
+								} else if (meta != null) {//without lore
+									print.debug(itemStack.getType().toString());
+									meta.setLore(List.of(Utils.color("&r" + gs)));
 									itemStack.setItemMeta(meta);
 									packet.getItemListModifier().write(0, itemStacks);
 								}
@@ -113,13 +122,16 @@ public class ProtocolLibAPI {
 					}
 					//------------------------------------------------------PACKET UPDATE SLOT ITEMS (pickup, change slot etc)
 					else if (packet.getType() == PacketType.Play.Server.SET_SLOT) {
-						print.debug(packet.getType().toString());
+						//print.debug(packet.getType().toString());
 						StructureModifier<ItemStack> itemStackStructureModifier = packet.getItemModifier();
 						for (int i = 0; i < itemStackStructureModifier.size(); i++) {
 							ItemStack itemStack = itemStackStructureModifier.read(i);
+							if (itemStack.getType() == Material.AIR) continue;
 							print.debug(itemStack.toString());
-
-							if (itemStack != null && itemStack.getType() != Material.AIR) {
+							GearScoreCalculator gsc = new GearScoreCalculator();
+							int gs = gsc.calcGearScore(itemStack);
+							if (gs == 0) continue;
+							if (itemStack != null) {
 								ItemMeta meta = itemStack.getItemMeta();
 								if (meta != null && meta.getLore() != null) {
 									//WIP filter gearscore items, and guis?
@@ -128,11 +140,16 @@ public class ProtocolLibAPI {
 									ListIterator<String> iterator = loreLines.listIterator();
 									while (iterator.hasNext()) {
 										String loreLine = iterator.next();
-										String newLore = loreLine.replaceAll("\\{gs\\}", Utils.color("&rGearScore: 123"));
+										String newLore = loreLine.replaceAll("\\{gs\\}", Utils.color("&r" + gs));
 										iterator.set(newLore);
 									}
 
 									meta.setLore(loreLines);
+									itemStack.setItemMeta(meta);
+									itemStackStructureModifier.write(i, itemStack);
+								} else if (meta != null) {//without lore
+									print.debug(itemStack.getType().toString());
+									meta.setLore(List.of(Utils.color("&r" + gs)));
 									itemStack.setItemMeta(meta);
 									itemStackStructureModifier.write(i, itemStack);
 								}

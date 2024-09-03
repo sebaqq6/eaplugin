@@ -33,7 +33,7 @@ import java.util.HashMap;
 /*NOTATKI:
  * ALT+J - zannaczenie tego samego
  * CTRL+ALT+SHIFT - tworzenie kursorów
- * 
+ *
  */
 
 public final class EternalAdventurePlugin extends JavaPlugin {
@@ -48,7 +48,6 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 	private static MobArena mobarena;
 	private static playerPrivateChatEvent privateChatEvent;
 	private static ProtocolLibAPI plAPI;
-
 
 
 	// public static int publicznaZmienna = 0;
@@ -70,17 +69,17 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		print.setDebug(config.getBoolean("debug"));
 		LeavesDecay.active(config.getBoolean("leavesDecaySystem"));
 		//Uruchomienie API Glowning
-		glowingBlocksAPI = new GlowingBlocks(this);
+		//glowingBlocksAPI = new GlowingBlocks(this);
 		// Wpięcie do VaultApi
 		if (!setupEconomy()) {
 			print.error("Nie wykryto pluginu ekonomii dla VaultAPI!");
 			return;
 		}
 		//Wpięcie do PlaceolderAPI
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { // 
-        	placeholders = new Placeholders(this);
-        	placeholders.register();
-        } else print.error("Nie wykryto PlaceholderAPI!");
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+			placeholders = new Placeholders(this);
+			placeholders.register();
+		} else print.error("Nie wykryto PlaceholderAPI!");
 		//Wpięcie LuckPerms
 		luckPerms = LuckPermsProvider.get();
 		//Wpięcie ProtocoLib
@@ -97,10 +96,9 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 			public void onPacketReceiving(PacketEvent e) {
 				PacketContainer packet = e.getPacket();
 				String message = packet.getStrings().read(0);
-				if(message.length() > 256)
-				{
+				if (message.length() > 256) {
 					Player player = e.getPlayer();
-					print.info("Blokuje atak (Tab)Completion od gracza: "+player.getName());
+					print.info("Blokuje atak (Tab)Completion od gracza: " + player.getName());
 					e.setCancelled(true);
 					Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> {// Run on the next minecraft
 						player.kickPlayer("Kicked for spamming");
@@ -111,10 +109,11 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		});
 		protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Status.Server.SERVER_INFO) {
 			final HashMap<InetAddress, Long> lastPingInfo = new HashMap<>();
+
 			@Override
 			public void onPacketSending(PacketEvent event) {
 				InetAddress ip = event.getPlayer().getAddress().getAddress();
-				print.debug("[MC-PING]: "+ip.getHostAddress());
+				print.debug("[MC-PING]: " + ip.getHostAddress());
 				/*if(ip == null || !ip.getHostAddress().equalsIgnoreCase("127.0.0.1")) {
 					print.error(String.format("IP %s odpytało serwer poza TCPShield! Odpowiedź została anulowana.", ip.getHostAddress()));
 					event.setCancelled(true);
@@ -154,7 +153,6 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new playerInteractEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerChangeArmorEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerPlaceTurret(), this);
-		getServer().getPluginManager().registerEvents(new playerInventoryOpen(), this);
 		getServer().getPluginManager().registerEvents(new leavesDecayEvent(), this);
 
 		//CHANNEL FOR VELCITY
@@ -200,8 +198,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					TopTimePlayerPlayed.load(storage, 20);
 					PunishmentSystem.init(storage);
 					ServerLogManager.enable(storage);
-				}
-				else
+				} else
 					print.error("Błąd połączenia z MySQL!");
 			}
 		}.runTaskAsynchronously(this);
@@ -211,6 +208,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		gVar.customItems = Utils.loadItemsFromFiles();
 		Command_rozsypanka.autoInit();
 		leavesDecayEvent.initCleanupBuffer();
+		RegionCommandLooper.load(this);
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();
 		gVar.colorIssueResolverIA.loadDataFromConfig();
@@ -227,23 +225,23 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		 * ); cancel(); } }.runTaskTimerAsynchronously(this, 20L, 20L);
 		 */
 		//Eternal Adventure Graffiti
-		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE +" _____ _                        _      _       _                 _                  \n");
-		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE +"| ____| |_ ___ _ __ _ __   __ _| |    / \\   __| |_   _____ _ __ | |_ _   _ _ __ ___ \n");
-		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE +"|  _| | __/ _ \\ '__| '_ \\ / _` | |   / _ \\ / _` \\ \\ / / _ \\ '_ \\| __| | | | '__/ _ \\\n");
-		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE +"| |___| ||  __/ |  | | | | (_| | |  / ___ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/\n");
-		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE +"|_____|\\__\\___|_|  |_| |_|\\__,_|_| /_/   \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\n");
+		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + " _____ _                        _      _       _                 _                  \n");
+		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "| ____| |_ ___ _ __ _ __   __ _| |    / \\   __| |_   _____ _ __ | |_ _   _ _ __ ___ \n");
+		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "|  _| | __/ _ \\ '__| '_ \\ / _` | |   / _ \\ / _` \\ \\ / / _ \\ '_ \\| __| | | | '__/ _ \\\n");
+		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "| |___| ||  __/ |  | | | | (_| | |  / ___ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/\n");
+		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "|_____|\\__\\___|_|  |_| |_|\\__,_|_| /_/   \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\n");
 		print.info("[EternalAdventurePlugin] Wczytywanie pluginu zakończone!");
 	}
 
 	@Override
 	public void onDisable() {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { // 
-            placeholders.unregister();
-        }
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+			placeholders.unregister();
+		}
 		MagicGUI.tryToUnload();
 		HomesInterface.tryUnload();
 		ServerLogManager.disable();
-		glowingBlocksAPI.disable();
+		//glowingBlocksAPI.disable();
 		print.info("[EternalAdventurePlugin] Plugin został wyłączony!");
 	}
 
@@ -283,7 +281,9 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		return storage;
 	}
 
-	public static MobArena getMobArena() { return mobarena; }
+	public static MobArena getMobArena() {
+		return mobarena;
+	}
 
 	private void setupMobArena() {
 		Plugin plugin = getServer().getPluginManager().getPlugin("MobArena");

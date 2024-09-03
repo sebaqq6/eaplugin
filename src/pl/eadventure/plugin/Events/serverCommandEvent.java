@@ -9,9 +9,9 @@ import pl.eadventure.plugin.Utils.print;
 
 public class serverCommandEvent implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
-    public void onServerCommand(ServerCommandEvent e){
+	public void onServerCommand(ServerCommandEvent e) {
 		CommandSender sender = e.getSender();
 		String command = e.getCommand();
-		print.debug(sender+" - wpisano komendę: "+command);
-    }
+		//print.debug(sender+" - wpisano komendę: "+command);
+	}
 }

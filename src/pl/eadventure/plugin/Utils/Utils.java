@@ -42,13 +42,13 @@ public class Utils {
 
 		return shuffledString.toString();
 	}
-	
-	public static String getRoundOffValue(double value){
+
+	public static String getRoundOffValue(double value) {
 		NumberFormat df = NumberFormat.getNumberInstance(Locale.UK);
 		df.setMaximumFractionDigits(3);
 		return df.format(value);
 	}
-	
+
 	public static long getUnixTimestamp() {
 		return Instant.now().getEpochSecond();
 	}
@@ -58,15 +58,15 @@ public class Utils {
 		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return date.format(timestamp);
 	}
-	
-    public static int[] convertSecondsToTime(int totalSeconds) {
-        int hours = totalSeconds / 3600;
-        int remainingSeconds = totalSeconds % 3600;
-        int minutes = remainingSeconds / 60;
-        int seconds = remainingSeconds % 60;
+
+	public static int[] convertSecondsToTime(int totalSeconds) {
+		int hours = totalSeconds / 3600;
+		int remainingSeconds = totalSeconds % 3600;
+		int minutes = remainingSeconds / 60;
+		int seconds = remainingSeconds % 60;
 
 		return new int[]{hours, minutes, seconds};
-    }
+	}
 
 	public static int[] convertSecondsToTimeWithDays(int totalSeconds) {
 		int days = totalSeconds / (3600 * 24);
@@ -89,42 +89,41 @@ public class Utils {
 		return new int[]{hours, minutes, seconds};
 	}
 
-	public static void commandUsageMessage(CommandSender sender, String commandAndParams){
+	public static void commandUsageMessage(CommandSender sender, String commandAndParams) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Użycie: %s", commandAndParams)));
 	}
 
 	static HashMap<String, ItemStack> headsCache = new HashMap<>();
-	public static ItemStack getPlayerHead(String playerName, String displayName, ArrayList<String> lore)
-	{
-		if(headsCache.containsKey(playerName)) {
+
+	public static ItemStack getPlayerHead(String playerName, String displayName, ArrayList<String> lore) {
+		if (headsCache.containsKey(playerName)) {
 			ItemStack cachePlayerHead = headsCache.get(playerName);
 			SkullMeta playerHeadMeta = (SkullMeta) cachePlayerHead.getItemMeta();
-			if(lore != null) playerHeadMeta.setLore(lore);
-			playerHeadMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', String.format("&r%s",displayName)));
+			if (lore != null) playerHeadMeta.setLore(lore);
+			playerHeadMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', String.format("&r%s", displayName)));
 			cachePlayerHead.setItemMeta(playerHeadMeta);//set new SkullMeta
 			return cachePlayerHead;
 		}
 		ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD); //create item
 		SkullMeta playerHeadMeta = (SkullMeta) playerHead.getItemMeta();//get actual skull meta from playerHead
 		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(Bukkit.getOfflinePlayer(playerName).getUniqueId());//get player uuid from name
-		if(offlinePlayer == null) return null;
+		if (offlinePlayer == null) return null;
 		playerHeadMeta.setOwningPlayer(offlinePlayer);//set SkullMeta to player getted from uuid
-		if(lore != null) playerHeadMeta.setLore(lore);
-		playerHeadMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', String.format("&r%s",displayName)));
+		if (lore != null) playerHeadMeta.setLore(lore);
+		playerHeadMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', String.format("&r%s", displayName)));
 		playerHead.setItemMeta(playerHeadMeta);//set new SkullMeta
 		headsCache.put(playerName, playerHead);
 		return playerHead;
 	}
 
-	public static ItemStack itemWithDisplayName(ItemStack item, String displayName, ArrayList<String> lore)
-	{
-		if(displayName.length() > 29) {
+	public static ItemStack itemWithDisplayName(ItemStack item, String displayName, ArrayList<String> lore) {
+		if (displayName.length() > 29) {
 			displayName = displayName.substring(0, 29);
 			displayName += "...";
 		}
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(displayName);
-		if(lore != null) meta.setLore(lore);
+		if (lore != null) meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;
 	}
@@ -168,8 +167,7 @@ public class Utils {
 		return itemStackMap;
 	}
 
-	public static String color(String string)
-	{
+	public static String color(String string) {
 		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 
@@ -245,7 +243,7 @@ public class Utils {
 	}
 
 	public static boolean isWood(Material type) {
-				//LOG
+		//LOG
 		return type == Material.MANGROVE_LOG ||
 				type == Material.DARK_OAK_LOG ||
 				type == Material.OAK_LOG ||
@@ -305,10 +303,10 @@ public class Utils {
 				type == Material.SPRUCE_LEAVES ||
 				type == Material.DARK_OAK_LEAVES ||
 				type == Material.FLOWERING_AZALEA_LEAVES;
-				//OTHER
-				//type == Material.VINE ||
-				//type == Material.TWISTING_VINES ||
-				//type == Material.GLOW_LICHEN;
+		//OTHER
+		//type == Material.VINE ||
+		//type == Material.TWISTING_VINES ||
+		//type == Material.GLOW_LICHEN;
 	}
 
 	public static int countActiveThreads(ExecutorService executor) {
@@ -330,7 +328,7 @@ public class Utils {
 	public static void benchmarkEnd(long benchmarkStartValue, String title) {
 		long endTime = System.nanoTime();
 		long durationInMilliseconds = (endTime - benchmarkStartValue) / 1000000;
-		print.debug("[BENCHMARK] Czas wykonania["+title+"]: " + durationInMilliseconds + " ms");
+		print.debug("[BENCHMARK] Czas wykonania[" + title + "]: " + durationInMilliseconds + " ms");
 	}
 
 	public static Location findFreeAirBlockAbove(Location startLocation) {
@@ -358,7 +356,7 @@ public class Utils {
 	public static String translateWorldName(World world) {
 		String originalWorldName = world.getName();
 		String translation = "Inny";
-		switch(originalWorldName) {
+		switch (originalWorldName) {
 			case "world" -> translation = "Overworld";
 			case "world_nether" -> translation = "Nether";
 			case "world_the_end" -> translation = "End";
@@ -418,4 +416,22 @@ public class Utils {
 		return matcher.find();
 	}
 	//-------------------------------------------
+
+	public static int isNumber(String number) {
+		int result = -1;
+		try {
+			result = Integer.parseInt(number);
+			return result;
+		} catch (NumberFormatException e) {
+			return -999999999;
+		}
+	}
+
+	public static void saveConfig(File file, YamlConfiguration config) {
+		try {
+			config.save(file);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

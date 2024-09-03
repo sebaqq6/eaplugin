@@ -9,33 +9,33 @@ import pl.eadventure.plugin.Utils.Utils;
 
 public class Placeholders extends PlaceholderExpansion {
 
-    private final EternalAdventurePlugin plugin; // 
+	private final EternalAdventurePlugin plugin; //
 
-    public Placeholders(EternalAdventurePlugin plugin) {
-        this.plugin = plugin;
-    }
+	public Placeholders(EternalAdventurePlugin plugin) {
+		this.plugin = plugin;
+	}
 
-    @Override
-    public String getAuthor() {
-        return String.join(", ", plugin.getDescription().getAuthors()); // 
-    }
+	@Override
+	public String getAuthor() {
+		return String.join(", ", plugin.getDescription().getAuthors()); //
+	}
 
-    @Override
-    public String getIdentifier() {
-        return "eaplugin";
-    }
+	@Override
+	public String getIdentifier() {
+		return "eaplugin";
+	}
 
-    @Override
-    public String getVersion() {
-        return plugin.getDescription().getVersion(); // 
-    }
+	@Override
+	public String getVersion() {
+		return plugin.getDescription().getVersion(); //
+	}
 
-    @Override
-    public boolean persist() {
-        return true; // 
-    }
+	@Override
+	public boolean persist() {
+		return true; //
+	}
 
-    @Override
+	@Override
 	public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
 		Player player = offlinePlayer.getPlayer();
 		//print.debug("Placeholders->onRequest: "+params);
@@ -46,18 +46,17 @@ public class Placeholders extends PlaceholderExpansion {
 		//%toponline_x_name/(time_h/m/s)
 		if (params.startsWith("toponline_")) {
 			String[] args = params.split("_");
-			if(args.length >= 3 && args.length <= 4) {
-				if(args[2].equalsIgnoreCase("name") && args.length == 3)
-				{
+			if (args.length >= 3 && args.length <= 4) {
+				if (args[2].equalsIgnoreCase("name") && args.length == 3) {
 					int place = 0;
 					try {
-						place = Integer.valueOf(args[1]);						
+						place = Integer.valueOf(args[1]);
 					} catch (NumberFormatException e) {
 						return "errorplacenumber";
 					}
-					if(place < 1) return "errorminplacenumber:1";
+					if (place < 1) return "errorminplacenumber:1";
 					return TopTimePlayerPlayed.getNickNameFromPlace(place);
-				} else if(args[2].equalsIgnoreCase("time")) {//time
+				} else if (args[2].equalsIgnoreCase("time")) {//time
 					int place = 0;
 					try {
 						place = Integer.valueOf(args[1]);
@@ -102,7 +101,7 @@ public class Placeholders extends PlaceholderExpansion {
 				return String.format("%02d", pd.onlineHours);
 			} else
 				return "00";
-		} 
+		}
 		//totalonline_m
 		else if (params.equalsIgnoreCase("totalonline_m")) {
 			if (player != null) {
@@ -123,11 +122,11 @@ public class Placeholders extends PlaceholderExpansion {
 		else if (params.equalsIgnoreCase("totalonline_formated")) {
 			if (player != null) {
 				PlayerData pd = PlayerData.get(player);
-				if(pd.onlineHours > 0) return String.format("%dh %dm", pd.onlineHours, pd.onlineMinutes);
-				else return String.format("%dm",pd.onlineMinutes);
+				if (pd.onlineHours > 0) return String.format("%dh %dm", pd.onlineHours, pd.onlineMinutes);
+				else return String.format("%dm", pd.onlineMinutes);
 			} else
 				return "0m";
-		//sessiontime_formated
+			//sessiontime_formated
 		} else if (params.equalsIgnoreCase("sessiontime_formated")) {
 			if (player != null) {
 				PlayerData pd = PlayerData.get(player);
@@ -145,6 +144,12 @@ public class Placeholders extends PlaceholderExpansion {
 				else return String.format("%dm", time[1]);
 			} else return "0m";
 		}
+		// maxsessiontime_formated
+		else if (params.equalsIgnoreCase("gs")) {
+			if (player != null) {
+				return "99999";
+			} else return "0";
+		}
 		return null; //
-    }
+	}
 }
