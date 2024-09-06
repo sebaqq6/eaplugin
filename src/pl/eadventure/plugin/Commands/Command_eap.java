@@ -37,6 +37,7 @@ public class Command_eap implements TabExecutor {
 					"addcustomitem",
 					"getcustomitem",
 					"armorfixreload",
+					"reloadgs",
 					"plist",
 					"rcl");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
@@ -374,6 +375,11 @@ public class Command_eap implements TabExecutor {
 					return true;
 				}
 */
+				return true;
+			}
+			case "reloadgs": {
+				GearScoreCalculator.loadConfig();
+				sender.sendMessage("Przeładowano config GearScoreCalculator!");
 				return true;
 			}
 			default: {

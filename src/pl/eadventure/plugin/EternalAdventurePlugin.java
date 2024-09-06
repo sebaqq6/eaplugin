@@ -209,6 +209,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		Command_rozsypanka.autoInit();
 		leavesDecayEvent.initCleanupBuffer();
 		RegionCommandLooper.load(this);
+		GearScoreCalculator.loadConfig();
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();
 		gVar.colorIssueResolverIA.loadDataFromConfig();

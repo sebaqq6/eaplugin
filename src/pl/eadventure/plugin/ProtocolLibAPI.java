@@ -92,7 +92,7 @@ public class ProtocolLibAPI {
 						List<ItemStack> itemStacks = packet.getItemListModifier().read(0);
 						for (ItemStack itemStack : itemStacks) {
 							if (itemStack.getType() == Material.AIR) continue;
-							print.debug(itemStack.toString());
+							//print.debug(itemStack.toString());
 							GearScoreCalculator gsc = new GearScoreCalculator();
 							int gs = gsc.calcGearScore(itemStack);
 							if (gs == 0) continue;
@@ -112,8 +112,8 @@ public class ProtocolLibAPI {
 									itemStack.setItemMeta(meta);
 									packet.getItemListModifier().write(0, itemStacks);
 								} else if (meta != null) {//without lore
-									print.debug(itemStack.getType().toString());
-									meta.setLore(List.of(Utils.color("&r" + gs)));
+									//print.debug(itemStack.getType().toString());
+									meta.setLore(List.of(Utils.color("&rGearScore: " + gs)));
 									itemStack.setItemMeta(meta);
 									packet.getItemListModifier().write(0, itemStacks);
 								}
@@ -127,7 +127,7 @@ public class ProtocolLibAPI {
 						for (int i = 0; i < itemStackStructureModifier.size(); i++) {
 							ItemStack itemStack = itemStackStructureModifier.read(i);
 							if (itemStack.getType() == Material.AIR) continue;
-							print.debug(itemStack.toString());
+							//print.debug(itemStack.toString());
 							GearScoreCalculator gsc = new GearScoreCalculator();
 							int gs = gsc.calcGearScore(itemStack);
 							if (gs == 0) continue;
@@ -149,7 +149,7 @@ public class ProtocolLibAPI {
 									itemStackStructureModifier.write(i, itemStack);
 								} else if (meta != null) {//without lore
 									print.debug(itemStack.getType().toString());
-									meta.setLore(List.of(Utils.color("&r" + gs)));
+									meta.setLore(List.of(Utils.color("&rGearScore: " + gs)));
 									itemStack.setItemMeta(meta);
 									itemStackStructureModifier.write(i, itemStack);
 								}
