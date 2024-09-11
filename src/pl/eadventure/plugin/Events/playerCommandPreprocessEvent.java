@@ -38,7 +38,15 @@ public class playerCommandPreprocessEvent implements Listener {
 				}
 			}
 		}
-		if (args[0].equalsIgnoreCase("/creative")) {
+
+		if (pd.creativeMode) {
+			if (!args[0].equalsIgnoreCase("/creative")) {
+				player.sendMessage(Utils.mm("<#888888>Nie możesz używać komend w <b>trybie kreatywnym</b>!</#888888>"));
+				e.setCancelled(true);
+				return;
+			}
+		}
+		/*if (args[0].equalsIgnoreCase("/creative")) {
 			if (player.getGameMode() != GameMode.CREATIVE) {
 				ItemStack[] contents = player.getInventory().getContents();
 				ItemStack[] armorContents = player.getInventory().getArmorContents();
@@ -55,7 +63,7 @@ public class playerCommandPreprocessEvent implements Listener {
 					}
 				}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
 			}
-		}
+		}*/
 		//Mob arena ticket system
 		if (command.equalsIgnoreCase("/ma join") || command.equalsIgnoreCase("/ma join eternal")) {
 			ItemStack mobArenaTicket = gVar.customItems.get("mobArenaTicket");

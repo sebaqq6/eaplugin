@@ -92,6 +92,10 @@ commands:
     description: "Wykonywanie komend z konsoli proxy velocity."
     usage: "Użyj /<command>"
     permission: eadventureplugin.cmd.vconsole
+  creative:
+    description: "Tryb kreatywny."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.creative
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

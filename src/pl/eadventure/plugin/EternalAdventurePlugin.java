@@ -11,6 +11,7 @@ import com.garbagemule.MobArena.MobArena;
 import ct.ajneb97.api.ComplexTurretsAPI;
 import fr.skytasul.glowingentities.GlowingBlocks;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.milkbowl.vault.economy.Economy;
@@ -154,6 +155,10 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new playerChangeArmorEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerPlaceTurret(), this);
 		getServer().getPluginManager().registerEvents(new leavesDecayEvent(), this);
+		getServer().getPluginManager().registerEvents(new playerPlaceBlock(), this);
+		getServer().getPluginManager().registerEvents(new playerBlockBreakEvent(), this);
+		getServer().getPluginManager().registerEvents(new playerPickupItemEvent(), this);
+		getServer().getPluginManager().registerEvents(new playerInventoryOpen(), this);
 
 		//CHANNEL FOR VELCITY
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "velocity:relay");
@@ -180,6 +185,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("excellentcratesproxy").setExecutor(new Command_excellentcratesproxy());
 		this.getCommand("fe").setExecutor(new Command_fe());
 		this.getCommand("vconsole").setExecutor(new Command_vconsole());
+		this.getCommand("creative").setExecutor(new Command_creative());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL

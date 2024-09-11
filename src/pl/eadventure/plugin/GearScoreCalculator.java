@@ -7,6 +7,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -86,9 +87,15 @@ public class GearScoreCalculator {
 		boolean isStock = false;
 		if (!isCustom) {
 			if (mpStockItem.containsKey(item.getType().toString())) {
-				print.debug("StockDetect: " + item.getType());
-				gearScore += mpStockItem.get(item.getType().toString());
-				isStock = true;
+				Set<ItemFlag> itemFlags = item.getItemFlags();
+				if (!itemFlags.contains(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+						&& !itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)
+						&& !itemFlags.contains(ItemFlag.HIDE_ENCHANTS)) {
+					print.debug("StockDetect: " + item.getType());
+					gearScore += mpStockItem.get(item.getType().toString());
+					isStock = true;
+				}
+
 			}
 		}
 

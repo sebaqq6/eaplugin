@@ -1,5 +1,10 @@
 package pl.eadventure.plugin.Utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.util.RGBLike;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -169,6 +174,14 @@ public class Utils {
 
 	public static String color(String string) {
 		return ChatColor.translateAlternateColorCodes('&', string);
+	}
+
+	public static TextComponent color(int color, String string) {
+		return Component.text(string).color(TextColor.color(color));
+	}
+
+	public static Component mm(String text) { // mm, short for MiniMessage
+		return MiniMessage.miniMessage().deserialize(text);
 	}
 
 	public static boolean isAdminPermissionHigherThan(String permission, String thanPermission) {

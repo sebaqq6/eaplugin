@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.Events;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,17 +12,29 @@ import pl.eadventure.plugin.Utils.print;
 
 public class playerQuitEvent implements Listener {
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent e)
-	{
+	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player player = e.getPlayer();
 		print.debug("Gracz: " + player.getName() + " opuścił na serwer.");
 		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
-		if(player.isGlowing()) {
+		if (player.isGlowing()) {
 			player.setGlowing(false);
 			print.debug("Dezaktywacja podświetlenia gracza... (opuścił serwer)");
 		}
 		PlayerData pd = PlayerData.get(player);
-		 if(pd.dbid != 0) storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
+		if (pd.creativeMode) {//restore items before disconnect
+			//TODO: BUG - server restart
+			pd.creativeMode = false;
+			player.getInventory().clear();
+			player.getInventory().setHelmet(null);
+			player.getInventory().setChestplate(null);
+			player.getInventory().setLeggings(null);
+			player.getInventory().setBoots(null);
+			player.getInventory().setContents(pd.itemsBackupCreative);
+			player.getInventory().setArmorContents(pd.armorBackupCreative);
+			player.setGameMode(GameMode.SURVIVAL);
+		}
+		if (pd.dbid != 0)
+			storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
 		PlayerData.free(player);
 	}
 }

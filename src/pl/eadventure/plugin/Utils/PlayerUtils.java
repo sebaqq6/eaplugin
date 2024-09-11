@@ -41,6 +41,17 @@ public class PlayerUtils {
 		return count;
 	}
 
+	public static int getArmorItemsCount(Player player) {
+		int count = 0;
+		for (ItemStack item : player.getInventory().getArmorContents()) {
+			// if (item == null || item.getType() != Material.RAW_CHICKEN) continue;
+			if (item == null)
+				continue;
+			count += item.getAmount();
+		}
+		return count;
+	}
+
 	public static int getItemCount(Player player, ItemStack item) {
 		int count = 0;
 		ItemStack[] contents = player.getInventory().getContents();
@@ -135,7 +146,7 @@ public class PlayerUtils {
 			Player targetOnline = Bukkit.getPlayer(targetName);
 			if (targetOnline == null) {//if player is offline
 				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
-				if(!offlinePlayer.hasPlayedBefore()) return false;
+				if (!offlinePlayer.hasPlayedBefore()) return false;
 				for (String permission : permissionsToCheck) {
 					if (hasOfflinePlayerPermission(offlinePlayer.getUniqueId(), permission)) {
 						targetPermission = permission;

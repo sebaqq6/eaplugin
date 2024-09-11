@@ -1,5 +1,6 @@
 package pl.eadventure.plugin;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,7 +19,6 @@ public class PlayerData {
 	//temp data
 	public boolean eventAnnChat = false;//player in Annuance chat mode
 	public boolean decayDebug = false;
-	//player temp data
 	public boolean deathOnPVPArena = false;//player last death on arena pvp
 	public ItemStack[] itemsWhileDeath = null;//items while death player
 	public ItemStack[] armorWhileDeath = null;//armor while death
@@ -29,6 +29,11 @@ public class PlayerData {
 	public HomesInterface homesInterface = null;
 	public String clientBrand = "null";
 	public RegionCommandLooper regionCommandLooper = null;
+	public ItemStack[] itemsBackupCreative = null;
+	public ItemStack[] armorBackupCreative = null;
+	public Location creativeLastPlacedPos = null;
+	public Location creativeLastBreakPos = null;
+	public boolean creativeMode = false;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
@@ -128,7 +133,7 @@ public class PlayerData {
 
 		//Add to punish system
 		PunishmentSystem.getListPlayersCanBeBanned().add(player.getName());
-		
+
 		PunishmentSystem.getListPlayersAll().add(player.getName());
 
 		new BukkitRunnable() {
