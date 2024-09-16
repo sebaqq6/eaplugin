@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import pl.eadventure.plugin.PlayerData;
-import pl.eadventure.plugin.Utils.print;
 
 public class playerBlockBreakEvent implements Listener {
 	@EventHandler

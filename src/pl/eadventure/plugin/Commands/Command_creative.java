@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Commands;
 
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

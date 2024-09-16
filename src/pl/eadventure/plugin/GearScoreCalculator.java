@@ -2,10 +2,10 @@ package pl.eadventure.plugin;
 
 import com.google.common.collect.Multimap;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -13,15 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.yaml.snakeyaml.Yaml;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.Attributes;
 
 public class GearScoreCalculator {
 	static File fileConfig = new File("plugins/EternalAdventurePlugin/gearscore/config.yml");
@@ -29,6 +28,7 @@ public class GearScoreCalculator {
 	static File fileConfigAttr = new File("plugins/EternalAdventurePlugin/gearscore/attributes.yml");
 	static File fileConfigStockItems = new File("plugins/EternalAdventurePlugin/gearscore/stockItems.yml");
 	static File fileConfigCustomItems = new File("plugins/EternalAdventurePlugin/gearscore/customItems.yml");
+	static File fileItemsDefault = new File("plugins/EternalAdventurePlugin/gearscore/itemsDefault.yml");
 
 	static Map<String, Integer> mpEnchants = new HashMap<>();
 	static Map<String, Integer> mpAttr = new HashMap<>();
@@ -155,19 +155,26 @@ public class GearScoreCalculator {
 					Utils.saveConfig(fileConfigAttr, config);*/
 				}
 			}
+			//default attributes
+			/*if (isStock) {
+				print.debug(item.getType().toString().toLowerCase());
+				Map<String, Object> defaultAttributes = getDefaultAttributes(item.getType().toString().toLowerCase());
+				for (Map.Entry<String, Object> attribute : defaultAttributes.entrySet()) {
+					print.debug(attribute.getKey() + ": " + attribute.getValue());
+				}
+			}*/
 		}
-
 		//add to cache
 		this.gearScore = gearScore;
-		cacheGsValues.put(item.toString(), gearScore);
-		print.debug("PUT TO CACHE");
-		print.debug("---------------" + cacheGsValues.size() + "-----------------");
-		int cacheCounter = 0;
-		for (String i : cacheGsValues.keySet()) {
-			cacheCounter++;
-			print.debug("*" + cacheCounter + "* " + i.toString());
-		}
-		print.debug("--------------------------------");
+//		cacheGsValues.put(item.toString(), gearScore);
+//		print.debug("PUT TO CACHE");
+//		print.debug("---------------" + cacheGsValues.size() + "-----------------");
+//		int cacheCounter = 0;
+//		for (String i : cacheGsValues.keySet()) {
+//			cacheCounter++;
+//			print.debug("*" + cacheCounter + "* " + i.toString());
+//		}
+//		print.debug("--------------------------------");
 		return this.gearScore;
 	}
 
@@ -225,4 +232,33 @@ public class GearScoreCalculator {
 		cacheColoredGs.put(gs, result);
 		return result;
 	}
+
+	private Map<String, Object> getDefaultAttributes(String itemName) {
+		Map<String, Object> attributes = new HashMap<>();
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(fileItemsDefault);
+
+		if (config.contains(itemName)) {
+			// Pobierz komponenty jako MemorySection
+			ConfigurationSection components = config.getConfigurationSection(itemName + ".components");
+			if (components != null) {
+				// Pobierz attribute_modifiers jako MemorySection
+				ConfigurationSection attributeModifiers = components.getConfigurationSection("attribute_modifiers");
+				if (attributeModifiers != null) {
+					// Pobierz modyfikatory jako lista
+					List<Map<?, ?>> modifiers = attributeModifiers.getMapList("modifiers");
+					if (modifiers != null) {
+						for (Map<?, ?> modifier : modifiers) {
+							String type = (String) modifier.get("type");
+							Object amount = modifier.get("amount");
+							if (type != null && amount != null) {
+								attributes.put(type, amount);
+							}
+						}
+					}
+				}
+			}
+		}
+		return attributes;
+	}
+
 }

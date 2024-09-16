@@ -10,14 +10,11 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -150,7 +147,7 @@ public class ProtocolLibAPI {
 									itemStack.setItemMeta(meta);
 									itemStackStructureModifier.write(i, itemStack);
 								} else if (meta != null) {//without lore
-									print.debug(itemStack.getType().toString());
+									//print.debug(itemStack.getType().toString());
 									meta.lore(List.of(gsc.getFormatedGsStock()));
 									itemStack.setItemMeta(meta);
 									itemStackStructureModifier.write(i, itemStack);

@@ -11,7 +11,6 @@ import com.garbagemule.MobArena.MobArena;
 import ct.ajneb97.api.ComplexTurretsAPI;
 import fr.skytasul.glowingentities.GlowingBlocks;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.milkbowl.vault.economy.Economy;

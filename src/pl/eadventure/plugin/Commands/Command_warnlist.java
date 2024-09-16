@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -18,7 +17,7 @@ import java.util.List;
 public class Command_warnlist implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		if(sender instanceof Player player) {
+		if (sender instanceof Player player) {
 			// /warnlist [nick]
 			if (args.length == 0) {//get target nick args[0]
 				Utils.commandUsageMessage(sender, String.format("/%s [nick gracza]", label));
@@ -38,10 +37,9 @@ public class Command_warnlist implements TabExecutor {
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1) {//nick
-			if(args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
+			if (args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
 			return StringUtil.copyPartialMatches(args[0], PunishmentSystem.getListPlayersCanBeBanned(), new ArrayList<>());
-		}
-		else
+		} else
 			return Collections.emptyList();
 	}
 }

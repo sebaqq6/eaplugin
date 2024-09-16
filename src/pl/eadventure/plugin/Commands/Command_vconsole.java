@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Commands;
 
-import com.comphenix.protocol.PacketType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,7 +15,7 @@ import java.util.List;
 public class Command_vconsole implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		if(args.length == 0) {
+		if (args.length == 0) {
 			sender.sendMessage("Użyj: /vconsole [komenda] - aby użyć konsoli Velocity.");
 			sender.sendMessage("Przykład 1: /vconsole velocity plugins");
 			sender.sendMessage("Przykład vSudo: /vconsole vsudo JakisGracz123 /velocity plugins");
@@ -26,8 +25,8 @@ public class Command_vconsole implements TabExecutor {
 		byte[] data = commandToRelay.getBytes();
 
 		Bukkit.getServer().sendPluginMessage(EternalAdventurePlugin.getInstance(), "velocity:relay", data);
-		if(sender instanceof Player player) {
-			if(player.isOp()) {
+		if (sender instanceof Player player) {
+			if (player.isOp()) {
 				sender.sendMessage("Wysłano do proxy Velocity: " + commandToRelay);
 			}
 		} else {

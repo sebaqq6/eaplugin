@@ -2,23 +2,18 @@ package pl.eadventure.plugin.Events;
 
 import com.garbagemule.MobArena.MobArena;
 import com.garbagemule.MobArena.framework.Arena;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.PunishmentSystem;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
-
-import java.lang.reflect.Array;
 
 public class playerCommandPreprocessEvent implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
