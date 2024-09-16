@@ -40,7 +40,7 @@ public class playerCommandPreprocessEvent implements Listener {
 		}
 
 		if (pd.creativeMode) {
-			if (!args[0].equalsIgnoreCase("/creative")) {
+			if (!args[0].equalsIgnoreCase("/creative") && !player.isOp()) {
 				player.sendMessage(Utils.mm("<#888888>Nie możesz używać komend w <b>trybie kreatywnym</b>!</#888888>"));
 				e.setCancelled(true);
 				return;

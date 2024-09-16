@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,9 +17,11 @@ import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Pattern;
 
 public class ProtocolLibAPI {
 	ProtocolManager protocolManager;
@@ -93,27 +96,27 @@ public class ProtocolLibAPI {
 						for (ItemStack itemStack : itemStacks) {
 							if (itemStack.getType() == Material.AIR) continue;
 							//print.debug(itemStack.toString());
-							GearScoreCalculator gsc = new GearScoreCalculator();
-							int gs = gsc.calcGearScore(itemStack);
+							GearScoreCalculator gsc = new GearScoreCalculator(itemStack);
+							int gs = gsc.calcGearScore();
 							if (gs == 0) continue;
 							if (itemStack != null) {
 								ItemMeta meta = itemStack.getItemMeta();
-								if (meta != null && meta.getLore() != null) {//with lore
-									//WIP filter gearscore items, and guis?
-									List<String> loreLines = new ArrayList<>();
-									loreLines.addAll(meta.getLore());
-									ListIterator<String> iterator = loreLines.listIterator();
+								if (meta != null && meta.lore() != null) {//with lore
+									List<Component> loreLines = new ArrayList<>();
+									loreLines.addAll(meta.lore());
+									ListIterator<Component> iterator = loreLines.listIterator();
 									while (iterator.hasNext()) {
-										String loreLine = iterator.next();
-										String newLore = loreLine.replaceAll("\\{gs\\}", Utils.color("&r" + gs));
+										Component loreLine = iterator.next();
+										Pattern pattern = Pattern.compile("\\{gs\\}");
+										Component newLore = loreLine.replaceText(builder -> builder.match(pattern).replacement(Utils.mm(gsc.getGsValueColored(gs))));
 										iterator.set(newLore);
 									}
-									meta.setLore(loreLines);
+									meta.lore(loreLines);
 									itemStack.setItemMeta(meta);
 									packet.getItemListModifier().write(0, itemStacks);
 								} else if (meta != null) {//without lore
 									//print.debug(itemStack.getType().toString());
-									meta.setLore(List.of(Utils.color("&rGearScore: " + gs)));
+									meta.lore(List.of(gsc.getFormatedGsStock()));
 									itemStack.setItemMeta(meta);
 									packet.getItemListModifier().write(0, itemStacks);
 								}
@@ -128,28 +131,27 @@ public class ProtocolLibAPI {
 							ItemStack itemStack = itemStackStructureModifier.read(i);
 							if (itemStack.getType() == Material.AIR) continue;
 							//print.debug(itemStack.toString());
-							GearScoreCalculator gsc = new GearScoreCalculator();
-							int gs = gsc.calcGearScore(itemStack);
+							GearScoreCalculator gsc = new GearScoreCalculator(itemStack);
+							int gs = gsc.calcGearScore();
 							if (gs == 0) continue;
 							if (itemStack != null) {
 								ItemMeta meta = itemStack.getItemMeta();
-								if (meta != null && meta.getLore() != null) {
-									//WIP filter gearscore items, and guis?
-									List<String> loreLines = new ArrayList<>();
-									loreLines.addAll(meta.getLore());
-									ListIterator<String> iterator = loreLines.listIterator();
+								if (meta != null && meta.lore() != null) {
+									List<Component> loreLines = new ArrayList<>();
+									loreLines.addAll(meta.lore());
+									ListIterator<Component> iterator = loreLines.listIterator();
 									while (iterator.hasNext()) {
-										String loreLine = iterator.next();
-										String newLore = loreLine.replaceAll("\\{gs\\}", Utils.color("&r" + gs));
+										Component loreLine = iterator.next();
+										Pattern pattern = Pattern.compile("\\{gs\\}");
+										Component newLore = loreLine.replaceText(builder -> builder.match(pattern).replacement(Utils.mm(gsc.getGsValueColored(gs))));
 										iterator.set(newLore);
 									}
-
-									meta.setLore(loreLines);
+									meta.lore(loreLines);
 									itemStack.setItemMeta(meta);
 									itemStackStructureModifier.write(i, itemStack);
 								} else if (meta != null) {//without lore
 									print.debug(itemStack.getType().toString());
-									meta.setLore(List.of(Utils.color("&rGearScore: " + gs)));
+									meta.lore(List.of(gsc.getFormatedGsStock()));
 									itemStack.setItemMeta(meta);
 									itemStackStructureModifier.write(i, itemStack);
 								}

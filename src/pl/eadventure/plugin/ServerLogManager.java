@@ -12,6 +12,7 @@ import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
 /*
 [14:50:51 INFO]: JrRequeim issued server command: /apanel
 [14:50:52 INFO]: [Essentials] CONSOLE issued server command: /sudo JrRequeim admin-zgub-skrzynie
@@ -31,7 +32,7 @@ public class ServerLogManager extends AbstractFilter {
 		myFilter.start();
 		rootLogger.addFilter(myFilter);
 		storage = mySQLStorage;
-		print.debug("ServerLogManager - ENABLED! filterCount = "+rootLogger.filterCount());
+		print.debug("ServerLogManager - ENABLED! filterCount = " + rootLogger.filterCount());
 	}
 
 	public interface LogType {
@@ -54,10 +55,10 @@ public class ServerLogManager extends AbstractFilter {
 
 	@Override
 	public Result filter(LogEvent event) {
-		if(disabled) return Result.NEUTRAL;
-		if(storage == null) return Result.NEUTRAL;
+		if (disabled) return Result.NEUTRAL;
+		if (storage == null) return Result.NEUTRAL;
 		String m = removeAnsiEscapeCodes(event.getMessage().getFormattedMessage());//message
-		if(m.contains("terra:reimagend/reimagend/")) {//block console spam terra generator
+		if (m.contains("EternalAntibot")) {//block console spam
 			return Result.DENY;
 		}
 		//String sender = event.getLoggerName();
@@ -69,9 +70,9 @@ public class ServerLogManager extends AbstractFilter {
 		}*/
 		//CHAT
 		//[Lokalny] [Uczestnik] [Adminchat] [Gracz] [EVP] [SVP] [VIP] [A] [M] [GM] [S]
-		if(m.contains("[Lokalny]") || m.contains("[Uczestnik]") || m.contains("[Adminchat]")
-		|| m.contains("[Gracz]") || m.contains("[EVP]") || m.contains("[SVP]") || m.contains("[VIP]")
-		|| m.contains("[A]") || m.contains("[M]") || m.contains("[GM]") || m.contains("[S]")) {
+		if (m.contains("[Lokalny]") || m.contains("[Uczestnik]") || m.contains("[Adminchat]")
+				|| m.contains("[Gracz]") || m.contains("[EVP]") || m.contains("[SVP]") || m.contains("[VIP]")
+				|| m.contains("[A]") || m.contains("[M]") || m.contains("[GM]") || m.contains("[S]")) {
 			log(m, LogType.Chat);
 			return Result.NEUTRAL;
 		}
@@ -82,7 +83,7 @@ public class ServerLogManager extends AbstractFilter {
 			return Result.NEUTRAL;
 		}
 		if (m.contains("issued server command: /") && !m.contains("CONSOLE")) {
-			if(ignoreNextCommandRun) {
+			if (ignoreNextCommandRun) {
 				ignoreNextCommandRun = false;
 				return Result.NEUTRAL;
 			}
@@ -91,7 +92,7 @@ public class ServerLogManager extends AbstractFilter {
 				return Result.NEUTRAL;
 			}
 			//ignore private message /msg and /r (because is SPY) and other chats commands
-			if(m.contains("/r") || m.contains("/msg") || m.contains("/adminczat")) {
+			if (m.contains("/r") || m.contains("/msg") || m.contains("/adminczat")) {
 				return Result.NEUTRAL;
 			}
 			String finalMessage = m.replaceAll("issued server command:", "wpisał/a komendę:");

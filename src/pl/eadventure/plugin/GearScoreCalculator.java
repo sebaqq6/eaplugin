@@ -1,6 +1,7 @@
 package pl.eadventure.plugin;
 
 import com.google.common.collect.Multimap;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -33,19 +34,48 @@ public class GearScoreCalculator {
 	static Map<String, Integer> mpAttr = new HashMap<>();
 	static Map<String, Integer> mpStockItem = new HashMap<>();
 	static Map<String, Integer> mpCustomItem = new HashMap<>();
+	static String gsTitleForStocks = null;
+	static String gsValueColorStart = null;
+	static String gsValueColorEnd = null;
+	static int gsValueMax = 1000;
 
-	static Map<String, Integer> cache = new HashMap<>();
+	static Map<String, Integer> cacheGsValues = new HashMap<>();
+	static Map<Integer, Component> cacheFormatedStock = new HashMap<>();
+	static Map<Integer, String> cacheColoredGs = new HashMap<>();
+
+	ItemStack item;
+	int gearScore = 0;
+
+	public GearScoreCalculator(ItemStack item) {
+		this.item = item;
+	}
 
 	public static void loadConfig() {
-		cache.clear();
+		cacheGsValues.clear();
+		cacheFormatedStock.clear();
+		cacheColoredGs.clear();
 		loadMultipliers(fileConfigEnchants, mpEnchants);// Load enchants multipliers
 		loadMultipliers(fileConfigAttr, mpAttr);// Load attributes multipliers
 		loadMultipliers(fileConfigStockItems, mpStockItem);// Load stock items multipliers
 		loadMultipliers(fileConfigCustomItems, mpCustomItem);// Load custom items multipliers
+		// Global config
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(fileConfig);
+		if (!fileConfig.exists()) {
+			config.set("gsTitleForStocks", "<#888888>Punkty GS:</#888888> <b>{gs}</b>");
+			config.set("gsValueColorStart", "#99FF00");
+			config.set("gsValueColorEnd", "#FF0000");
+			config.set("gsValueMax", 1000);
+			Utils.saveConfig(fileConfig, config);
+		}
+		gsTitleForStocks = config.getString("gsTitleForStocks");
+		gsValueColorStart = config.getString("gsValueColorStart");
+		gsValueColorEnd = config.getString("gsValueColorEnd");
+		gsValueMax = config.getInt("gsValueMax");
+		print.ok("Wczytano config GearScoreCalculator!");
 	}
 
 	static private void loadMultipliers(File file, Map<String, Integer> map) {
-		map.clear(); //clear cache when new data is load
+		map.clear(); //clear data when new data is load
 		if (!file.exists()) {
 			print.error("Nie znaleziono pliku: " + file.getPath());
 			return;
@@ -59,11 +89,12 @@ public class GearScoreCalculator {
 		}
 	}
 
-	public int calcGearScore(ItemStack item) {
+	public int calcGearScore() {
 		// Check cache
-		if (cache.containsKey(item.toString())) {
-			print.debug("[GET FROM CACHE] gs: " + cache.get(item.toString()));
-			return cache.get(item.toString());
+		if (cacheGsValues.containsKey(item.toString())) {
+			print.debug("[GET FROM CACHE] gs: " + cacheGsValues.get(item.toString()));
+			this.gearScore = cacheGsValues.get(item.toString());
+			return this.gearScore;
 		}
 		int gearScore = 0;
 		ItemMeta itemMeta = item.getItemMeta();
@@ -127,16 +158,17 @@ public class GearScoreCalculator {
 		}
 
 		//add to cache
-		cache.put(item.toString(), gearScore);
+		this.gearScore = gearScore;
+		cacheGsValues.put(item.toString(), gearScore);
 		print.debug("PUT TO CACHE");
-		print.debug("---------------" + cache.size() + "-----------------");
+		print.debug("---------------" + cacheGsValues.size() + "-----------------");
 		int cacheCounter = 0;
-		for (String i : cache.keySet()) {
+		for (String i : cacheGsValues.keySet()) {
 			cacheCounter++;
 			print.debug("*" + cacheCounter + "* " + i.toString());
 		}
 		print.debug("--------------------------------");
-		return gearScore;
+		return this.gearScore;
 	}
 
 
@@ -157,4 +189,40 @@ public class GearScoreCalculator {
 		return 0;
 	}
 
+	public Component getFormatedGsStock() {
+		if (cacheFormatedStock.containsKey(this.gearScore)) {
+			return cacheFormatedStock.get(this.gearScore);
+		}
+		String coloredGs = getGsValueColored(this.gearScore);
+		Component component = Utils.mm("<!i>" + gsTitleForStocks.replaceAll("\\{gs\\}", coloredGs));
+		cacheFormatedStock.put(this.gearScore, component);
+		return component;
+	}
+
+	public String getGsValueColored(int gs) {
+		if (cacheColoredGs.containsKey(gs)) {
+			return cacheColoredGs.get(gs);
+		}
+		gs = Math.max(0, Math.min(gs, gsValueMax));
+
+		int startR = Integer.parseInt(gsValueColorStart.substring(1, 3), 16);
+		int startG = Integer.parseInt(gsValueColorStart.substring(3, 5), 16);
+		int startB = Integer.parseInt(gsValueColorStart.substring(5, 7), 16);
+
+		int endR = Integer.parseInt(gsValueColorEnd.substring(1, 3), 16);
+		int endG = Integer.parseInt(gsValueColorEnd.substring(3, 5), 16);
+		int endB = Integer.parseInt(gsValueColorEnd.substring(5, 7), 16);
+
+		double ratio = (double) gs / gsValueMax;
+
+		int finalR = (int) (startR + (endR - startR) * ratio);
+		int finalG = (int) (startG + (endG - startG) * ratio);
+		int finalB = (int) (startB + (endB - startB) * ratio);
+
+		String finalColor = String.format("%02X%02X%02X", finalR, finalG, finalB);
+
+		String result = "<!i><#" + finalColor + ">" + gs + "</#" + finalColor + ">";
+		cacheColoredGs.put(gs, result);
+		return result;
+	}
 }

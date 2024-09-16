@@ -20,7 +20,7 @@ public class playerInventoryOpen implements Listener {
 		LivingEntity livingEntity = e.getPlayer();
 		if (livingEntity instanceof Player player) {
 			PlayerData pd = PlayerData.get(player);
-			if (pd.creativeMode) {
+			if (pd.creativeMode && !player.isOp()) {
 				e.setCancelled(true);
 			}
 		}
