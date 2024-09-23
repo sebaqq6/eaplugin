@@ -238,13 +238,10 @@ public class GearScoreCalculator {
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(fileItemsDefault);
 
 		if (config.contains(itemName)) {
-			// Pobierz komponenty jako MemorySection
 			ConfigurationSection components = config.getConfigurationSection(itemName + ".components");
 			if (components != null) {
-				// Pobierz attribute_modifiers jako MemorySection
 				ConfigurationSection attributeModifiers = components.getConfigurationSection("attribute_modifiers");
 				if (attributeModifiers != null) {
-					// Pobierz modyfikatory jako lista
 					List<Map<?, ?>> modifiers = attributeModifiers.getMapList("modifiers");
 					if (modifiers != null) {
 						for (Map<?, ?> modifier : modifiers) {

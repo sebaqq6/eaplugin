@@ -2,12 +2,14 @@ package pl.eadventure.plugin.Events;
 
 import com.garbagemule.MobArena.MobArena;
 import com.garbagemule.MobArena.framework.Arena;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.PunishmentSystem;
@@ -41,7 +43,7 @@ public class playerCommandPreprocessEvent implements Listener {
 				return;
 			}
 		}
-		/*if (args[0].equalsIgnoreCase("/creative")) {
+		if (command.equalsIgnoreCase("/gamemode creative") || args[0].equalsIgnoreCase("/creativemode")) {
 			if (player.getGameMode() != GameMode.CREATIVE) {
 				ItemStack[] contents = player.getInventory().getContents();
 				ItemStack[] armorContents = player.getInventory().getArmorContents();
@@ -54,11 +56,10 @@ public class playerCommandPreprocessEvent implements Listener {
 						player.getInventory().setContents(contents);
 						player.getInventory().setArmorContents(armorContents);
 						player.getInventory().setExtraContents(extraContents);
-						print.debug("update invent");
 					}
 				}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
 			}
-		}*/
+		}
 		//Mob arena ticket system
 		if (command.equalsIgnoreCase("/ma join") || command.equalsIgnoreCase("/ma join eternal")) {
 			ItemStack mobArenaTicket = gVar.customItems.get("mobArenaTicket");

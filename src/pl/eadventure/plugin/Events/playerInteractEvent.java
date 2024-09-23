@@ -1,5 +1,8 @@
 package pl.eadventure.plugin.Events;
 
+import it.ajneb97.api.InteractionsAPI;
+import it.ajneb97.model.ConversationEndReason;
+import it.ajneb97.model.player.PlayerConversation;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +15,7 @@ import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.LeavesDecay;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.Utils.wgAPI;
 
 public class playerInteractEvent implements Listener {
@@ -21,7 +25,7 @@ public class playerInteractEvent implements Listener {
 		Block clickedBlock = e.getClickedBlock();
 		PlayerData pd = PlayerData.get(player);
 		//LeavesDecay DEBUG
-		if(pd.decayDebug) {
+		if (pd.decayDebug) {
 			if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND) {
 				if (clickedBlock != null) {
 					new BukkitRunnable() {
@@ -35,10 +39,9 @@ public class playerInteractEvent implements Listener {
 								player.sendMessage(Utils.color(String.format("&2%s jest połączone z drewnem. Liść bezpieczny.", clickedBlock.getType())));
 							} else {
 								player.sendMessage(Utils.color(String.format("&c%s nie jest połączone z drewnem.", clickedBlock.getType())));
-								if(wgAPI.leafDecayFlagDeny(clickedBlock)) {
+								if (wgAPI.leafDecayFlagDeny(clickedBlock)) {
 									player.sendMessage(Utils.color("&aLiść nie zniknie, gdyż obowiązuje go flaga LEAF_DECAY:DENY."));
-								}
-								else {
+								} else {
 									player.sendMessage(Utils.color("&dLiść może zniknąć. Brak flagi LEAF_DECAY:DENY."));
 								}
 							}
@@ -48,5 +51,13 @@ public class playerInteractEvent implements Listener {
 				}
 			}
 		}
+		// Disable conversation hotkey
+		/*PlayerConversation pc = InteractionsAPI.getPlayerConversation(player);
+		if (pc != null) {
+			if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
+				InteractionsAPI.endConversation(player, ConversationEndReason.DIALOGUE);
+				print.debug("InteractionsAPI END");
+			}
+		}*/
 	}
 }

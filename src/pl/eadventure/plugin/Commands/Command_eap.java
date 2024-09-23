@@ -1,6 +1,7 @@
 package pl.eadventure.plugin.Commands;
 
 import ct.ajneb97.utils.UtilsPlayers;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -38,6 +39,7 @@ public class Command_eap implements TabExecutor {
 					"armorfixreload",
 					"reloadgs",
 					"plist",
+					"reconnectdb",
 					"rcl");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
@@ -379,6 +381,11 @@ public class Command_eap implements TabExecutor {
 			case "reloadgs": {
 				GearScoreCalculator.loadConfig();
 				sender.sendMessage("Przeładowano config GearScoreCalculator!");
+				return true;
+			}
+			case "reconnectdb": {
+				EternalAdventurePlugin.getMySQL().reconnect();
+				sender.sendMessage(Component.text("Wykonano reconnect z bazą danych!"));
 				return true;
 			}
 			default: {
