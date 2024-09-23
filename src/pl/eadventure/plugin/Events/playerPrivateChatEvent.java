@@ -7,7 +7,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.ServerLogManager;
+import pl.eadventure.plugin.Modules.ServerLogManager;
 
 import java.util.Arrays;
 
@@ -17,6 +17,7 @@ public class playerPrivateChatEvent {
 		String pmLog = String.format("[SPY] %s -> %s: %s", source, target, message);
 		ServerLogManager.log(pmLog, ServerLogManager.LogType.Chat);
 	}
+
 	//==================================================================================================================
 	//----------------------------------------------ON PLAYER CHAT PROXY
 	public void onPlayerChatProxy(AsyncPlayerChatEvent event) {

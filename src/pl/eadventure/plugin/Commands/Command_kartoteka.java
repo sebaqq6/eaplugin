@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.eadventure.plugin.PunishmentSystem;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.Utils;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class Command_kartoteka implements TabExecutor {
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1) {//nick
-			if(args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
+			if (args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
 			return StringUtil.copyPartialMatches(args[0], PunishmentSystem.getListPlayersAll(), new ArrayList<>());
 		} else
 			return Collections.emptyList();

@@ -1,8 +1,5 @@
 package pl.eadventure.plugin.Events;
 
-import it.ajneb97.api.InteractionsAPI;
-import it.ajneb97.model.ConversationEndReason;
-import it.ajneb97.model.player.PlayerConversation;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,10 +9,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.LeavesDecay;
+import pl.eadventure.plugin.Modules.LeavesDecay;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.Utils.wgAPI;
 
 public class playerInteractEvent implements Listener {

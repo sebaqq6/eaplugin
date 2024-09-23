@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.PunishmentSystem;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 
@@ -23,7 +23,7 @@ public class Command_ban implements TabExecutor {
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 		if (args.length == 1) {//nick
-			if(args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
+			if (args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
 			return StringUtil.copyPartialMatches(args[0], PunishmentSystem.getListPlayersCanBeBanned(), new ArrayList<>());
 		} else if (args.length == 2) {//time/perm
 			List<String> cmdlist = Arrays.asList("perm", "30m", "2h", "1d", "7d", "30d", "60d", "120d", "1d,12h",
@@ -35,8 +35,7 @@ public class Command_ban implements TabExecutor {
 		} else if (args.length == 4) {//reason
 			List<String> cmdlist = Arrays.asList("Cheater.", "Szkodnik.", "Griefing.", "Reklama.", "Nieprzestrzeganie regulaminu.");
 			return StringUtil.copyPartialMatches(args[3], cmdlist, new ArrayList<>());
-		}
-		else
+		} else
 			return Collections.emptyList();
 	}
 
@@ -51,13 +50,12 @@ public class Command_ban implements TabExecutor {
 					return;
 				}
 				String targetName = args[0];
-				if(targetName.equalsIgnoreCase(sender.getName())) {//if target == player
+				if (targetName.equalsIgnoreCase(sender.getName())) {//if target == player
 					sender.sendMessage(Utils.color("&7Nie możesz tego użyć na sobie."));
 					return;
 				}
-				if(sender instanceof Player player)
-				{
-					if(PlayerUtils.isAdminPermissionHasHigher(player.getName(), targetName)) {
+				if (sender instanceof Player player) {
+					if (PlayerUtils.isAdminPermissionHasHigher(player.getName(), targetName)) {
 						sender.sendMessage(Utils.color("&7Ten gracz ma wyższe uprawnienia administracyjne niż Ty."));
 						return;
 					}

@@ -1,4 +1,4 @@
-package pl.eadventure.plugin;
+package pl.eadventure.plugin.API;
 
 import com.nickuc.login.api.nLoginAPI;
 import ct.ajneb97.api.EntityValidation;
@@ -7,6 +7,7 @@ import dev.espi.protectionstones.PSRegion;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import pl.eadventure.plugin.Modules.HomesInterface;
 
 import java.util.UUID;
 
@@ -42,11 +43,11 @@ public class ComplexTurretValidation extends EntityValidation {
 				int z = playerTurret.getLocation().getBlockZ();
 				if (cuboid.getWGRegion().contains(x, y, z)) {//if turret in inside of cuboid
 					//print.debug("Tower inside: " + cuboid.getId());
-					if(cuboid.getMembers().contains(player.getUniqueId())) {
+					if (cuboid.getMembers().contains(player.getUniqueId())) {
 						//print.debug("Target is member - don't shoot!");
 						return false;//if target is member - don't shoot
 					}
-					if(cuboid.getOwners().contains(player.getUniqueId())) {
+					if (cuboid.getOwners().contains(player.getUniqueId())) {
 						//print.debug("Target is owner - don't shoot!");
 						return false;//if target is owner - don't shoot
 					}

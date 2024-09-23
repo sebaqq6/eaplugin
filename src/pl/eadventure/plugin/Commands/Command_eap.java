@@ -1,26 +1,22 @@
 package pl.eadventure.plugin.Commands;
 
-import ct.ajneb97.utils.UtilsPlayers;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.*;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
+import pl.eadventure.plugin.Modules.GearScoreCalculator;
+import pl.eadventure.plugin.Modules.LeavesDecay;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
+import pl.eadventure.plugin.Modules.RegionCommandLooper;
 import pl.eadventure.plugin.Utils.*;
 
-import java.io.IOException;
 import java.util.*;
 
 public class Command_eap implements TabExecutor {
@@ -132,61 +128,9 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
-				if (args.length == 1) {
-					sender.sendMessage("Użyj: /eap test [testid]");
-					return true;
-				}
-				String testid = args[1];
-
-				if (testid.equalsIgnoreCase("on")) {
-					Player player = (Player) sender;
-					sender.sendMessage("Włączone");
-					player.setMetadata("eapenabledturrets", new FixedMetadataValue(EternalAdventurePlugin.getInstance(), true));
-				} else if (testid.equalsIgnoreCase("off")) {
-					Player player = (Player) sender;
-					sender.sendMessage("Wyłączone");
-					Iterator<MetadataValue> var2 = player.getMetadata("eapenabledturrets").iterator();
-
-					while (var2.hasNext()) {
-						MetadataValue var1 = var2.next();
-						Plugin ownPlugin = var1.getOwningPlugin();
-						print.debug(ownPlugin.toString());
-						player.removeMetadata("eapenabledturrets", ownPlugin);
-					}
-
-				} else if (testid.equalsIgnoreCase("status")) {
-					Player player = (Player) sender;
-					if (!player.hasMetadata("eapenabledturrets")) {
-						sender.sendMessage("Brak metadanych eapenabledturrets");
-						return true;
-					}
-					MetadataValue metadataValue = player.getMetadata("eapenabledturrets").get(0);
-					if (metadataValue.asBoolean()) {
-						sender.sendMessage("Metadata eapenabledturrets: TRUE");
-					} else {
-						sender.sendMessage("Metadata eapenabledturrets: FALSE");
-					}
-				} else if (testid.equalsIgnoreCase("hack")) {
-					try {
-						CrackComplexTurret.crack();
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				} else if (testid.equalsIgnoreCase("survival")) {
-					Player player = (Player) sender;
-					print.debug("IsSurvival; " + UtilsPlayers.isSurvival(player));
-				} else if (testid.equalsIgnoreCase("list")) {
-					Player player = (Player) sender;
-					Iterator var2 = player.getMetadata("eapenabledturrets").iterator();
-
-					while (var2.hasNext()) {
-						MetadataValue var1 = (MetadataValue) var2.next();
-						sender.sendMessage(var1.asString());
-					}
-				} else if (testid.equalsIgnoreCase("disablebs")) {
-					CrackComplexTurret.disabledBypass = true;
-				} else if (testid.equalsIgnoreCase("enablebs")) {
-					CrackComplexTurret.disabledBypass = false;
+				if (sender instanceof Player player) {
+					PlayerData pd = PlayerData.get(player);
+					sender.sendMessage(String.valueOf(pd.breakBlocksCount));
 				}
 				break;
 			}

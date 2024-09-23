@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.objectweb.asm.*;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.HomesInterface;
+import pl.eadventure.plugin.Modules.HomesInterface;
 import pl.eadventure.plugin.PlayerData;
 
 import java.io.FileInputStream;
@@ -43,7 +43,7 @@ public class CrackComplexTurret {
 					} else {//cuboid members auto detect
 						PlayerData pd = PlayerData.get(p);
 						HomesInterface hi = pd.homesInterface;
-						if(hi == null) {
+						if (hi == null) {
 							hi = new HomesInterface();
 							hi.loadFromPlayer(p);
 							pd.homesInterface = hi;
@@ -51,7 +51,7 @@ public class CrackComplexTurret {
 							hi.loadFromPlayer(p);
 						}
 
-						for(PSRegion cuboid : hi.getAllCuboids()) {
+						for (PSRegion cuboid : hi.getAllCuboids()) {
 							if (wgAPI.isOnRegion(p, cuboid.getId())) {
 								hideForTurrets = true;
 								break;
@@ -81,7 +81,7 @@ public class CrackComplexTurret {
 	private static void enableTurrets(Player p) {
 		if (!p.hasMetadata("eapenabledturrets")) {
 			p.setMetadata("eapenabledturrets", new FixedMetadataValue(EternalAdventurePlugin.getInstance(), true));
-			print.debug("enableTurrets: "+ p.getName());
+			print.debug("enableTurrets: " + p.getName());
 		}
 	}
 
@@ -95,7 +95,7 @@ public class CrackComplexTurret {
 				print.debug(ownPlugin.toString());
 				p.removeMetadata("eapenabledturrets", ownPlugin);
 			}
-			print.debug("disableTurrets: "+ p.getName());
+			print.debug("disableTurrets: " + p.getName());
 		}
 	}
 

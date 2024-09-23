@@ -1,4 +1,4 @@
-package pl.eadventure.plugin;
+package pl.eadventure.plugin.Modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,7 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.*;
+import pl.eadventure.plugin.gVar;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -30,73 +33,72 @@ public class PunishmentSystem {
 
 	public record BanData(String nick, String ip, UUID uuid, String bannedByNick, int expiresTimestamp,
 						  String bannedDate, String reason) {
-			private static final HashMap<String, BanData> banForNick = new HashMap<>();
-			private static final HashMap<String, BanData> banForIP = new HashMap<>();
-			private static final HashMap<UUID, BanData> banForUUID = new HashMap<>();
+		private static final HashMap<String, BanData> banForNick = new HashMap<>();
+		private static final HashMap<String, BanData> banForIP = new HashMap<>();
+		private static final HashMap<UUID, BanData> banForUUID = new HashMap<>();
 
 		public BanData(String nick, String ip, UUID uuid, String bannedByNick, int expiresTimestamp, String bannedDate, String reason) {
-				this.nick = nick;
-				this.ip = ip;
-				this.uuid = uuid;
-				this.bannedByNick = bannedByNick;
-				this.expiresTimestamp = expiresTimestamp;
-				this.bannedDate = bannedDate;
-				this.reason = reason;
-				if (nick != null) banForNick.put(nick, this);
-				if (ip != null) banForIP.put(ip, this);
-				if (uuid != null) banForUUID.put(uuid, this);
-			}
+			this.nick = nick;
+			this.ip = ip;
+			this.uuid = uuid;
+			this.bannedByNick = bannedByNick;
+			this.expiresTimestamp = expiresTimestamp;
+			this.bannedDate = bannedDate;
+			this.reason = reason;
+			if (nick != null) banForNick.put(nick, this);
+			if (ip != null) banForIP.put(ip, this);
+			if (uuid != null) banForUUID.put(uuid, this);
+		}
 
-			public static BanData getByNick(String nick) {
-				if (banForNick.containsKey(nick)) {
-					BanData bd = banForNick.get(nick);
-					if (bd.expiresTimestamp() < Utils.getUnixTimestamp() && bd.expiresTimestamp != -1) {
-						banForNick.remove(nick);
-						reloadFastCacheBanList();
-						return null;
-					}
-					return banForNick.get(nick);
+		public static BanData getByNick(String nick) {
+			if (banForNick.containsKey(nick)) {
+				BanData bd = banForNick.get(nick);
+				if (bd.expiresTimestamp() < Utils.getUnixTimestamp() && bd.expiresTimestamp != -1) {
+					banForNick.remove(nick);
+					reloadFastCacheBanList();
+					return null;
 				}
-				return null;
+				return banForNick.get(nick);
 			}
+			return null;
+		}
 
 		public static BanData getByIP(String ip) {
-				if (banForIP.containsKey(ip)) {
-					BanData bd = banForIP.get(ip);
-					if (bd.expiresTimestamp() < Utils.getUnixTimestamp() && bd.expiresTimestamp != -1) {
-						banForIP.remove(ip);
-						reloadFastCacheBanList();
-						return null;
-					}
-					return banForIP.get(ip);
+			if (banForIP.containsKey(ip)) {
+				BanData bd = banForIP.get(ip);
+				if (bd.expiresTimestamp() < Utils.getUnixTimestamp() && bd.expiresTimestamp != -1) {
+					banForIP.remove(ip);
+					reloadFastCacheBanList();
+					return null;
 				}
-				return null;
+				return banForIP.get(ip);
 			}
+			return null;
+		}
 
 		public static BanData getByUUID(UUID uuid) {
-				if (banForUUID.containsKey(uuid)) {
-					BanData bd = banForUUID.get(uuid);
-					if (bd.expiresTimestamp() < Utils.getUnixTimestamp() && bd.expiresTimestamp != -1) {
-						banForUUID.remove(uuid);
-						reloadFastCacheBanList();
-						return null;
-					}
-					return banForUUID.get(uuid);
+			if (banForUUID.containsKey(uuid)) {
+				BanData bd = banForUUID.get(uuid);
+				if (bd.expiresTimestamp() < Utils.getUnixTimestamp() && bd.expiresTimestamp != -1) {
+					banForUUID.remove(uuid);
+					reloadFastCacheBanList();
+					return null;
 				}
-				return null;
+				return banForUUID.get(uuid);
 			}
+			return null;
+		}
 
 		public static void clear() {
-				banForNick.clear();
-				banForIP.clear();
-				banForUUID.clear();
-			}
+			banForNick.clear();
+			banForIP.clear();
+			banForUUID.clear();
+		}
 
 
 	}
 
-	public static void init(MySQLStorage mysqlInstance)
-	{
+	public static void init(MySQLStorage mysqlInstance) {
 		storage = mysqlInstance;
 		reloadBans();
 		WarnData.deleteExpiredWarnsFromDB();
@@ -105,7 +107,7 @@ public class PunishmentSystem {
 			public void run() {
 				reloadFastCacheBanList();
 			}
-		}.runTaskTimer(EternalAdventurePlugin.getInstance(), 20L*60L*30L, 20L*60L*30L);
+		}.runTaskTimer(EternalAdventurePlugin.getInstance(), 20L * 60L * 30L, 20L * 60L * 30L);
 	}
 
 	public interface LogType {
@@ -123,9 +125,8 @@ public class PunishmentSystem {
 			reason = reason.replace("-s", "");
 			reason = reason.trim();
 		}
-		if(disableNotify) return;
-		switch (type)
-		{
+		if (disableNotify) return;
+		switch (type) {
 			case LogType.MUTE -> {
 				PlayerUtils.sendColorMessageToAll(String.format("&4&l&c&l%s &4&lzostał/a uciszony/a przez &3&l%s", targetName, adminName));
 			}
@@ -142,11 +143,11 @@ public class PunishmentSystem {
 
 		PlayerUtils.sendColorMessageToAll(String.format("&4&lPowód: &7%s", reason));
 
-		if(type != LogType.KICK) { //all others have time
+		if (type != LogType.KICK) { //all others have time
 			String timeFormat = "Permanentny";
-			if(type == LogType.BAN) {//only ban have other time format... (my bad, rework coming soon)
+			if (type == LogType.BAN) {//only ban have other time format... (my bad, rework coming soon)
 				if (expire != -1) {
-					long expireTimestamp = Utils.getUnixTimestamp()+expire*60L;
+					long expireTimestamp = Utils.getUnixTimestamp() + expire * 60L;
 					timeFormat = PunishmentSystem.getFormatedExpiresShort((int) expireTimestamp);
 				}
 			} else {
@@ -172,12 +173,12 @@ public class PunishmentSystem {
 			int numRows = (int) queryResult.get("num_rows");
 			@SuppressWarnings("unchecked")
 			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
-			if(numRows > 0) {
+			if (numRows > 0) {
 				for (int i = 0; i < numRows; i++) {
 					int banType = (int) rows.get(i).get("banned");
 
 					//timestamp to string
-					Timestamp dateTimestamp =  (Timestamp) rows.get(i).get("banDate");
+					Timestamp dateTimestamp = (Timestamp) rows.get(i).get("banDate");
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = sdf.format(dateTimestamp);
 
@@ -246,7 +247,7 @@ public class PunishmentSystem {
 				parametersExecute.add(adminNick);
 				long calculatedExpireTimestamp = -1;//default perm
 				if (timeMinutes > 0) {
-					calculatedExpireTimestamp = Utils.getUnixTimestamp()+(60L * timeMinutes);//if timeMinuter is higher than 0 calc timestamp
+					calculatedExpireTimestamp = Utils.getUnixTimestamp() + (60L * timeMinutes);//if timeMinuter is higher than 0 calc timestamp
 					//log
 					int[] time = Utils.convertSecondsToTimeWithDays(60 * timeMinutes);
 					log(LogType.BAN, playerNick, adminNick, String.format("%s. %dd, %dg, %dm, %ds.", reason, time[0], time[1], time[2], time[3]));
@@ -260,13 +261,13 @@ public class PunishmentSystem {
 				storage.executeSafe("UPDATE players SET banned=?, bannedBy=?, banExpires=?, banReason=?, banDate=? WHERE id=?", parametersExecute);
 				reloadBans();
 				Player player = Bukkit.getPlayer(playerNick);
-                if(player != null) player.kickPlayer(getBannedMessage(playerNick, adminNick, reason, (int) calculatedExpireTimestamp, Utils.getCurrentDate()));
+				if (player != null)
+					player.kickPlayer(getBannedMessage(playerNick, adminNick, reason, (int) calculatedExpireTimestamp, Utils.getCurrentDate()));
 			}
 		});
 	}
 
-	public static void unbanPlayer(String playerNick)
-	{
+	public static void unbanPlayer(String playerNick) {
 		ArrayList<Object> parametersSelect = new ArrayList<>();
 		parametersSelect.add(playerNick);
 		storage.querySafe("SELECT id FROM players WHERE nick=?", parametersSelect, queryResult -> {
@@ -311,15 +312,15 @@ public class PunishmentSystem {
 	}
 
 	public static String getFormatedExpires(int expiresTimestamp) {
-		if(expiresTimestamp == -1) return "Permanentny";
-		long remainingSeconds = expiresTimestamp-Utils.getUnixTimestamp();
+		if (expiresTimestamp == -1) return "Permanentny";
+		long remainingSeconds = expiresTimestamp - Utils.getUnixTimestamp();
 		int[] remainingTime = Utils.convertSecondsToTimeWithDays((int) remainingSeconds);
 		return String.format("%d dni, %d godz, %d min, %d sek", remainingTime[0], remainingTime[1], remainingTime[2], remainingTime[3]);
 	}
 
 	public static String getFormatedExpiresShort(int expiresTimestamp) {
-		if(expiresTimestamp == -1) return "Permanentny";
-		long remainingSeconds = expiresTimestamp-Utils.getUnixTimestamp();
+		if (expiresTimestamp == -1) return "Permanentny";
+		long remainingSeconds = expiresTimestamp - Utils.getUnixTimestamp();
 		int[] remainingTime = Utils.convertSecondsToTimeWithDays((int) remainingSeconds);
 		return String.format("%dd, %dg, %dm", remainingTime[0], remainingTime[1], remainingTime[2]);
 	}
@@ -337,7 +338,7 @@ public class PunishmentSystem {
 				String playerBannedName = getListPlayersCanBeUnbanned().get(i);
 				ArrayList<String> playerDescription = new ArrayList<>();
 				BanData tempBanData = BanData.getByNick(playerBannedName);
-				if(tempBanData == null) continue;
+				if (tempBanData == null) continue;
 				playerDescription.add(Utils.color(String.format("&r&7Powód: &3%s", tempBanData.reason())));
 				playerDescription.add(Utils.color(String.format("&r&7Nadał/a: &3%s", tempBanData.bannedByNick())));
 				playerDescription.add(Utils.color(String.format("&r&7Nadano: &3%s", tempBanData.bannedDate())));
@@ -346,7 +347,7 @@ public class PunishmentSystem {
 				playerDescription.add(Utils.color(String.format("&r&7Ban na nick: %s", (tempBanData.nick() != null) ? "&a✔" : "&c✘")));
 				playerDescription.add(Utils.color(String.format("&r&7Ban na UUID: %s", (tempBanData.uuid() != null) ? "&a✔" : "&c✘")));
 				playerDescription.add(Utils.color(String.format("&r&7Ban na IP: %s", (tempBanData.ip() != null) ? "&a✔" : "&c✘")));
-				if(p.hasPermission("eadventureplugin.cmd.unban")) {
+				if (p.hasPermission("eadventureplugin.cmd.unban")) {
 					playerDescription.add(" ");
 					playerDescription.add(Utils.color("&r&c&lSHIFT+PPM &7- aby odbanować."));
 				}
@@ -354,9 +355,9 @@ public class PunishmentSystem {
 
 				banListGUI.addItem(playerHead, (player, gui, slot, type) -> {
 					if (ClickType.SHIFT_RIGHT == type) {
-						if(player.hasPermission("eadventureplugin.cmd.unban")) {
+						if (player.hasPermission("eadventureplugin.cmd.unban")) {
 							player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&',String.format("&7Gracz &2%s &7został &2pomyślnie &7odbanowany.", playerBannedName)));
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Gracz &2%s &7został &2pomyślnie &7odbanowany.", playerBannedName)));
 							unbanPlayer(playerBannedName);
 							banListGUI.setItem(slot, new ItemStack(Material.AIR));
 						}
@@ -404,24 +405,23 @@ public class PunishmentSystem {
 		banListGUI.open(p);
 	}
 
-	public record AdminLogEntry(String nick, String adminNick, String note, String date, int type) {}
+	public record AdminLogEntry(String nick, String adminNick, String note, String date, int type) {
+	}
 
 	public static void showAdminLogGUI(Player p, String targetName, int entryType, Integer page, ArrayList<AdminLogEntry> adminLogList) {
-		if(adminLogList == null)
-		{
+		if (adminLogList == null) {
 			ArrayList<AdminLogEntry> adminLog = new ArrayList<>();
 			//load data
 			String sql;
 			ArrayList<Object> sqlParameters = new ArrayList<>();
-			if(entryType == -1)
-			{
-				if(targetName == null) sql = "SELECT * FROM logadmin ORDER BY id DESC;";
+			if (entryType == -1) {
+				if (targetName == null) sql = "SELECT * FROM logadmin ORDER BY id DESC;";
 				else {
 					sql = "SELECT * FROM logadmin WHERE nick=? ORDER BY id DESC;";
 					sqlParameters.add(targetName);
 				}
 			} else {
-				if(targetName == null) {
+				if (targetName == null) {
 					sql = "SELECT * FROM logadmin WHERE type=? ORDER BY id DESC;";
 					sqlParameters.add(entryType);
 				} else {
@@ -434,13 +434,13 @@ public class PunishmentSystem {
 				int numRows = (int) queryResult.get("num_rows");
 				@SuppressWarnings("unchecked")
 				ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
-				if(numRows > 0) {
+				if (numRows > 0) {
 					for (int i = 0; i < numRows; i++) {
 						String nick = (String) rows.get(i).get("nick");
 						String adminNick = (String) rows.get(i).get("adminNick");
 						String note = (String) rows.get(i).get("note");
 
-						Timestamp dateTimestamp =  (Timestamp) rows.get(i).get("date");
+						Timestamp dateTimestamp = (Timestamp) rows.get(i).get("date");
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 						String date = sdf.format(dateTimestamp);
 
@@ -451,27 +451,31 @@ public class PunishmentSystem {
 				showAdminLogGUI(p, targetName, entryType, page, adminLog);
 			});
 		}
-		if(adminLogList == null) return;
+		if (adminLogList == null) return;
 		//page variables
 		int itemsPerPage = 45;
-		int startIndex = (page -1) * itemsPerPage;
+		int startIndex = (page - 1) * itemsPerPage;
 		int endIndex = Math.min(startIndex + itemsPerPage, adminLogList.size());
 		int totalPages = (int) Math.ceil((double) adminLogList.size() / itemsPerPage);
 		String targetNameFinal = targetName;
-		if(targetName == null) targetNameFinal = "-";
+		if (targetName == null) targetNameFinal = "-";
 		String titleName = String.format("&4&lKartoteka %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
-		switch(entryType) {
-			case LogType.MUTE -> titleName = String.format("&4&lMute %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
-			case LogType.BAN -> titleName = String.format("&4&lBany %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
-			case LogType.KICK -> titleName = String.format("&4&lKicki %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
-			case LogType.WARN -> titleName = String.format("&4&lWarny %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
+		switch (entryType) {
+			case LogType.MUTE ->
+					titleName = String.format("&4&lMute %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
+			case LogType.BAN ->
+					titleName = String.format("&4&lBany %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
+			case LogType.KICK ->
+					titleName = String.format("&4&lKicki %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
+			case LogType.WARN ->
+					titleName = String.format("&4&lWarny %s (%d/%d)", targetNameFinal, page, Math.max(totalPages, 1));
 		}
 		MagicGUI adminLogGUI = MagicGUI.create(Utils.color(titleName), 54);
 		adminLogGUI.setAutoRemove(true);
 		for (int i = startIndex; i < endIndex; i++) {
 			if (i >= 0 && i < adminLogList.size()) {
 				AdminLogEntry entry = adminLogList.get(i);
-				if(entryType != -1 && entry.type() != entryType) continue;
+				if (entryType != -1 && entry.type() != entryType) continue;
 				ArrayList<String> playerDescription = new ArrayList<>();
 				String entryTypeName = "Niezidentyfikowany";
 				playerDescription.add(Utils.color(String.format("&r&7Gracz: &3%s", entry.nick())));
@@ -554,13 +558,13 @@ public class PunishmentSystem {
 	}
 
 	public record WarnEntry(int id, String nick, String adminNick, String reason, int expire, Timestamp date) {
-		public String getFormatDate(){
+		public String getFormatDate() {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			return sdf.format(date);
 		}
 
 		public String getFormatExpire() {
-			int expireSeconds = expire- (int) Utils.getUnixTimestamp();
+			int expireSeconds = expire - (int) Utils.getUnixTimestamp();
 			int[] timeExpire = Utils.convertSecondsToTimeWithDays(expireSeconds);
 			return String.format("%dd, %dg, %dm, %ds", timeExpire[0], timeExpire[1], timeExpire[2], timeExpire[3]);
 		}
@@ -586,7 +590,7 @@ public class PunishmentSystem {
 
 		public void load(UUID playerUUID) {
 			playerName = Bukkit.getOfflinePlayer(playerUUID).getName();
-			if(playerName == null) {
+			if (playerName == null) {
 				print.error(String.format("WarnLoad, błąd UUID: %s", playerUUID));
 				return;
 			}
@@ -603,14 +607,14 @@ public class PunishmentSystem {
 
 		private void onDataLoaded(HashMap<Object, Object> queryResult) {
 			warnList.clear();//clear acutal warns before load new
-			if(queryResult == null) {
+			if (queryResult == null) {
 				loaded = true;
 				return;
 			}
 			@SuppressWarnings("unchecked")
 			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
 			int numRows = (int) queryResult.get("num_rows");
-			if(numRows > 0) {
+			if (numRows > 0) {
 				for (int i = 0; i < numRows; i++) {
 					int id = (int) rows.get(i).get("id");
 					String nick = (String) rows.get(i).get("nick");
@@ -618,7 +622,7 @@ public class PunishmentSystem {
 					String reason = (String) rows.get(i).get("reason");
 					int expire = (int) rows.get(i).get("expire");
 
-					Timestamp dateTimestamp =  (Timestamp) rows.get(i).get("date");
+					Timestamp dateTimestamp = (Timestamp) rows.get(i).get("date");
 
 					warnList.add(i, new WarnEntry(id, nick, adminNick, reason, expire, dateTimestamp));
 				}
@@ -678,7 +682,7 @@ public class PunishmentSystem {
 			sqlParams.add(playerName);
 			int id = storage.executeGetInsertID(sql, sqlParams);
 			warnList.add(new WarnEntry(id, playerName, adminNick, reason, expire, new Timestamp(System.currentTimeMillis())));
-			if(size() >= maxWarns) {
+			if (size() >= maxWarns) {
 				deleteAll();//delete all warns
 				int timeMinutes = 7 * 60 * 24;//days * minutes * hours = total minutes
 				banPlayer(playerName, "CONSOLE", timeMinutes, BanType.NICK_UUID, "Przekroczona ilość warnów.");
@@ -705,10 +709,11 @@ public class PunishmentSystem {
 		}
 
 	}
+
 	public static void showWarnsGUI(Player p) {
 		PlayerData pd = PlayerData.get(p);
 		WarnData wd = pd.warnData;
-		if(!wd.isLoaded()) {
+		if (!wd.isLoaded()) {
 			p.sendMessage("Wystąpił nieoczekiwany błąd.");
 			return;
 		}
@@ -716,7 +721,7 @@ public class PunishmentSystem {
 		WarnEntry entry;
 		String guiTitle;
 		guiTitle = String.format("&4&lOstrzeżenia %d/%d", wd.size(), WarnData.maxWarns);
-		MagicGUI warnsGUI = MagicGUI.create(Utils.color(guiTitle),9);
+		MagicGUI warnsGUI = MagicGUI.create(Utils.color(guiTitle), 9);
 		warnsGUI.setAutoRemove(true);
 		ItemStack glass = Utils.itemWithDisplayName(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ", null);
 		for (int i = 0; i < wd.size(); i++) {
@@ -727,7 +732,7 @@ public class PunishmentSystem {
 			description.add(Utils.color(String.format("&r&7Data nadania: &3%s", entry.getFormatDate())));
 			description.add(Utils.color(String.format("&r&7Powód: &3%s", entry.reason())));
 			ItemStack warnItem = Utils.itemWithDisplayName(gVar.customItems.get("hWarning"), Utils.color("&r&4&lOstrzeżenie"), description);
-			warnsGUI.setItem(i+2, warnItem);
+			warnsGUI.setItem(i + 2, warnItem);
 		}
 		ArrayList<String> description = new ArrayList<>();
 		description.add(Utils.color(String.format("&r&7Maksymalna ilość ostrzeżeń to &c%d&7.", WarnData.maxWarns)));
@@ -752,20 +757,20 @@ public class PunishmentSystem {
 			public void run() {
 				WarnData wd = null;
 				Player targetPlayer = Bukkit.getPlayer(targetName);
-				if(targetPlayer == null) //player is offline
+				if (targetPlayer == null) //player is offline
 				{
 					wd = new WarnData();
 					wd.load(targetName);
 					int hardBreak = 0;
-					while(true) {//waiting for load
+					while (true) {//waiting for load
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							throw new RuntimeException(e);
 						}
-						if(wd.isLoaded()) break;//data loaded - stop loop
+						if (wd.isLoaded()) break;//data loaded - stop loop
 						hardBreak++;
-						if(hardBreak > 5) {
+						if (hardBreak > 5) {
 							print.error("Nieoczekiwany błąd warnListGUI -> Loading offline WarnData");
 							break;
 						}
@@ -778,11 +783,11 @@ public class PunishmentSystem {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if(finalWd.isLoaded()) {//WarnData is loaded
+						if (finalWd.isLoaded()) {//WarnData is loaded
 							finalWd.deleteExpired();
 							String guiTitle;
 							guiTitle = String.format("&4&lWarny: &4&l%s", targetName);
-							MagicGUI warnListGUI = MagicGUI.create(Utils.color(guiTitle),9);
+							MagicGUI warnListGUI = MagicGUI.create(Utils.color(guiTitle), 9);
 							warnListGUI.setAutoRemove(true);
 							WarnEntry entry = null;
 							ItemStack glass = Utils.itemWithDisplayName(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ", null);
@@ -800,8 +805,8 @@ public class PunishmentSystem {
 								}
 								ItemStack warnItem = Utils.itemWithDisplayName(gVar.customItems.get("hWarning"), Utils.color("&r&4&lOstrzeżenie"), description);
 								WarnEntry entryFinal = entry;
-								warnListGUI.setItem(i+2, warnItem, (player, gui, slot, type) -> {
-									if(type == ClickType.SHIFT_RIGHT) {
+								warnListGUI.setItem(i + 2, warnItem, (player, gui, slot, type) -> {
+									if (type == ClickType.SHIFT_RIGHT) {
 										if (player.hasPermission("eadventureplugin.unwarn")) {
 											player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
 											finalWd.delete(entryFinal);
@@ -868,13 +873,13 @@ public class PunishmentSystem {
 				sqlExecuteParams.add(id);
 				storage.executeSafe(sqlExecute, sqlExecuteParams);
 				//notification
-				notifyMessage(LogType.MUTE, playerName, admin.getName(), reason, timestampExpire+1);//temp fix, add delay for mysql query +1 second
+				notifyMessage(LogType.MUTE, playerName, admin.getName(), reason, timestampExpire + 1);//temp fix, add delay for mysql query +1 second
 				//log
 				String msg = String.format("%s. %dg, %dm, %ds.", reason, time[0], time[1], time[2]);
 				log(LogType.MUTE, playerName, admin.getName(), msg);
 				//if player is online
 				Player targetPlayer = Bukkit.getPlayer(playerName);
-				if(targetPlayer != null) {
+				if (targetPlayer != null) {
 					PlayerData pd = PlayerData.get(targetPlayer);
 					pd.mutedExpire = timestampExpire;
 					pd.mutedBy = admin.getName();
@@ -900,13 +905,13 @@ public class PunishmentSystem {
 			if (numRows != 0) {
 				HashMap<?, ?> row = (HashMap<?, ?>) queryResult.get("row");
 				int id = (int) row.get("id");
-				String sqlExecute = "UPDATE players SET mutedExpire=0, mutedBy=NULL, mutedReason=NULL WHERE id="+id+";";
+				String sqlExecute = "UPDATE players SET mutedExpire=0, mutedBy=NULL, mutedReason=NULL WHERE id=" + id + ";";
 				storage.execute(sqlExecute);
 				String msg = String.format("&2%s &7został/a &2pomyślnie &7odciszony/a.", targetName);
 				adminSender.sendMessage(Utils.color(msg));
 				//if player is online
 				Player targetPlayer = Bukkit.getPlayer(targetName);
-				if(targetPlayer != null) {
+				if (targetPlayer != null) {
 					PlayerData pd = PlayerData.get(targetPlayer);
 					pd.mutedExpire = 0;
 					targetPlayer.sendMessage(Utils.color("&2&lZostałeś/aś odciszony/a."));
@@ -926,10 +931,10 @@ public class PunishmentSystem {
 	}
 
 	public static void showMutedPlayersGUI(Player p, int page, List<MutedEntry> list) {
-		if(list == null) {//generate list
+		if (list == null) {//generate list
 			String sql = "SELECT id, nick, mutedExpire, mutedBy, mutedReason" +
 					" FROM players WHERE" +
-					" mutedExpire > "+Utils.getUnixTimestamp()+";";
+					" mutedExpire > " + Utils.getUnixTimestamp() + ";";
 			List<MutedEntry> mutedEntryList = new ArrayList<>();
 			storage.query(sql, queryResult -> {
 				int numRows = (int) queryResult.get("num_rows");
@@ -954,7 +959,7 @@ public class PunishmentSystem {
 		}
 
 		int itemsPerPage = 45;
-		int startIndex = (page-1) * itemsPerPage;
+		int startIndex = (page - 1) * itemsPerPage;
 		int endIndex = Math.min(startIndex + itemsPerPage, list.size());
 		int totalPages = (int) Math.ceil((double) list.size() / itemsPerPage);
 
@@ -973,14 +978,14 @@ public class PunishmentSystem {
 			description.add(Utils.color(strFormat));
 			strFormat = String.format("&r&7Powód: &3%s", me.reason());
 			description.add(Utils.color(strFormat));
-			if(p.hasPermission("eadventureplugin.cmd.unmute")) {
+			if (p.hasPermission("eadventureplugin.cmd.unmute")) {
 				description.add(" ");
 				description.add(Utils.color("&r&c&lSHIFT+PPM &7- aby odciszyć gracza."));
 			}
 			ItemStack playerHead = Utils.getPlayerHead(me.playerName(), Utils.color(String.format("&c&l%s", me.playerName())), description);
 			muteListGUI.addItem(playerHead, (player, gui, slot, type) -> {
 				if (type == ClickType.SHIFT_RIGHT) {
-					if(player.hasPermission("eadventureplugin.cmd.unmute")) {
+					if (player.hasPermission("eadventureplugin.cmd.unmute")) {
 						player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
 						unmutePlayer(player, me.playerName);
 						muteListGUI.setItem(slot, new ItemStack(Material.AIR));

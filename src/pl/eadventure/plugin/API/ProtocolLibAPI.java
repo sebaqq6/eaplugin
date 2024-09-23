@@ -1,4 +1,4 @@
-package pl.eadventure.plugin;
+package pl.eadventure.plugin.API;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Utils.Utils;
 
 import java.util.ArrayList;

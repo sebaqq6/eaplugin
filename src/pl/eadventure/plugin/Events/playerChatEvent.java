@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.*;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
+import pl.eadventure.plugin.Modules.ServerLogManager;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
@@ -17,7 +19,7 @@ public class playerChatEvent implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
 		Player player = e.getPlayer();
-		print.debug("Gracz: " + player.getName() + " wpisał: "+ e.getMessage());
+		print.debug("Gracz: " + player.getName() + " wpisał: " + e.getMessage());
 		PlayerData pd = PlayerData.get(player);
 		//-----------------------------------------------------------------------
 		boolean isAnnMessage = false;

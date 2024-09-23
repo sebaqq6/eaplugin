@@ -1,4 +1,4 @@
-package pl.eadventure.plugin;
+package pl.eadventure.plugin.Modules;
 
 import com.google.common.collect.Multimap;
 import net.kyori.adventure.text.Component;

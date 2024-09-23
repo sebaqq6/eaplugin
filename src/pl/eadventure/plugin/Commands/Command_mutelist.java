@@ -6,7 +6,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.eadventure.plugin.PunishmentSystem;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 public class Command_mutelist implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		if(sender instanceof Player player) {
+		if (sender instanceof Player player) {
 			PunishmentSystem.showMutedPlayersGUI(player, 1, null);
 		}
 		return true;

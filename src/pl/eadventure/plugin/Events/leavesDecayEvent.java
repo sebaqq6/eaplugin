@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.LeavesDecay;
+import pl.eadventure.plugin.Modules.LeavesDecay;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.Utils.wgAPI;
@@ -33,7 +33,7 @@ public class leavesDecayEvent implements Listener {
 		e.setCancelled(true);
 		if (LeavesDecay.enabled()) {
 			Block block = e.getBlock();
-			if(decayIgnoredByFlag.containsKey(block)) return;
+			if (decayIgnoredByFlag.containsKey(block)) return;
 			long currentTime = System.currentTimeMillis();
 
 			if (!lastCheckMap.containsKey(block) || currentTime - lastCheckMap.get(block) >= CHECK_INTERVAL) {
@@ -54,7 +54,7 @@ public class leavesDecayEvent implements Listener {
 								for (int x = -radius; x <= radius; x++) {
 									for (int y = -radius; y <= radius; y++) {
 										for (int z = -radius; z <= radius; z++) {
-											if(x == 0 && y == 0 && z == 0) continue;
+											if (x == 0 && y == 0 && z == 0) continue;
 											Block adjacentBlock = block.getRelative(x, y, z);
 											if (Utils.isLeaves(adjacentBlock.getType())) {
 												removeBlockAsynchronously(adjacentBlock);
@@ -70,7 +70,7 @@ public class leavesDecayEvent implements Listener {
 								for (int x = -extendedRadius; x <= extendedRadius; x++) {
 									for (int y = -extendedRadius; y <= extendedRadius; y++) {
 										for (int z = -extendedRadius; z <= extendedRadius; z++) {
-											if(maxRemoveSingleLeaves >= 8) continue;
+											if (maxRemoveSingleLeaves >= 8) continue;
 											Block nearbyBlock = block.getRelative(x, y, z);
 											if (nearbyBlock.getType().isAir()) continue; // Skip air blocks
 											if (!Utils.isLeaves(nearbyBlock.getType())) continue;
@@ -114,8 +114,9 @@ public class leavesDecayEvent implements Listener {
 	}*/
 
 	private static boolean initCleanupBufferActive = false;
+
 	public static void initCleanupBuffer() {
-		if(initCleanupBufferActive) return;
+		if (initCleanupBufferActive) return;
 		initCleanupBufferActive = true;
 		new BukkitRunnable() {
 			@Override
@@ -141,7 +142,7 @@ public class leavesDecayEvent implements Listener {
 	}
 
 	public static void getStats(CommandSender sender) {
-		sender.sendMessage("Status systemu usuwania liści: "+LeavesDecay.enabled());
+		sender.sendMessage("Status systemu usuwania liści: " + LeavesDecay.enabled());
 		sender.sendMessage(String.format("Ilość liści w pamięci cache: %d", lastCheckMap.size()));
 		sender.sendMessage(String.format("Ilość wyczyszczonych pozycji z cache: %d", statAllClearedCache));
 		sender.sendMessage(String.format("Ilość perm cache dla leafDecayFlag: %d", decayIgnoredByFlag.size()));

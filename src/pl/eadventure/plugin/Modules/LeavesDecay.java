@@ -1,4 +1,4 @@
-package pl.eadventure.plugin;
+package pl.eadventure.plugin.Modules;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,13 +18,13 @@ public class LeavesDecay {
 	private static boolean enabled = false;
 	private static final int MAX_DISTANCE = 8; // Maksymalna odległość do sprawdzenia
 
-	public static boolean enabled(){
+	public static boolean enabled() {
 		return enabled;
 	}
 
 	public static void active(boolean enable) {
 		enabled = enable;
-		if(enable) {
+		if (enable) {
 			print.ok("Aktywowano system automatycznego usuwania liści z drzew.");
 		} else {
 			print.okRed("Dezaktywowano system automatycznego usuwania liści z drzew.");
@@ -34,7 +34,7 @@ public class LeavesDecay {
 	// Metoda sprawdzająca, czy dany blok liścia jest połączony z drewnem
 	public static boolean isLeavesConnectedToWood(Block block, Player debugPlayer) {
 		//long benchmark = Utils.benchmarkStart();
-		if(!Utils.isLeaves(block.getType())) {
+		if (!Utils.isLeaves(block.getType())) {
 			//Utils.benchmarkEnd(benchmark, "isLeavesConnectedToWood(0-false)");
 			return false;
 		}
@@ -66,16 +66,16 @@ public class LeavesDecay {
 						int dx = neighborLocation.getBlockX() - blockX + MAX_DISTANCE; // Obliczenie współrzędnej x w tablicy odwiedzonych
 						int dy = neighborLocation.getBlockY() - blockY + MAX_DISTANCE; // Obliczenie współrzędnej y w tablicy odwiedzonych
 						int dz = neighborLocation.getBlockZ() - blockZ + MAX_DISTANCE; // Obliczenie współrzędnej z w tablicy odwiedzonych
-						if(debugPlayer != null) {
-							PlayerUtils.glowBlock(currentBlock, debugPlayer, ChatColor.GREEN, 20L*2L);
+						if (debugPlayer != null) {
+							PlayerUtils.glowBlock(currentBlock, debugPlayer, ChatColor.GREEN, 20L * 2L);
 						}
 						// Dodanie do kolejki również sąsiednich bloków będących blokami drzewa
 						if (dx >= 0 && dx < visited.length && dy >= 0 && dy < visited[0].length && dz >= 0 && dz < visited[0][0].length) {
 							if (!visited[dx][dy][dz] && Utils.isWood(neighborType)) {
 								queue.offer(neighborBlock); // Dodanie sąsiada do kolejki
 								visited[dx][dy][dz] = true; // Oznaczenie sąsiada jako odwiedzony
-								if(debugPlayer != null) {
-									PlayerUtils.glowBlock(neighborBlock, debugPlayer, ChatColor.RED, 20L*4L);
+								if (debugPlayer != null) {
+									PlayerUtils.glowBlock(neighborBlock, debugPlayer, ChatColor.RED, 20L * 4L);
 								}
 								//Utils.benchmarkEnd(benchmark, "isLeavesConnectedToWood(true)");
 								return true;

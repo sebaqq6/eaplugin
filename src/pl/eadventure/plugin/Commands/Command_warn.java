@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
-import pl.eadventure.plugin.PunishmentSystem;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 //TODO default cmd 7 days
 public class Command_warn implements TabExecutor {
 	@Override
@@ -34,7 +35,7 @@ public class Command_warn implements TabExecutor {
 					return;
 				}
 				String targetName = args[0];
-				if(targetName.equalsIgnoreCase(sender.getName())) {//if target == player
+				if (targetName.equalsIgnoreCase(sender.getName())) {//if target == player
 					sender.sendMessage(Utils.color("&7Nie możesz tego użyć na sobie."));
 					return;
 				}
@@ -42,9 +43,8 @@ public class Command_warn implements TabExecutor {
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Gracz &c%s &7nie istnieje.", targetName)));
 					return;
 				}
-				if(sender instanceof Player player)
-				{
-					if(PlayerUtils.isAdminPermissionHasHigher(player.getName(), targetName)) {//lag - use only async thread
+				if (sender instanceof Player player) {
+					if (PlayerUtils.isAdminPermissionHasHigher(player.getName(), targetName)) {//lag - use only async thread
 						sender.sendMessage(Utils.color("&7Ten gracz ma wyższe uprawnienia administracyjne niż Ty."));
 						return;
 					}
@@ -59,7 +59,7 @@ public class Command_warn implements TabExecutor {
 				}
 				String timeParam = args[1];
 				int timeMinutes = Utils.parseTimeToMinutes(timeParam);
-				if(timeMinutes == -1) {
+				if (timeMinutes == -1) {
 					sender.sendMessage(Utils.color("&7Niepoprawnie podany czas."));
 					return;
 				}
@@ -84,24 +84,24 @@ public class Command_warn implements TabExecutor {
 					return;
 				}
 
-				int expireTimestamp = (int) Utils.getUnixTimestamp()+timeMinutes*60;
+				int expireTimestamp = (int) Utils.getUnixTimestamp() + timeMinutes * 60;
 
 				PunishmentSystem.WarnData wd = null;
 				Player targetPlayer = Bukkit.getPlayer(targetName);
-				if(targetPlayer == null) //player is offline
+				if (targetPlayer == null) //player is offline
 				{
 					wd = new PunishmentSystem.WarnData();
 					wd.load(targetName);
 					int hardBreak = 0;
-					while(true) {//waiting for load
+					while (true) {//waiting for load
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							throw new RuntimeException(e);
 						}
-						if(wd.isLoaded()) break;//data loaded - stop loop
+						if (wd.isLoaded()) break;//data loaded - stop loop
 						hardBreak++;
-						if(hardBreak > 5) {
+						if (hardBreak > 5) {
 							print.error("Nieoczekiwany błąd /warn -> Loading offline WarnData");
 							break;
 						}
@@ -110,8 +110,8 @@ public class Command_warn implements TabExecutor {
 					PlayerData pd = PlayerData.get(targetPlayer);
 					wd = pd.warnData;
 				}
-				if(wd.isLoaded()) {//WarnData is loaded
-					if(wd.size() >= PunishmentSystem.WarnData.maxWarns) {
+				if (wd.isLoaded()) {//WarnData is loaded
+					if (wd.size() >= PunishmentSystem.WarnData.maxWarns) {
 						sender.sendMessage("Ten gracz posiada już maksymalną ilość warnów.");
 						return;
 					}
@@ -123,7 +123,7 @@ public class Command_warn implements TabExecutor {
 					//add warn
 					wd.add(sender.getName(), reason, expireTimestamp);
 					//message to player
-					if(targetPlayer != null) {
+					if (targetPlayer != null) {
 						targetPlayer.sendMessage(Utils.color("&c&lOtrzymałeś/aś ostrzeżenie."));
 						targetPlayer.sendMessage(Utils.color(String.format("&4Powód&8: &7%s", reason)));
 						targetPlayer.sendMessage(Utils.color(String.format("&4Masz teraz &2%d/%d &4ostrzeżeń.", wd.size(), PunishmentSystem.WarnData.maxWarns)));
@@ -143,7 +143,7 @@ public class Command_warn implements TabExecutor {
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1) {//nick
-			if(args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
+			if (args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
 			return StringUtil.copyPartialMatches(args[0], PunishmentSystem.getListPlayersCanBeBanned(), new ArrayList<>());
 		} else if (args.length == 2) {//time
 			List<String> cmdlist = Arrays.asList("30m", "2h", "1d", "7d", "30d", "60d", "120d", "1d,12h",
@@ -152,8 +152,7 @@ public class Command_warn implements TabExecutor {
 		} else if (args.length == 3) {//reason
 			List<String> cmdlist = Arrays.asList("Cheater.", "Szkodnik.", "Griefing.", "Reklama.", "Nieprzestrzeganie regulaminu.");
 			return StringUtil.copyPartialMatches(args[2], cmdlist, new ArrayList<>());
-		}
-		else
+		} else
 			return Collections.emptyList();
 	}
 }

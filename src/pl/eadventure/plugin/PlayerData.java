@@ -4,6 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import pl.eadventure.plugin.Modules.HomesInterface;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
+import pl.eadventure.plugin.Modules.RegionCommandLooper;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
@@ -44,6 +47,7 @@ public class PlayerData {
 	public int mutedExpire = 0;
 	public String mutedBy = " ";
 	public String mutedReason = " ";
+	public int breakBlocksCount = 0;
 
 
 	//end variables
@@ -113,6 +117,7 @@ public class PlayerData {
 		mutedExpire = (int) row.get("mutedExpire");
 		mutedBy = (String) row.get("mutedBy");
 		mutedReason = (String) row.get("mutedReason");
+		breakBlocksCount = (int) row.get("breakBlocks");
 		//Load data end
 		//Update some information
 		ArrayList<Object> parameters = new ArrayList<>();

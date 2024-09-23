@@ -1,4 +1,4 @@
-package pl.eadventure.plugin;
+package pl.eadventure.plugin.Modules;
 
 import dev.espi.protectionstones.PSPlayer;
 import dev.espi.protectionstones.PSRegion;
@@ -15,7 +15,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.*;
+import pl.eadventure.plugin.gVar;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,17 +54,19 @@ public class HomesInterface {
 	int cuboidsLimitSize = 0;
 	boolean typingCuboidName = false;
 	boolean typingAddMemberCuboid = false;
+
 	//-------------------------------------------------------------------use onEnable plugin
 	public static void tryLoad(Plugin plugin) {
-			if (listener == null) {
-				staticPlugin = plugin;
-				listener = new HomeInterfaceListener();
-				Bukkit.getPluginManager().registerEvents(listener, plugin);
-			}
+		if (listener == null) {
+			staticPlugin = plugin;
+			listener = new HomeInterfaceListener();
+			Bukkit.getPluginManager().registerEvents(listener, plugin);
+		}
 	}
+
 	//------------------------------------------------------------------use onDisable plugin
 	public static void tryUnload() {
-		if(listener != null) {
+		if (listener != null) {
 			HandlerList.unregisterAll(listener);
 			staticPlugin = null;
 		}
@@ -85,6 +89,7 @@ public class HomesInterface {
 		homePaneManage = Utils.itemWithDisplayName(new ItemStack(Material.LIME_STAINED_GLASS_PANE), " ", null);
 		backgroundPane = Utils.itemWithDisplayName(new ItemStack(Material.WHITE_STAINED_GLASS_PANE), " ", null);
 	}
+
 	//----------------------------------------------------------load data from player to HouseInterface
 	public void loadFromUUID(UUID uuid) {
 		this.psPlayer = PSPlayer.fromUUID(uuid);
@@ -114,7 +119,7 @@ public class HomesInterface {
 		allCuboids.addAll(memberCuboids);
 		//create all cuboids names list
 		allCuboidsNames.clear();
-		for(PSRegion cuboid : allCuboids) {
+		for (PSRegion cuboid : allCuboids) {
 			String cuboidName = cuboid.getName() == null ? cuboid.getId() : cuboid.getName();
 			allCuboidsNames.add(cuboidName);
 		}
@@ -134,19 +139,24 @@ public class HomesInterface {
 		cuboidsOwnerSize = ownerCuboids.size();
 		cuboidsMemberSize = memberCuboids.size();
 	}
+
 	//---------------------------------------------------------------------get cuboid list
 	public ArrayList<String> getAllCuboidsList() {
 		return allCuboidsNames;
 	}
+
 	public List<PSRegion> getAllCuboids() {
 		return allCuboids;
 	}
+
 	public List<PSRegion> getOwnerCuboids() {
 		return ownerCuboids;
 	}
+
 	public List<PSRegion> getMemberCuboids() {
 		return memberCuboids;
 	}
+
 	//---------------------------------------------------------------------------print debug data
 	public void printDebugData() {
 		print.debug("Dane gracza: " + psPlayer.getName());
@@ -155,16 +165,17 @@ public class HomesInterface {
 		print.debug("[Owner] Lista działek (nazwa - nazwa wg - świat- typ):");
 		for (PSRegion cubOwner : ownerCuboids) {
 			print.debug(cubOwner.getName() + " - " + cubOwner.getId() + " - " + cubOwner.getWorld().getName() + " - "
-			+ cubOwner.getTypeOptions().alias);
+					+ cubOwner.getTypeOptions().alias);
 		}
 		// be member
 		print.debug("[Member] Ilość działek: " + memberCuboids.size());
 		print.debug("[Member] Lista działek (nazwa - nazwa wg - świat - typ):");
 		for (PSRegion cubMember : memberCuboids) {
 			print.debug(cubMember.getName() + " - " + cubMember.getId() + " - " + cubMember.getWorld().getName() + " - " +
-			cubMember.getTypeOptions().alias);
+					cubMember.getTypeOptions().alias);
 		}
 	}
+
 	//---------------------------------------------------------------------------show first menu (all houses)
 	public void renderMainMenuGUI(Player p) {
 		int renderedInactiveCuboids = 0;
@@ -207,7 +218,7 @@ public class HomesInterface {
 							if (cuboidsLimitSize == 2 && renderedInactiveCuboids == 1) {//limit 2 cuboids
 								mainMenuGUI.setItem(x + 1, houseItem);
 								mainMenuGUI.setItem(x, backgroundPane);
-							} else if(cuboidsLimitSize == 1 && x == 21) {//limit one cuboids
+							} else if (cuboidsLimitSize == 1 && x == 21) {//limit one cuboids
 								mainMenuGUI.setItem(x, backgroundPane);
 							} else {//other (3 cuboids)
 								mainMenuGUI.setItem(x, houseItem);
@@ -283,6 +294,7 @@ public class HomesInterface {
 		}
 		mainMenuGUI.open(p);
 	}
+
 	//-----------------------------------------------------------------------generate description cuboid
 	public ArrayList<String> getCuboidDescription(Player p, PSRegion cuboid) {
 		ArrayList<String> description = new ArrayList<>();
@@ -298,6 +310,7 @@ public class HomesInterface {
 		}
 		return description;
 	}
+
 	//-----------------------------------------------------------------------interact with any cuboid
 	public void clickOwnerCuboid(Player p, PSRegion cuboid, ClickType clickType) {
 		switch (clickType) {
@@ -317,6 +330,7 @@ public class HomesInterface {
 			}
 		}
 	}
+
 	//-----------------------------------------------------------------------menage selected cuboid
 	public void renderMenageCuboidGUI(Player p, PSRegion cuboid) {
 		String cuboidName = cuboid.getName() == null ? cuboid.getId() : cuboid.getName();
@@ -330,7 +344,7 @@ public class HomesInterface {
 					menageCuboidGUI.setItem(x, homePaneManage);
 				}
 				case 13, 21, 23, 31, 39, 41 -> {//menu
-					if(x == 13)//sethome
+					if (x == 13)//sethome
 					{
 						ArrayList<String> description = new ArrayList<>();
 						description.add(Utils.color("&r&7Użyj &5&l/dzialka-teleport&7 - znajdując się"));
@@ -350,8 +364,7 @@ public class HomesInterface {
 								menageCuboidGUI.close(player);
 							}
 						}));
-					}
-					else if (x == 21) {//add member
+					} else if (x == 21) {//add member
 						ArrayList<String> description = new ArrayList<>();
 						description.add(Utils.color(String.format("&r&7Ilość członków: &3%d", cuboid.getMembers().size())));
 						description.add(" ");
@@ -370,7 +383,7 @@ public class HomesInterface {
 							startTypingAddMember(player);
 							menageCuboidGUI.close(player);
 						}));
-					} else if(x == 23) {//remove member
+					} else if (x == 23) {//remove member
 						ArrayList<String> description = new ArrayList<>();
 						description.add(Utils.color(String.format("&r&7Ilość członków: &3%d", cuboid.getMembers().size())));
 						description.add(" ");
@@ -387,7 +400,7 @@ public class HomesInterface {
 							player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
 							renderMenageMembersGUI(player, 1);
 						}));
-					} else if(x == 31) {//hide unhide block
+					} else if (x == 31) {//hide unhide block
 						menageCuboidGUI.setItem(x, getBlockByStatus(cuboid), ((player, gui, slot, type) -> {
 							player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
 							cuboid.toggleHide();
@@ -449,8 +462,10 @@ public class HomesInterface {
 		}
 		menageCuboidGUI.open(p);
 	}
+
 	//------------------------------------------------------------------------------------menage members cuboid GUI
-	public record MemberEntry(UUID uuid, String playerName, ItemStack head, PSRegion cuboid) { }
+	public record MemberEntry(UUID uuid, String playerName, ItemStack head, PSRegion cuboid) {
+	}
 
 	public void renderMenageMembersGUI(Player p, int page) {
 		renderMenageMembersGUI(p, page, null);
@@ -459,11 +474,11 @@ public class HomesInterface {
 	private void renderMenageMembersGUI(Player p, int page, List<MemberEntry> list) {
 		PSRegion cuboid = actualCuboidSet;
 		//generate list
-		if(list == null) {
+		if (list == null) {
 			List<MemberEntry> preparedList = new ArrayList<>();
 			for (UUID memberUUID : cuboid.getMembers()) {
 				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(memberUUID);
-				if(offlinePlayer.hasPlayedBefore()) {
+				if (offlinePlayer.hasPlayedBefore()) {
 					String playerName = offlinePlayer.getName();
 					String playerNameDisplay = Utils.color(String.format("&5&l%s", playerName));
 					ArrayList<String> description = new ArrayList<>();
@@ -479,7 +494,7 @@ public class HomesInterface {
 		}
 		//init pages
 		int itemsPerPage = 45;
-		int startIndex = (page-1) * itemsPerPage;
+		int startIndex = (page - 1) * itemsPerPage;
 		int endIndex = Math.min(startIndex + itemsPerPage, list.size());
 		int totalPages = (int) Math.ceil((double) list.size() / itemsPerPage);
 
@@ -503,7 +518,7 @@ public class HomesInterface {
 		}
 		// Generate navigation
 		for (int x = 45; x < 54; x++) {
-			if(x == 45) {
+			if (x == 45) {
 				ArrayList<String> description = new ArrayList<>(getCuboidDescription(p, cuboid));
 				ItemStack infoItem = Utils.itemWithDisplayName(gVar.customItems.get("hInfo"), Utils.color("&r&e&lInformacja"), description);
 				menageMembersGUI.setItem(x, infoItem);//Info
@@ -545,9 +560,10 @@ public class HomesInterface {
 		//open GUI
 		menageMembersGUI.open(p);
 	}
+
 	//------------------------------------------------------------------------------------get cuboid block by status
 	private ItemStack getBlockByStatus(PSRegion cuboid) {
-		if(cuboid.isHidden()) {
+		if (cuboid.isHidden()) {
 			ArrayList<String> description = new ArrayList<>();
 			description.add(Utils.color("&r&7Blok działki jest ukryty."));
 			description.add(" ");
@@ -564,11 +580,13 @@ public class HomesInterface {
 			return cuboidBlock;
 		}
 	}
+
 	//-----------------------------------------------------------------------------------typing cuboid name
 	public void startTypingCuboidName(Player player) {
-		if(typingCuboidName) return;
+		if (typingCuboidName) return;
 		new BukkitRunnable() {
 			int step = 0;
+
 			@Override
 			public void run() {
 				String msg;
@@ -585,7 +603,7 @@ public class HomesInterface {
 					}
 				}
 
-				if(typingCuboidName && player.isOnline()) {
+				if (typingCuboidName && player.isOnline()) {
 					player.sendTitle("", Utils.color(msg), 10, 80, 10);
 					step++;
 				} else {
@@ -598,8 +616,7 @@ public class HomesInterface {
 		typingCuboidName = true;
 	}
 
-	public static void sendTypingCuboidNameMessage(Player player)
-	{
+	public static void sendTypingCuboidNameMessage(Player player) {
 		String msg = "&2&m-------------------------------------------------\n" +
 				"&7&lWpisz nową nazwę działki na czacie.\n" +
 				"&7&lWpisz &anone&7&l, aby usunąć nazwę działki.\n" +
@@ -618,11 +635,13 @@ public class HomesInterface {
 			}
 		}.runTask(staticPlugin);
 	}
+
 	//-------------------------------------------------------------------------------------typing add member to cuboid
 	public void startTypingAddMember(Player player) {
-		if(typingAddMemberCuboid) return;
+		if (typingAddMemberCuboid) return;
 		new BukkitRunnable() {
 			int step = 0;
+
 			@Override
 			public void run() {
 				String msg;
@@ -639,7 +658,7 @@ public class HomesInterface {
 					}
 				}
 
-				if(typingAddMemberCuboid && player.isOnline()) {
+				if (typingAddMemberCuboid && player.isOnline()) {
 					player.sendTitle("", Utils.color(msg), 10, 80, 10);
 					step++;
 				} else {
@@ -652,8 +671,7 @@ public class HomesInterface {
 		typingAddMemberCuboid = true;
 	}
 
-	public static void sendTypingAddMemberMessage(Player player)
-	{
+	public static void sendTypingAddMemberMessage(Player player) {
 		String msg = "&2&m-------------------------------------------------\n" +
 				"&7&lWpisz nazwę gracza na czacie.\n" +
 				"&7&lWpisz &aanuluj&7&l, aby anulować.\n" +
@@ -673,10 +691,11 @@ public class HomesInterface {
 		}.runTask(staticPlugin);
 
 	}
+
 	//----------------------------------------------------------------------------------------member teleport gui
 	public void renderMemberCuboids(Player p, int page) {
 		int itemsPerPage = 45;
-		int startIndex = (page-1) * itemsPerPage;
+		int startIndex = (page - 1) * itemsPerPage;
 		int endIndex = Math.min(startIndex + itemsPerPage, memberCuboids.size());
 		int totalPages = (int) Math.ceil((double) memberCuboids.size() / itemsPerPage);
 		String guiTitle = Utils.color(String.format("&5&lCzłonkostwo %d/%d (%d)", page, Math.max(totalPages, 1), memberCuboids.size()));
@@ -702,7 +721,7 @@ public class HomesInterface {
 			}
 
 			ItemStack cuboidIcon = new ItemStack(cuboid.getProtectBlock().getRelative(BlockFace.DOWN).getType());
-			if(!cuboidIcon.getType().isSolid()) {//if air change to block type
+			if (!cuboidIcon.getType().isSolid()) {//if air change to block type
 				cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
 			}
 
@@ -712,7 +731,7 @@ public class HomesInterface {
 			memberCuboidsGUI.addItem(finalCuboidIcon, ((player, gui, slot, type) -> {
 				if (type == ClickType.LEFT) {
 					player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
-					if(cuboid.isMember(player.getUniqueId())) {
+					if (cuboid.isMember(player.getUniqueId())) {
 						teleportSafeToCuboid(player, cuboid);
 						String msg = String.format("&aTeleportacja do działki &7%s&a...", cuboidName);
 						PlayerUtils.sendColorMessage(player, msg);
@@ -720,9 +739,9 @@ public class HomesInterface {
 						PlayerUtils.sendColorMessage(player, "&7Nie jesteś członkiem tej działki.");
 						memberCuboidsGUI.close(player);
 					}
-				} else if(type == ClickType.SHIFT_RIGHT) {
+				} else if (type == ClickType.SHIFT_RIGHT) {
 					player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
-					if(cuboid.isMember(player.getUniqueId())) {
+					if (cuboid.isMember(player.getUniqueId())) {
 						memberCuboidsGUI.setItem(slot, new ItemStack(Material.AIR));
 						memberCuboids.remove(cuboid);
 						allCuboids.remove(cuboid);
@@ -772,12 +791,13 @@ public class HomesInterface {
 		}
 		memberCuboidsGUI.open(p);
 	}
+
 	//----------------------------------------------------------------------teleport to cuboid by name
 	public boolean teleportToCuboidByName(Player p, String cubName) {
 		for (PSRegion cuboid : allCuboids) {
 			String cuboidName = cuboid.getName() == null ? cuboid.getId() : cuboid.getName();
-			if(!cuboidName.equalsIgnoreCase(cubName)) continue;
-			if(!cuboid.getMembers().contains(p.getUniqueId()) &&
+			if (!cuboidName.equalsIgnoreCase(cubName)) continue;
+			if (!cuboid.getMembers().contains(p.getUniqueId()) &&
 					!cuboid.getOwners().contains(p.getUniqueId())) continue;
 			teleportSafeToCuboid(p, cuboid);
 			String msg = String.format("&aTeleportacja do działki &7%s&a...", cuboidName);
@@ -786,14 +806,15 @@ public class HomesInterface {
 		}
 		return false;
 	}
+
 	//------------------------------------------------------------------------better safe teleport to cuboid
 	public void teleportSafeToCuboid(Player p, PSRegion cuboid) {
 		Location posHome = cuboid.getHome();
 		Material firstBlock = posHome.getBlock().getType();
 		Location posSecondBlock = posHome.clone();
-		posSecondBlock.setY(posSecondBlock.getY()+1);
+		posSecondBlock.setY(posSecondBlock.getY() + 1);
 		Material secondBlock = posSecondBlock.getBlock().getType();
-		if(firstBlock.isAir() && secondBlock.isAir()) { //teleport is safe
+		if (firstBlock.isAir() && secondBlock.isAir()) { //teleport is safe
 			p.teleport(posHome);
 		} else {
 			Location safePos = Utils.findFreeAirBlockAbove(posHome);
@@ -804,15 +825,17 @@ public class HomesInterface {
 			}
 		}
 	}
+
 	//------------------------------------------------------------------------get cuboid size
 	public String getCuboidSize(PSRegion cuboid) {
 		String result = "0x0";
 		String alias = cuboid.getTypeOptions().alias;
-		if(alias != null) {
+		if (alias != null) {
 			result = String.format("%sx%s", alias, alias);
 		}
 		return result;
 	}
+
 	//----------------------------------------------------------------------------------------------Listeners
 	public static class HomeInterfaceListener implements Listener {
 		@EventHandler
@@ -820,19 +843,19 @@ public class HomesInterface {
 			Player player = e.getPlayer();
 			PlayerData pd = PlayerData.get(player);
 			HomesInterface hi = pd.homesInterface;
-			if(hi != null) {
+			if (hi != null) {
 				PSRegion region = hi.actualCuboidSet;
 				//-----------------------------------------typing cuboid name
 				String message = e.getMessage();
-				if(hi.typingCuboidName) {
+				if (hi.typingCuboidName) {
 					e.setCancelled(true);
-					if(region == null) {
+					if (region == null) {
 						player.sendMessage("Wystąpił nieoczekiwany błąd. Zgłoś to! (ID: rnull:0)");
 						hi.stopTypingCuboidName(player);
 						return;
 					}
 					String[] newRegionName = message.split(" ");
-					if(newRegionName[0].length() > 24) {
+					if (newRegionName[0].length() > 24) {
 						player.sendMessage(Utils.color("&7Nazwa domku jest za długa (maks 32 znaki)."));
 						return;
 					}
@@ -861,9 +884,9 @@ public class HomesInterface {
 					hi.stopTypingCuboidName(player);
 				}
 				//---------------------------------------------------typing add member
-				if(hi.typingAddMemberCuboid) {
+				if (hi.typingAddMemberCuboid) {
 					e.setCancelled(true);
-					if(region == null) {
+					if (region == null) {
 						player.sendMessage("Wystąpił nieoczekiwany błąd. Zgłoś to! (ID: rnull:1)");
 						hi.stopTypingAddMember(player);
 						return;
@@ -881,7 +904,7 @@ public class HomesInterface {
 						player.sendMessage(Utils.color(msg));
 						return;
 					}
-					if(region.isMember(offlinePlayer.getUniqueId())) {
+					if (region.isMember(offlinePlayer.getUniqueId())) {
 						String msg = "&7Ten gracz jest już dodany do Twojej działki.";
 						player.sendMessage(Utils.color(msg));
 						return;
@@ -894,6 +917,7 @@ public class HomesInterface {
 				}
 			}
 		}
+
 		//---------------------------------------block commands while player typing value
 		@EventHandler
 		public void onCommandPreprocess(PlayerCommandPreprocessEvent e) {

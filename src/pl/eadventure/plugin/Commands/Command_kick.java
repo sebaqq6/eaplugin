@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.eadventure.plugin.PunishmentSystem;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 //TODO default cmd only nick
 public class Command_kick implements TabExecutor {
 	@Override
@@ -27,22 +28,21 @@ public class Command_kick implements TabExecutor {
 		}
 		String targetName = args[0];
 		Player targetPlayer = Bukkit.getPlayer(targetName);
-		if(targetPlayer == null) {
+		if (targetPlayer == null) {
 			sender.sendMessage(Utils.color("&7Ten gracz nie jest online."));
 			return true;
 		}
-		if(targetName.equalsIgnoreCase(sender.getName())) {//if target == player
+		if (targetName.equalsIgnoreCase(sender.getName())) {//if target == player
 			sender.sendMessage(Utils.color("&7Nie możesz tego użyć na sobie."));
 			return true;
 		}
-		if(sender instanceof Player player)
-		{
-			if(PlayerUtils.isAdminPermissionHasHigher(player.getName(), targetName)) {
+		if (sender instanceof Player player) {
+			if (PlayerUtils.isAdminPermissionHasHigher(player.getName(), targetName)) {
 				sender.sendMessage(Utils.color("&7Ten gracz ma wyższe uprawnienia administracyjne niż Ty."));
 				return true;
 			}
 		}
-		if(args.length == 1) {
+		if (args.length == 1) {
 			Utils.commandUsageMessage(sender, String.format("/%s %s [powód]", label, targetName));
 			return true;
 		}
@@ -81,7 +81,7 @@ public class Command_kick implements TabExecutor {
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1) {//nick
 			return null;
-		} else if(args.length == 2) {//reason
+		} else if (args.length == 2) {//reason
 			List<String> cmdlist = Arrays.asList("Cheater.", "Szkodnik.", "Griefing.", "Reklama.", "Nieprzestrzeganie regulaminu.");
 			return StringUtil.copyPartialMatches(args[1], cmdlist, new ArrayList<>());
 		}

@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import pl.eadventure.plugin.HomesInterface;
+import pl.eadventure.plugin.Modules.HomesInterface;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.print;
@@ -20,7 +20,7 @@ public class playerPlaceTurret implements Listener {
 		HomesInterface hi = pd.homesInterface;
 		//PlayerTurret turret = ComplexTurretsAPI.getTurretFromLocation(e.getLocation());
 		//UUID uid = UUID.fromString(turret.getOwnerUUID());
-		if(hi == null) {
+		if (hi == null) {
 			hi = new HomesInterface();
 			hi.loadFromPlayer(p);
 			pd.homesInterface = hi;
@@ -29,13 +29,13 @@ public class playerPlaceTurret implements Listener {
 		}
 		Location location = e.getLocation();
 		boolean onCuboid = false;
-		for(PSRegion cuboid : hi.getAllCuboids()) {
+		for (PSRegion cuboid : hi.getAllCuboids()) {
 			if (cuboid.getWGRegion().contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
 				onCuboid = true;
 				break;
 			}
 		}
-		if(!onCuboid && !p.isOp() && !p.hasPermission("complexturrets.admin")) {
+		if (!onCuboid && !p.isOp() && !p.hasPermission("complexturrets.admin")) {
 			PlayerUtils.sendColorMessage(p, "&7Nie możesz tutaj postawić wieżyczki.");
 			print.okRed(String.format("Gracz %s próbował postawić wieżyczkę w niedozwolonym miejscu.", e.getPlayer().getName()));
 			e.setCancelled(true);

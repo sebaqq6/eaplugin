@@ -1,19 +1,25 @@
 package pl.eadventure.plugin.Events;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.MySQLStorage;
+
+import java.util.ArrayList;
 
 public class playerBlockBreakEvent implements Listener {
 	@EventHandler
 	public void onPlayerBreakBlock(BlockBreakEvent e) {
 		Player player = e.getPlayer();
 		PlayerData pd = PlayerData.get(e.getPlayer());
+		//creative logs
 		if (pd.creativeMode) {
 			Location blockLocation = e.getBlock().getLocation();
 			int bPosX = blockLocation.getBlockX();
@@ -40,6 +46,15 @@ public class playerBlockBreakEvent implements Listener {
 				Bukkit.getConsoleSender().sendMessage(info);
 			}
 			pd.creativeLastBreakPos = blockLocation;
+		}
+		//break blocks count
+		if (e.isDropItems() && player.getGameMode() != GameMode.CREATIVE) {
+			pd.breakBlocksCount++;
+			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(pd.breakBlocksCount);
+			parameters.add(pd.dbid);
+			storage.executeSafe("UPDATE players SET breakBlocks=? WHERE id=?;", parameters);
 		}
 	}
 }
