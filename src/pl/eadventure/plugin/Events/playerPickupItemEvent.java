@@ -14,7 +14,7 @@ public class playerPickupItemEvent implements Listener {
 		//playerPickupItemEvent
 		if (entity instanceof Player player) {
 			PlayerData pd = PlayerData.get(player);
-			if (pd.creativeMode) {
+			if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
 				e.setCancelled(true);
 			}
 		}

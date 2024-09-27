@@ -109,3 +109,5 @@ permissions:
     description: "Dostęp do /eap syncplayedtime"
   eadventureplugin.unwarn:
     description: "Możliwość usuwanie warna gracza przez /warnlist."
+  eadventureplugin.creative.bypass:
+    description: "Bypass funkcjonalności dla /creative - tylko dla zaufanych osób."

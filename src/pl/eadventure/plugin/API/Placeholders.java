@@ -8,6 +8,8 @@ import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Modules.TopTimePlayerPlayed;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
+import pl.eadventure.plugin.gVar;
 
 
 public class Placeholders extends PlaceholderExpansion {
@@ -40,11 +42,49 @@ public class Placeholders extends PlaceholderExpansion {
 
 	@Override
 	public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
-		Player player = offlinePlayer.getPlayer();
+		Player player = null;
+		if (offlinePlayer != null) {
+			player = offlinePlayer.getPlayer();
+		}
 		//print.debug("Placeholders->onRequest: "+params);
 		//%eaplugin_test%
 		if (params.equalsIgnoreCase("test")) {
 			return "Placeholdery EternalAdventurePlugin działają poprawnie!";
+		}
+		//%topbb_x_name/count%
+		if (params.startsWith("topbb_")) {
+			String[] args = params.split("_");
+			print.debug(String.valueOf(args.length));
+			if (args.length == 3) {
+				//return name
+				if (args[2].equalsIgnoreCase("name")) {
+					int place = 0;
+					try {
+						place = Integer.valueOf(args[1]);
+					} catch (NumberFormatException e) {
+						return "errorplacenumber";
+					}
+					if (place < 1) {
+						return "errorminplacenumber:1";
+					}
+					return gVar.topBreakBlocks.getNickNameFromPlace(place);
+				}
+				//return count blocks
+				if (args[2].equalsIgnoreCase("count")) {
+					int place = 0;
+					try {
+						place = Integer.valueOf(args[1]);
+					} catch (NumberFormatException e) {
+						return "errorplacenumber";
+					}
+					if (place < 1) {
+						return "errorminplacenumber:1";
+					}
+					int countBlocks = gVar.topBreakBlocks.getCountFromPlace(place);
+					if (countBlocks == -1) return "---";
+					return String.valueOf(countBlocks);
+				}
+			}
 		}
 		//%toponline_x_name/(time_h/m/s)
 		if (params.startsWith("toponline_")) {
@@ -147,10 +187,17 @@ public class Placeholders extends PlaceholderExpansion {
 				else return String.format("%dm", time[1]);
 			} else return "0m";
 		}
-		// maxsessiontime_formated
+		// gs
 		else if (params.equalsIgnoreCase("gs")) {
 			if (player != null) {
 				return "99999";
+			} else return "0";
+		}
+		// breakblocks
+		else if (params.equalsIgnoreCase("breakblocks")) {
+			if (player != null) {
+				PlayerData pd = PlayerData.get(player);
+				return String.valueOf(pd.breakBlocksCount);
 			} else return "0";
 		}
 		return null; //

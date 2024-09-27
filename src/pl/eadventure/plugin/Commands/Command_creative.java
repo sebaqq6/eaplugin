@@ -29,7 +29,8 @@ public class Command_creative implements CommandExecutor {
 
 			} else { //enable creative mode
 				//temp disable backup inventory, player we need empty inventory
-				if (PlayerUtils.getInventoryItemsCount(player) != 0 || PlayerUtils.getArmorItemsCount(player) != 0) {
+				if ((PlayerUtils.getInventoryItemsCount(player) != 0 || PlayerUtils.getArmorItemsCount(player) != 0) &&
+						!player.hasPermission("eadventureplugin.creative.bypass")) {
 					player.sendMessage(Utils.mm("<#888888>Musisz mieć <u>pusty</u> ekwipunek!</#888888>"));
 					return true;
 				}

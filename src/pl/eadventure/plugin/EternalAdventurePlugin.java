@@ -207,6 +207,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					TopTimePlayerPlayed.load(storage, 20);
 					PunishmentSystem.init(storage);
 					ServerLogManager.enable(storage);
+					gVar.topBreakBlocks = new TopBreakBlocks(storage, 20);
 				} else
 					print.error("Błąd połączenia z MySQL!");
 			}

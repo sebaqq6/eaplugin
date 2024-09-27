@@ -12,7 +12,7 @@ public class playerDropEvent implements Listener {
 		//print.debug("Gracz: " + e.getPlayer().getName() + " wyrzuca przedmiot.");
 		Player player = e.getPlayer();
 		PlayerData pd = PlayerData.get(player);
-		if (pd.creativeMode && !player.isOp()) {
+		if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
 			e.setCancelled(true);
 		}
 	}

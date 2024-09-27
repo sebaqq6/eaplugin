@@ -13,7 +13,7 @@ public class playerInventoryOpen implements Listener {
 		LivingEntity livingEntity = e.getPlayer();
 		if (livingEntity instanceof Player player) {
 			PlayerData pd = PlayerData.get(player);
-			if (pd.creativeMode && !player.isOp()) {
+			if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
 				e.setCancelled(true);
 			}
 		}

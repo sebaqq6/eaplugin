@@ -36,9 +36,16 @@ public class playerCommandPreprocessEvent implements Listener {
 			}
 		}
 
-		if (pd.creativeMode) {
-			if (!args[0].equalsIgnoreCase("/creative") && !player.isOp()) {
+		if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
+			if (!args[0].equalsIgnoreCase("/creative")) {
 				player.sendMessage(Utils.mm("<#888888>Nie możesz używać komend w <b>trybie kreatywnym</b>!</#888888>"));
+				e.setCancelled(true);
+				return;
+			}
+		}
+		if (pd.creativeMode) {
+			if (args[0].equalsIgnoreCase("/survival")) {
+				player.performCommand("creative");
 				e.setCancelled(true);
 				return;
 			}

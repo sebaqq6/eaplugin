@@ -2,6 +2,7 @@ package pl.eadventure.plugin;
 
 import org.bukkit.inventory.ItemStack;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
+import pl.eadventure.plugin.Modules.TopBreakBlocks;
 import pl.eadventure.plugin.Utils.ColorIssueResolverIA;
 
 import java.net.InetAddress;
@@ -23,5 +24,6 @@ public class gVar {
 	public static HashMap<String, ItemStack> customItems = new HashMap<>();
 	public static ColorIssueResolverIA colorIssueResolverIA;
 	public static FunEventsManager funEventsManager;
+	public static TopBreakBlocks topBreakBlocks;
 	public static boolean antiBot = true;
 }
