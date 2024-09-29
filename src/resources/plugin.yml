@@ -96,6 +96,10 @@ commands:
     description: "Tryb kreatywny."
     usage: "/<command>"
     permission: eadventureplugin.cmd.creative
+  ogloszenia:
+    description: "Ogłoszenia."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.ogloszenia
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."
@@ -111,3 +115,5 @@ permissions:
     description: "Możliwość usuwanie warna gracza przez /warnlist."
   eadventureplugin.creative.bypass:
     description: "Bypass funkcjonalności dla /creative - tylko dla zaufanych osób."
+  eadventureplugin.annuance.manage:
+    description: "Dodawanie/usuwanie ogłoszeń."

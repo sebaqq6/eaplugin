@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -128,6 +129,15 @@ public class Utils {
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(displayName);
 		if (lore != null) meta.setLore(lore);
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	public static ItemStack itemWithDisplayName(ItemStack item, Component displayName, ArrayList<Component> lore) {
+		//String plainText = PlainTextComponentSerializer.plainText().serialize(displayName);
+		ItemMeta meta = item.getItemMeta();
+		meta.displayName(displayName);
+		if (lore != null) meta.lore(lore);
 		item.setItemMeta(meta);
 		return item;
 	}

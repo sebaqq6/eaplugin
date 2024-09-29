@@ -185,6 +185,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("dzialka").setExecutor(new Command_dzialka());
 		this.getCommand("chunkhunt").setExecutor(new Command_chunkhunt());
 		this.getCommand("viewlog").setExecutor(new Command_viewlog());
+		this.getCommand("ogloszenia").setExecutor(new Command_ogloszenie());
 		this.getCommand("excellentcratesproxy").setExecutor(new Command_excellentcratesproxy());
 		this.getCommand("fe").setExecutor(new Command_fe());
 		this.getCommand("vconsole").setExecutor(new Command_vconsole());
@@ -208,6 +209,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					PunishmentSystem.init(storage);
 					ServerLogManager.enable(storage);
 					gVar.topBreakBlocks = new TopBreakBlocks(storage, 20);
+					gVar.announceManager = new AnnounceManager(instance, storage);
 				} else
 					print.error("Błąd połączenia z MySQL!");
 			}
