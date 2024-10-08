@@ -8,12 +8,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.*;
+import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.ServerLogManager;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
+import pl.eadventure.plugin.gVar;
 
 public class playerChatEvent implements Listener {
 	@EventHandler

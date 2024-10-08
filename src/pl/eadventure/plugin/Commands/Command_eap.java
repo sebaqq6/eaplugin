@@ -1,7 +1,10 @@
 package pl.eadventure.plugin.Commands;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -9,15 +12,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import pl.eadventure.plugin.*;
+import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Modules.LeavesDecay;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.RegionCommandLooper;
-import pl.eadventure.plugin.Utils.*;
+import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.MySQLStorage;
+import pl.eadventure.plugin.Utils.PlayerUtils;
+import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
+import pl.eadventure.plugin.gVar;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Command_eap implements TabExecutor {
 	@Override

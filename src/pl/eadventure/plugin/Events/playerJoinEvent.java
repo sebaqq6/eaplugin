@@ -7,10 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.*;
+import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.ServerLogManager;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.print;
+import pl.eadventure.plugin.gVar;
 
 public class playerJoinEvent implements Listener {
 	@EventHandler

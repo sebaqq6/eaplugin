@@ -10,8 +10,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.Modules.HomesInterface;
-import pl.eadventure.plugin.PlayerData;
 
 import java.util.HashMap;
 import java.util.List;

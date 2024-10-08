@@ -7,12 +7,10 @@ import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.Utils.*;
 import pl.eadventure.plugin.gVar;
 
-import java.awt.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -118,7 +116,7 @@ public class AnnounceManager {
 						return 0;
 					}
 					// Insert to database
-					
+
 					// Show summary
 					//p.sendMessage("Podsumowanie:");
 					//p.sendMessage(Utils.mm(annuanceInput));
