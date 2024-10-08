@@ -54,7 +54,7 @@ public class Placeholders extends PlaceholderExpansion {
 		//%topbb_x_name/count%
 		if (params.startsWith("topbb_")) {
 			String[] args = params.split("_");
-			print.debug(String.valueOf(args.length));
+			//print.debug(String.valueOf(args.length));
 			if (args.length == 3) {
 				//return name
 				if (args[2].equalsIgnoreCase("name")) {

@@ -116,8 +116,8 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 
 			@Override
 			public void onPacketSending(PacketEvent event) {
-				InetAddress ip = event.getPlayer().getAddress().getAddress();
-				print.debug("[MC-PING]: " + ip.getHostAddress());
+				//InetAddress ip = event.getPlayer().getAddress().getAddress();
+				//print.debug("[MC-PING]: " + ip.getHostAddress());
 				/*if(ip == null || !ip.getHostAddress().equalsIgnoreCase("127.0.0.1")) {
 					print.error(String.format("IP %s odpytało serwer poza TCPShield! Odpowiedź została anulowana.", ip.getHostAddress()));
 					event.setCancelled(true);

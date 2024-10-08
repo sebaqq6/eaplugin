@@ -87,7 +87,7 @@ public class RegionCommandLooper {
 					//print.debug("countdown: " + countEnd);
 					countEnd--;
 					if (lastRegion != null && !region.name.equalsIgnoreCase(lastRegion.name)) {//change region
-						print.debug("[RGC] Changed region: " + region.name + " -> " + lastRegion.name);
+						//print.debug("[RGC] Changed region: " + region.name + " -> " + lastRegion.name);
 						performCommand(lastRegion.commandExit);
 						performCommand(region.command);
 						countEnd = region.time;
@@ -95,14 +95,14 @@ public class RegionCommandLooper {
 					}
 				} else if (looping && countEnd == 0) {
 					performCommand(region.command);
-					print.debug("[RGC] RESTART");
+					//print.debug("[RGC] RESTART");
 					countEnd = region.time;
 				} else if (!looping) {
 					performCommand(region.command);
 					countEnd = region.time;
 					looping = true;
 					lastRegion = region;
-					print.debug("[RGC] START!");
+					//print.debug("[RGC] START!");
 				}
 				regionFound = true;
 				break;
@@ -113,7 +113,7 @@ public class RegionCommandLooper {
 			if (looping && lastRegion != null) {
 				looping = false;
 				performCommand(lastRegion.commandExit);
-				print.debug("STOPP");
+				//print.debug("STOPP");
 				lastRegion = null;
 			}
 		}
@@ -124,7 +124,7 @@ public class RegionCommandLooper {
 			@Override
 			public void run() {
 				String finalCommand = command.replaceAll("%username%", player.getName());
-				print.debug("finalCommand: " + finalCommand);
+				//print.debug("finalCommand: " + finalCommand);
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
 			}
 		}.runTask(plugin);

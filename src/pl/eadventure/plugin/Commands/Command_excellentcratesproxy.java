@@ -25,9 +25,7 @@ public class Command_excellentcratesproxy implements CommandExecutor {
 		Bukkit.dispatchCommand(sender, proxyCommand);
 		//add key to players reward on mobarena
 		if (args.length < 3) return true;
-		print.debug("1");
 		if (!args[0].equalsIgnoreCase("key")) return true;
-		print.debug("2");
 		MobArena ma = EternalAdventurePlugin.getMobArena();
 		ArenaMaster am = ma.getArenaMaster();
 		if (args[1].equalsIgnoreCase("give")) {///excellentcrates key[0] give[1] JrDesmond[2] epic[3] 1[4] (5)
@@ -35,15 +33,13 @@ public class Command_excellentcratesproxy implements CommandExecutor {
 			String key = args[3];
 			String keyCount = args[4];
 			Player targetPlayer = Bukkit.getPlayer(args[2]);
-			print.debug("args2: " + args[2]);
-			print.debug("give");
 			if (targetPlayer == null) return true;
 			Arena arena = am.getArenaWithPlayer(targetPlayer);
-			print.debug("Arena: " + arena);
+			//print.debug("Arena: " + arena);
 
 			if (arena == null) return true;
-			print.debug("arena.getPlayersInArena().contains(targetPlayer): " + arena.getAllPlayers().contains(targetPlayer));
-			print.debug("arena.isRunning(): " + arena.isRunning());
+			//print.debug("arena.getPlayersInArena().contains(targetPlayer): " + arena.getAllPlayers().contains(targetPlayer));
+			//print.debug("arena.isRunning(): " + arena.isRunning());
 			if (!arena.getAllPlayers().contains(targetPlayer)) return true;
 			setAllReadyOnMA(arena);
 			if (!arena.isRunning()) {
@@ -58,14 +54,13 @@ public class Command_excellentcratesproxy implements CommandExecutor {
 				print.error("[excellentcratesproxy(0)]: " + e.getMessage());
 				return true;
 			}
-			print.debug("thing: " + thingInput);
+			//print.debug("thing: " + thingInput);
 			arena.getRewardManager().addReward(targetPlayer, thing);
 		}
 		if (args[1].equalsIgnoreCase("giveall")) {///excellentcrates key[0] giveall[1] epic[2] 1[3] (4)
 			if (args.length < 4) return true;
 			String key = args[2];
 			String keyCount = args[3];
-			print.debug("giveall");
 			Arena arena = ma.getArenaMaster().getArenaWithName("Eternal");
 			if (arena == null) return true;
 			//if (!arena.isRunning()) {return true;
@@ -74,7 +69,6 @@ public class Command_excellentcratesproxy implements CommandExecutor {
 				arena.forceStart();
 			}
 			for (Player p : arena.getPlayersInArena()) {
-				print.debug("InArenaLoop: " + p.getName());
 				String thingInput = String.format("cmd(Klucz: %s):/excellentcrates key give <player> %s %s", key, key, keyCount);
 				Thing thing;
 				try {
@@ -84,14 +78,14 @@ public class Command_excellentcratesproxy implements CommandExecutor {
 					print.error("[excellentcratesproxy(1)]: " + e.getMessage());
 					return true;
 				}
-				print.debug("thing: " + thingInput);
 				arena.getRewardManager().addReward(p, thing);
 			}
 		}
 		return true;
 	}
+
 	public static void setAllReadyOnMA(@NotNull Arena arena) {
-		for(Player p: arena.getNonreadyPlayers()) {
+		for (Player p : arena.getNonreadyPlayers()) {
 			if (!arena.isRunning()) {
 				arena.playerReady(p);
 			}
