@@ -10,6 +10,9 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.gVar;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 
 public class Placeholders extends PlaceholderExpansion {
 
@@ -186,10 +189,19 @@ public class Placeholders extends PlaceholderExpansion {
 				else return String.format("%dm", time[1]);
 			} else return "0m";
 		}
+		// money
+		else if (params.equalsIgnoreCase("money")) {
+			if (player != null) {
+				double money = EternalAdventurePlugin.getEconomy().getBalance(player);
+				NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
+				currencyFormatter.setMaximumFractionDigits(0);
+				return currencyFormatter.format(money);
+			} else return "0";
+		}
 		// gs
 		else if (params.equalsIgnoreCase("gs")) {
 			if (player != null) {
-				return "1234";
+				return "<#FF0000>1234";
 			} else return "0";
 		}
 		// breakblocks
