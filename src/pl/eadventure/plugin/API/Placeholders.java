@@ -190,7 +190,7 @@ public class Placeholders extends PlaceholderExpansion {
 		// gs
 		else if (params.equalsIgnoreCase("gs")) {
 			if (player != null) {
-				return "99999";
+				return "1234";
 			} else return "0";
 		}
 		// breakblocks

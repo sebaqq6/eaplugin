@@ -122,7 +122,7 @@ public class Command_eap implements TabExecutor {
 					p.teleport(newLocation);
 					sender.sendMessage("Hooop!");
 				} else {
-					print.error("Dostępne tylko z poziomu gracza!");
+					print.error("Komenda niedostępna z konsoli!");
 				}
 				break;
 			}

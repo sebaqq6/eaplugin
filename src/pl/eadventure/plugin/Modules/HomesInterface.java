@@ -609,7 +609,6 @@ public class HomesInterface {
 				} else {
 					cancel();
 					typingCuboidName = false;
-					print.debug("typingCuboidName: cancelTimer");
 				}
 			}
 		}.runTaskTimer(staticPlugin, 1, 100);

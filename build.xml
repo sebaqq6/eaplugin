@@ -9,5 +9,18 @@
                     includes="**/*"/>
         </jar>
     </target>
+    <target name="BuildRemote">
+        <!-- Step 1: Create the JAR file locally -->
+        <jar jarfile="./target/${ant.project.name}.jar" basedir="./target/classes/" includes="**/*">
+            <zipfileset
+                    src="/home/sebastian/.m2/repository/io/github/skytasul/glowingentities/1.3.2/glowingentities-1.3.2.jar"
+                    includes="**/*"/>
+        </jar>
+
+        <!-- Step 2: Run the shell script to upload the JAR -->
+        <exec executable="bash">
+            <arg value="/home/sebastian/eclipse-workspace/upload"/>
+        </exec>
+    </target>
 
 </project>
