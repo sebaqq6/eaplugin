@@ -1,14 +1,18 @@
 package pl.eadventure.plugin.Modules;
 
+import com.comphenix.protocol.PacketType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.*;
 import pl.eadventure.plugin.gVar;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,10 +48,13 @@ public class AnnounceManager {
 				"announcements " +
 				"LEFT JOIN players ON announcements.author=players.id " +
 				"ORDER BY expire DESC;";
+		print.debug(sql);
 		storage.query(sql, queryResult -> {
+			print.debug("Dane: " + queryResult);
 			int numRows = (int) queryResult.get("num_rows");
 			@SuppressWarnings("unchecked")
 			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
+
 			if (numRows > 0) {
 				announceList.clear();
 				int id;
@@ -107,7 +114,6 @@ public class AnnounceManager {
 					try {
 						date = LocalDateTime.parse(dateInput, formatter);
 					} catch (Exception e) {
-
 						p.sendMessage(Utils.mm("<#FF0000>Nieprawidłowa data i godzina."));
 						return 0;
 					}
@@ -118,11 +124,23 @@ public class AnnounceManager {
 					// Insert to database
 
 					// Show summary
-					//p.sendMessage("Podsumowanie:");
-					//p.sendMessage(Utils.mm(annuanceInput));
-					//p.sendMessage("Termin ważności: " + dateInput);
+					p.sendMessage("Podsumowanie:");
+					p.sendMessage(Utils.mm(annuanceInput));
+					p.sendMessage("Termin ważności: " + dateInput);
 					// Show main menu
-					showMainMenuGUI(playerInput);
+					//showMainMenuGUI(playerInput);
+					print.debug("Zapytanie?");
+					ArrayList<Object> parameters = new ArrayList<>();
+					PlayerData pd = PlayerData.get(playerInput2);
+					String insertSql = "INSERT INTO announcements (author, created, expire, text) VALUES (?, ?, ?, ?);";
+					parameters.add(pd.dbid);
+					parameters.add(Timestamp.from(Instant.now()));
+					Instant instantExpire = date.atZone(ZoneId.systemDefault()).toInstant();
+					parameters.add(Timestamp.from(instantExpire));
+					parameters.add(annuanceInput);
+					int insertId = storage.executeGetInsertID(insertSql, parameters);
+					print.debug("insertID: " + insertId);
+					//()//blokowanie kompilacji
 					return 1;
 				});
 				return 0;

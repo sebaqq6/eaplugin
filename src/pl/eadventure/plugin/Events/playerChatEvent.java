@@ -21,7 +21,7 @@ public class playerChatEvent implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
 		Player player = e.getPlayer();
-		print.debug("Gracz: " + player.getName() + " wpisał: " + e.getMessage());
+		//print.debug("Gracz: " + player.getName() + " wpisał: " + e.getMessage());
 		PlayerData pd = PlayerData.get(player);
 		//-----------------------------------------------------------------------
 		boolean isAnnMessage = false;
