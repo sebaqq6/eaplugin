@@ -82,7 +82,7 @@ public class MySQLStorage {
 					while (result.next()) {
 						HashMap<Object, Object> row = new HashMap<>();
 						for (int index = 1; index <= result.getMetaData().getColumnCount(); index++) {
-							row.put(result.getMetaData().getColumnName(index), result.getObject(result.getMetaData().getColumnName(index)));
+							row.put(result.getMetaData().getColumnLabel(index), result.getObject(result.getMetaData().getColumnLabel(index)));
 						}
 
 						data.add(i, row);
@@ -123,7 +123,7 @@ public class MySQLStorage {
 					while (result.next()) {
 						HashMap<Object, Object> row = new HashMap<>();
 						for (int index = 1; index <= result.getMetaData().getColumnCount(); index++) {
-							row.put(result.getMetaData().getColumnName(index), result.getObject(result.getMetaData().getColumnName(index)));
+							row.put(result.getMetaData().getColumnLabel(index), result.getObject(result.getMetaData().getColumnLabel(index)));
 						}
 
 						data.add(i, row);
