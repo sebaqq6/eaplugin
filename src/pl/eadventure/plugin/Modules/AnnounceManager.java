@@ -2,6 +2,7 @@ package pl.eadventure.plugin.Modules;
 
 import com.comphenix.protocol.PacketType;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -10,6 +11,7 @@ import pl.eadventure.plugin.Utils.*;
 import pl.eadventure.plugin.gVar;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,7 +29,16 @@ public class AnnounceManager {
 	ChatInputCapture chatInputCapture;
 
 	//table: announcements
-	record Announce(int id, String authorName, Timestamp created, Timestamp expire, String text) {
+	record Announce(int id, String authorName, Timestamp created, Timestamp expire, Timestamp lastViewed, String text) {
+		static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		public String getExpireFormated() {
+			return sdf.format(expire);
+		}
+
+		public String getCreatedFormated() {
+			return sdf.format(expire);
+		}
 	}
 
 	//constructor
@@ -61,14 +72,16 @@ public class AnnounceManager {
 				String author;
 				Timestamp created;
 				Timestamp expire;
+				Timestamp lastViewed;
 				String text;
 				for (int i = 0; i < numRows; i++) {
 					id = (int) rows.get(i).get("id");
 					author = (String) rows.get(i).get("author");
 					created = (Timestamp) rows.get(i).get("created");
 					expire = (Timestamp) rows.get(i).get("expire");
+					lastViewed = (Timestamp) rows.get(i).get("lastviewed");
 					text = (String) rows.get(i).get("text");
-					announceList.add(new Announce(id, author, created, expire, text));
+					announceList.add(new Announce(id, author, created, expire, lastViewed, text));
 				}
 			}
 		});
@@ -79,6 +92,32 @@ public class AnnounceManager {
 		boolean canManage = p.hasPermission("eadventureplugin.annuance.manage");
 		MagicGUI mainGui = MagicGUI.create(Utils.mm("<bold><gradient:#BF00FF:#7d00a7>Ogłoszenia</bold>"), 54);
 		mainGui.setAutoRemove(true);
+		String color = "#FFFFFF";
+		// Annuance list
+		int annInGUISlot = 0;
+		for (Announce ann : announceList) {
+			ArrayList<Component> lore = new ArrayList<>();
+			String text = ann.text;
+			final int maxLineLength = 40;
+
+			List<String> textLines = Utils.breakLinesWithTags(text, maxLineLength);
+
+			for (String textLine : textLines) {
+				lore.add(Utils.mm("<!i><#FFFFFF>" + textLine));
+			}
+
+			//lore.add(Utils.mm("<!i><#FFFFFF>" + ann.text));
+			lore.add(Utils.mm("<!i><#730088>Dodał:" + ann.authorName()));
+			lore.add(Utils.mm("<!i><#730088>Utworzono: " + ann.getCreatedFormated()));
+			lore.add(Utils.mm("<!i><#730088>Wygasa: " + ann.getExpireFormated()));
+
+			ItemStack annItem = Utils.itemWithDisplayName(ItemStack.of(Material.BLUE_BANNER), Utils.mm("<!i><bold><#999999>Ogłoszenie</bold>"), lore);
+			mainGui.setItem(annInGUISlot, annItem);
+			annInGUISlot++;
+			if (annInGUISlot > 45) break;
+		}
+		//()//blokowanie kompilacji
+		// Buttons
 		ItemStack buttonClose = Utils.itemWithDisplayName(hBlackX, Utils.mm("<!i><bold><#999999>Zamknij</#999999></bold>"), null);
 		mainGui.setItem(49, buttonClose, ((playerGui, gui, slot, type) -> {
 			mainGui.close(playerGui);
@@ -96,7 +135,7 @@ public class AnnounceManager {
 					showMainMenuGUI(playerInput);
 					return 1;
 				}
-				String annuanceInput = message;
+				String announceInput = message;
 				// Get end date
 				messages.clear();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
@@ -125,7 +164,7 @@ public class AnnounceManager {
 
 					// Show summary
 					p.sendMessage("Podsumowanie:");
-					p.sendMessage(Utils.mm(annuanceInput));
+					p.sendMessage(Utils.mm(announceInput));
 					p.sendMessage("Termin ważności: " + dateInput);
 					// Show main menu
 					//showMainMenuGUI(playerInput);
@@ -134,13 +173,15 @@ public class AnnounceManager {
 					PlayerData pd = PlayerData.get(playerInput2);
 					String insertSql = "INSERT INTO announcements (author, created, expire, text) VALUES (?, ?, ?, ?);";
 					parameters.add(pd.dbid);
-					parameters.add(Timestamp.from(Instant.now()));
+					Timestamp created = Timestamp.from(Instant.now());
+					parameters.add(created);
 					Instant instantExpire = date.atZone(ZoneId.systemDefault()).toInstant();
-					parameters.add(Timestamp.from(instantExpire));
-					parameters.add(annuanceInput);
+					Timestamp expire = Timestamp.from(instantExpire);
+					parameters.add(expire);
+					parameters.add(announceInput);
 					int insertId = storage.executeGetInsertID(insertSql, parameters);
-					print.debug("insertID: " + insertId);
-					//()//blokowanie kompilacji
+					Announce ann = new Announce(insertId, playerInput2.getName(), created, expire, created, announceInput);
+					announceList.add(ann);
 					return 1;
 				});
 				return 0;

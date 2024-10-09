@@ -455,4 +455,122 @@ public class Utils {
 			throw new RuntimeException(e);
 		}
 	}
+
+	// Split lines with minimessage tags
+	public static List<String> breakLinesWithTags(String text, int maxLineLength) {
+		List<String> lines = new ArrayList<>();
+		Stack<String> openTags = new Stack<>();  // Przechowuje otwarte tagi
+
+		while (text.length() > 0) {
+			int breakPoint = findBreakPoint(text, maxLineLength);
+
+			// Znajdź fragment tekstu do nowej linii
+			String lineFragment = text.substring(0, breakPoint).trim();
+			text = text.substring(breakPoint).trim();
+
+			// Dodaj otwarte tagi do nowej linii
+			lineFragment = rebuildLineWithTags(lineFragment, openTags);
+
+			// Dodaj linię do listy
+			lines.add(lineFragment);
+
+			// Zaktualizuj otwarte tagi na podstawie przetworzonego fragmentu
+			updateOpenTags(lineFragment, openTags);
+		}
+
+		return lines;
+	}
+
+	// Funkcja do znalezienia odpowiedniego miejsca do przerwania linii
+	private static int findBreakPoint(String text, int maxLineLength) {
+		int visibleLength = 0;
+		int lastSpace = -1;  // Pozycja ostatniej spacji
+		int breakPoint = text.length();  // Ustawiamy jako długość tekstu na początek
+
+		boolean insideTag = false;
+
+		for (int i = 0; i < text.length(); i++) {
+			char c = text.charAt(i);
+
+			if (c == '<') {
+				insideTag = true;  // Znacznik otwarcia tagu
+			} else if (c == '>') {
+				insideTag = false; // Znacznik zamknięcia tagu
+				continue;
+			}
+
+			// Jeśli nie jesteśmy wewnątrz tagu, zliczamy widoczne znaki
+			if (!insideTag) {
+				visibleLength++;
+
+				// Jeśli napotkamy spację, zapisujemy jej pozycję
+				if (c == ' ') {
+					lastSpace = i;
+				}
+			}
+
+			// Przerwij, jeśli osiągniemy maksymalną długość widocznego tekstu
+			if (visibleLength >= maxLineLength) {
+				// Ustaw breakPoint na ostatnią spację, jeśli jest, w przeciwnym razie podzielimy na maksymalną długość
+				breakPoint = (lastSpace != -1) ? lastSpace : i + 1;
+				break;
+			}
+		}
+
+		// Jeśli nie znaleźliśmy miejsca do przerwania, łamiemy na maksymalnej długości
+		if (breakPoint == 0) {
+			breakPoint = Math.min(text.length(), maxLineLength);
+		}
+
+		return breakPoint;
+	}
+
+	// Funkcja do przebudowania linii z otwartymi tagami
+	private static String rebuildLineWithTags(String lineFragment, Stack<String> openTags) {
+		StringBuilder rebuiltLine = new StringBuilder();
+
+		// Dodaj otwarte tagi na początku linii
+		for (String tag : openTags) {
+			rebuiltLine.append(tag);
+		}
+
+		// Dodaj rzeczywisty fragment linii
+		rebuiltLine.append(lineFragment);
+
+		return rebuiltLine.toString();
+	}
+
+	// Funkcja do aktualizacji otwartych tagów
+	private static void updateOpenTags(String line, Stack<String> openTags) {
+		String[] parts = line.split("(?=<)|(?<=>)"); // Dzielenie tekstu na fragmenty zawierające tagi
+
+		for (String part : parts) {
+			if (part.startsWith("<") && !part.startsWith("</")) {
+				// Jeśli zaczyna się od otwarcia tagu, dodaj do stosu
+				openTags.push(part);
+			} else if (part.startsWith("</")) {
+				// Jeśli to tag zamykający, znajdź odpowiadający otwarty tag i usuń go
+				String matchingOpenTag = findMatchingOpenTag(part, openTags);
+				if (matchingOpenTag != null) {
+					openTags.remove(matchingOpenTag);
+				}
+			}
+		}
+	}
+
+	// Funkcja do znajdowania pasującego otwartego tagu na podstawie zamkniętego tagu
+	private static String findMatchingOpenTag(String closeTag, Stack<String> openTags) {
+		// Usuwamy znacznik końcowy </ i szukamy odpowiadającego otwartego tagu
+		String tagName = closeTag.replace("</", "").replace(">", "").trim();
+
+		// Przeszukiwanie stosu od końca, aby znaleźć odpowiadający otwarty tag
+		for (int i = openTags.size() - 1; i >= 0; i--) {
+			String openTag = openTags.get(i);
+			if (openTag.startsWith("<" + tagName)) {
+				return openTag;
+			}
+		}
+		return null;
+	}
+	// Split lines with minimessage tags - END
 }
