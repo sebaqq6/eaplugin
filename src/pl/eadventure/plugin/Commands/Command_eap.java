@@ -194,6 +194,15 @@ public class Command_eap implements TabExecutor {
 				PunishmentSystem.reloadBans();
 				break;
 			}
+			case "reloadanns": {
+				if (sender instanceof Player) {
+					sender.sendMessage("Komenda dostępna tylko z konsoli.");
+					return true;
+				}
+				sender.sendMessage("Lista ogłoszeń została przeładowana.");
+				gVar.announceManager.load();
+				break;
+			}
 			case "syncplayedtime": {
 				if (sender instanceof Player) {
 					if (!sender.hasPermission("eadventureplugin.syncplayedtime")) {
