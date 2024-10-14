@@ -47,6 +47,7 @@ public class Command_eap implements TabExecutor {
 					"reloadgs",
 					"plist",
 					"reconnectdb",
+					"reloadanns",
 					"rcl");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}

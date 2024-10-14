@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.PlayerData;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AnnounceManager {
+	//TODO: ༺ ༻
 	Plugin plugin;
 	MySQLStorage storage;
 	List<Announce> announceList = new ArrayList<>();
@@ -29,8 +31,44 @@ public class AnnounceManager {
 	ChatInputCapture chatInputCapture;
 
 	//table: announcements
-	record Announce(int id, String authorName, Timestamp created, Timestamp expire, Timestamp lastViewed, String text) {
+	static class Announce {
 		static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		int id;
+		String authorName;
+		Timestamp created;
+
+		public String getAuthorName() {
+			return authorName;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public Timestamp getCreated() {
+			return created;
+		}
+
+		public Timestamp getExpire() {
+			return expire;
+		}
+
+		public Timestamp getLastViewed() {
+			return lastViewed;
+		}
+
+		Timestamp expire;
+		Timestamp lastViewed;
+		String text;
+
+		public Announce(int id, String authorName, Timestamp created, Timestamp expire, Timestamp lastViewed, String text) {
+			this.id = id;
+			this.authorName = authorName;
+			this.created = created;
+			this.expire = expire;
+			this.lastViewed = lastViewed;
+			this.text = text;
+		}
 
 		public String getExpireFormated() {
 			return sdf.format(expire);
@@ -38,6 +76,18 @@ public class AnnounceManager {
 
 		public String getCreatedFormated() {
 			return sdf.format(expire);
+		}
+
+		public String lastViewedFormated() {
+			return sdf.format(lastViewed);
+		}
+
+		public String getText() {
+			return text;
+		}
+
+		public void setText(String text) {
+			this.text = text;
 		}
 	}
 
@@ -54,7 +104,7 @@ public class AnnounceManager {
 	//load data from database
 	public void load() {
 		String sql = "SELECT " +
-				"announcements.id, nick AS author, created, expire, text " +
+				"announcements.id, nick AS author, created, expire, lastviewed, text " +
 				"FROM " +
 				"announcements " +
 				"LEFT JOIN players ON announcements.author=players.id " +
@@ -92,7 +142,6 @@ public class AnnounceManager {
 		boolean canManage = p.hasPermission("eadventureplugin.annuance.manage");
 		MagicGUI mainGui = MagicGUI.create(Utils.mm("<bold><gradient:#BF00FF:#7d00a7>Ogłoszenia</bold>"), 54);
 		mainGui.setAutoRemove(true);
-		String color = "#FFFFFF";
 		// Annuance list
 		int annInGUISlot = 0;
 		for (Announce ann : announceList) {
@@ -105,43 +154,109 @@ public class AnnounceManager {
 			for (String textLine : textLines) {
 				lore.add(Utils.mm("<!i><#FFFFFF>" + textLine));
 			}
-
+			String color = "#740DC6";
 			//lore.add(Utils.mm("<!i><#FFFFFF>" + ann.text));
-			lore.add(Utils.mm("<!i><#730088>Dodał:" + ann.authorName()));
-			lore.add(Utils.mm("<!i><#730088>Utworzono: " + ann.getCreatedFormated()));
-			lore.add(Utils.mm("<!i><#730088>Wygasa: " + ann.getExpireFormated()));
+			lore.add(Utils.mm(""));
+			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Dodał:</gradient> <gray><bold>" + ann.getAuthorName()));
+			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Ostatnio wyświetlono:</gradient> <gray><bold>" + ann.lastViewedFormated()));
+			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Utworzono:</gradient> <gray><bold>" + ann.getCreatedFormated()));
+			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Wygasa:</gradient> <gray><bold>" + ann.getExpireFormated()));
+			lore.add(Utils.mm(""));
+			lore.add(Utils.mm("<!i><bold><#56c61a>LPM <gray>- Wyświetl podgląd na czacie."));
+			lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+PPM <gray>- Usuń ogłoszenie."));
+			lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+LPM <gray>- Edytuj treść ogłoszenia."));
 
 			ItemStack annItem = Utils.itemWithDisplayName(ItemStack.of(Material.BLUE_BANNER), Utils.mm("<!i><bold><#999999>Ogłoszenie</bold>"), lore);
-			mainGui.setItem(annInGUISlot, annItem);
+			mainGui.setItem(annInGUISlot, annItem, ((player, gui, slot, type) -> {
+				if (type == ClickType.LEFT) {
+					player.sendMessage(Utils.mm(ann.text));
+				} else if (type == ClickType.SHIFT_RIGHT) {//Delete ann
+					if (announceList.contains(ann)) {
+						String sqlDelete = "DELETE FROM announcements WHERE id=" + ann.id;
+						storage.execute(sqlDelete);
+						announceList.remove(ann);
+						showMainMenuGUI(player);
+					}
+				} else if (type == ClickType.SHIFT_LEFT) {//Edit ann
+					player.sendMessage(Utils.mm("<gradient:#a500d3:#440057><strikethrough>-------------------------------------------------</gradient>"));
+					player.sendMessage(Utils.mm(ann.text));
+					List<Component> messages = new ArrayList<>();
+					messages.add(Utils.mm("<bold><#FF0000><underlined><click:SUGGEST_COMMAND:'" + ann.text + "'>✎ Kliknij tutaj aby edytować ✎"));
+					messages.add(Utils.mm("<#AAAAAA><bold>Lub wprowadź nową treść na czacie."));
+					messages.add(Utils.mm("<#AAAAAA><bold>Aby anulować wpisz: <#FF0000>anuluj"));
+					messages.add(Utils.mm("<#AAAAAA><bold>Aby zapisać wpisz: <#FF0000>zapisz"));
+					final String backup = ann.text;
+					chatInputCapture.receiveInput(player, messages, (playerInput, message) -> {
+						if (message.equalsIgnoreCase("anuluj")) {
+							ann.setText(backup);
+							showMainMenuGUI(playerInput);
+							return 1;
+						} else if (message.equalsIgnoreCase("zapisz")) {
+							String saveTextSql = "UPDATE announcements SET text=? WHERE id=?;";
+							ArrayList<Object> parameters = new ArrayList<>();
+							parameters.add(ann.getText());
+							parameters.add(ann.id);
+							storage.executeSafe(saveTextSql, parameters);
+							playerInput.sendMessage(Utils.mm("<#FF0000><bold>Zapisano:"));
+							playerInput.sendMessage(Utils.mm(ann.getText()));
+							return 1;
+						} else {
+							ann.setText(message);
+
+							playerInput.sendMessage("");
+							playerInput.sendMessage(Utils.mm(message));
+							playerInput.sendMessage("");
+							playerInput.sendMessage(Utils.mm("<#AAAAAA><bold>Aby anulować wpisz: <#FF0000>anuluj"));
+							playerInput.sendMessage(Utils.mm("<#AAAAAA><bold>Aby zapisać wpisz: <#FF0000>zapisz"));
+							return 0;
+						}
+					});
+				}
+			}));
 			annInGUISlot++;
 			if (annInGUISlot > 45) break;
 		}
 		//()//blokowanie kompilacji
+		// Pane GUI
+		mainGui.setItem(46, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		mainGui.setItem(47, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		mainGui.setItem(48, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		mainGui.setItem(50, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		mainGui.setItem(51, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		mainGui.setItem(52, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		mainGui.setItem(53, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
 		// Buttons
 		ItemStack buttonClose = Utils.itemWithDisplayName(hBlackX, Utils.mm("<!i><bold><#999999>Zamknij</#999999></bold>"), null);
 		mainGui.setItem(49, buttonClose, ((playerGui, gui, slot, type) -> {
 			mainGui.close(playerGui);
 		}));
 		ItemStack buttonAdd = Utils.itemWithDisplayName(hGreenPlus, Utils.mm("<!i><bold><#999999>Dodaj nowy wpis</#999999></bold>"), null);
-		mainGui.setItem(48, buttonAdd, ((playerGui, gui, slot, type) -> {
+		mainGui.setItem(45, buttonAdd, ((playerGui, gui, slot, type) -> {
 			mainGui.close(playerGui);
 			List<Component> messages = new ArrayList<>();
 			//Get annuance text
-			messages.add(Utils.mm("Wprowadź treść ogłoszenia na czacie."));
-			messages.add(Utils.mm("Możesz używać technologi MiniMessage"));
-			messages.add(Utils.mm("Aby anulować wpisz: anuluj"));
+			//<gradient:#730088:#FFFFFF>
+			messages.add(Utils.mm("<#AAAAAA><bold>Wprowadź treść ogłoszenia na czacie."));
+			messages.add(Utils.mm("<#AAAAAA><bold>Używaj formatu <#FF0000>" +
+					"<underlined><hover:show_text:'<color:#37ff00>Kliknij aby otworzyć narzędzie<br>do formatowania kodu.</color>'>" +
+					"<click:OPEN_URL:'https://webui.advntr.dev/'>MiniMessage</click>" +
+					"</hover></underlined>"));
+			messages.add(Utils.mm("<#AAAAAA><bold>Aby anulować wpisz: <#FF0000>anuluj"));
 			chatInputCapture.receiveInput(playerGui, messages, (playerInput, message) -> {
 				if (message.equalsIgnoreCase("anuluj")) {
 					showMainMenuGUI(playerInput);
 					return 1;
 				}
 				String announceInput = message;
+				p.sendMessage(Utils.mm("<#00FF00><bold><underlined>Podgląd ogłoszenia:"));
+				p.sendMessage(Utils.mm(announceInput));
 				// Get end date
 				messages.clear();
+
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-				messages.add(Utils.mm("Wprowadź datę i godzinie zakończenia."));
-				messages.add(Utils.mm("Użyj formatu: DD-MM-RRRR GG:MM"));
-				messages.add(Utils.mm("Aby anulować wpisz: anuluj"));
+				messages.add(Utils.mm("<#AAAAAA><bold>Wprowadź datę i godzinę zakończenia."));
+				messages.add(Utils.mm("<#AAAAAA><bold>Użyj formatu: <#FF0000>DD-MM-RRRR GG:MM"));
+				messages.add(Utils.mm("<#AAAAAA><bold>Aby anulować wpisz: <#FF0000>anuluj"));
 				print.debug("New capture");
 				chatInputCapture.receiveInput(playerGui, messages, (playerInput2, message2) -> {
 					if (message2.equalsIgnoreCase("anuluj")) {
@@ -163,12 +278,11 @@ public class AnnounceManager {
 					// Insert to database
 
 					// Show summary
-					p.sendMessage("Podsumowanie:");
-					p.sendMessage(Utils.mm(announceInput));
-					p.sendMessage("Termin ważności: " + dateInput);
+					///p.sendMessage("Podsumowanie:");
+					//p.sendMessage(Utils.mm(announceInput));
+					//p.sendMessage("Termin ważności: " + dateInput);
 					// Show main menu
 					//showMainMenuGUI(playerInput);
-					print.debug("Zapytanie?");
 					ArrayList<Object> parameters = new ArrayList<>();
 					PlayerData pd = PlayerData.get(playerInput2);
 					String insertSql = "INSERT INTO announcements (author, created, expire, text) VALUES (?, ?, ?, ?);";

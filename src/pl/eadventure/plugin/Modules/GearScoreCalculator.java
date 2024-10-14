@@ -110,6 +110,7 @@ public class GearScoreCalculator {
 						isCustom = true;
 						gearScore += mpCustomItem.get(eiItemID);
 						print.debug("CustomDetect: " + eiItemID);
+						print.debug(item.toString());
 					}
 				}
 			}
@@ -148,8 +149,8 @@ public class GearScoreCalculator {
 					double level = attribute.getValue().getAmount();
 					gearScore += (int) (Math.round(level) * getScoreForAttribute(attribute));
 					//print.debug(attribute.getValue().getKey().value());
+					//()
 
-					//print.debug(finalAttribute + " (lvl: " + level + ")");
 					/*YamlConfiguration config = YamlConfiguration.loadConfiguration(fileConfigAttr);
 					config.set(finalAttribute, 10);
 					Utils.saveConfig(fileConfigAttr, config);*/
@@ -166,7 +167,7 @@ public class GearScoreCalculator {
 		}
 		//add to cache
 		this.gearScore = gearScore;
-//		cacheGsValues.put(item.toString(), gearScore);
+		cacheGsValues.put(item.toString(), gearScore);
 //		print.debug("PUT TO CACHE");
 //		print.debug("---------------" + cacheGsValues.size() + "-----------------");
 //		int cacheCounter = 0;
@@ -189,9 +190,12 @@ public class GearScoreCalculator {
 
 	private int getScoreForAttribute(Map.Entry<Attribute, AttributeModifier> attribute) {
 		String finalAttribute = attribute.getKey().getKey().getKey().replaceAll("generic.", "");
+		print.debug("finalAttribute: " + finalAttribute);
 		if (attribute.getValue().getKey().value().contains("base")) return 0;
 		if (mpAttr.containsKey(finalAttribute)) {
-			return mpAttr.get(finalAttribute);
+			int level = mpAttr.get(finalAttribute);
+			print.debug(finalAttribute + " (lvl: " + level + ")");
+			return level;
 		}
 		return 0;
 	}
@@ -206,7 +210,7 @@ public class GearScoreCalculator {
 		return component;
 	}
 
-	public String getGsValueColored(int gs) {
+	/*public String getGsValueColored(int gs) {
 		if (cacheColoredGs.containsKey(gs)) {
 			return cacheColoredGs.get(gs);
 		}
@@ -231,8 +235,107 @@ public class GearScoreCalculator {
 		String result = "<!i><#" + finalColor + ">" + gs + "</#" + finalColor + ">";
 		cacheColoredGs.put(gs, result);
 		return result;
+	}*/
+
+	public String getGsValueColored(int gs) {
+		if (cacheColoredGs.containsKey(gs)) {
+			return cacheColoredGs.get(gs);
+		}
+		gs = Math.max(0, Math.min(gs, gsValueMax));
+
+		// Podział na 7 przedziałów
+		double ratio = (double) gs / gsValueMax;
+		int segment = (int) (ratio * 7);  // 7 segmentów
+		double segmentRatio = (ratio * 7) - segment;  // Stosunek wewnątrz segmentu
+
+		int startR = 0, startG = 0, startB = 0;
+		int endR = 0, endG = 0, endB = 0;
+
+		// Definiujemy kolory startowe i końcowe dla każdego segmentu
+		switch (segment) {
+			case 0: // Szary -> Biały
+				startR = Integer.parseInt("D3D3D3".substring(0, 2), 16); // szary
+				startG = Integer.parseInt("D3D3D3".substring(2, 4), 16);
+				startB = Integer.parseInt("D3D3D3".substring(4, 6), 16);
+
+				endR = Integer.parseInt("FFFFFF".substring(0, 2), 16); // biały
+				endG = Integer.parseInt("FFFFFF".substring(2, 4), 16);
+				endB = Integer.parseInt("FFFFFF".substring(4, 6), 16);
+				break;
+			case 1: // Biały -> Zielony
+				startR = Integer.parseInt("FFFFFF".substring(0, 2), 16); // biały
+				startG = Integer.parseInt("FFFFFF".substring(2, 4), 16);
+				startB = Integer.parseInt("FFFFFF".substring(4, 6), 16);
+
+				endR = Integer.parseInt("00FF00".substring(0, 2), 16); // zielony
+				endG = Integer.parseInt("00FF00".substring(2, 4), 16);
+				endB = Integer.parseInt("00FF00".substring(4, 6), 16);
+				break;
+			case 2: // Zielony -> Błękitny
+				startR = Integer.parseInt("00FF00".substring(0, 2), 16); // zielony
+				startG = Integer.parseInt("00FF00".substring(2, 4), 16);
+				startB = Integer.parseInt("00FF00".substring(4, 6), 16);
+
+				endR = Integer.parseInt("00FFFF".substring(0, 2), 16); // błękitny
+				endG = Integer.parseInt("00FFFF".substring(2, 4), 16);
+				endB = Integer.parseInt("00FFFF".substring(4, 6), 16);
+				break;
+			case 3: // Błękitny -> Żółty
+				startR = Integer.parseInt("00FFFF".substring(0, 2), 16); // błękitny
+				startG = Integer.parseInt("00FFFF".substring(2, 4), 16);
+				startB = Integer.parseInt("00FFFF".substring(4, 6), 16);
+
+				endR = Integer.parseInt("FFFF00".substring(0, 2), 16); // żółty
+				endG = Integer.parseInt("FFFF00".substring(2, 4), 16);
+				endB = Integer.parseInt("FFFF00".substring(4, 6), 16);
+				break;
+			case 4: // Żółty -> Pomarańczowy
+				startR = Integer.parseInt("FFFF00".substring(0, 2), 16); // żółty
+				startG = Integer.parseInt("FFFF00".substring(2, 4), 16);
+				startB = Integer.parseInt("FFFF00".substring(4, 6), 16);
+
+				endR = Integer.parseInt("FFA500".substring(0, 2), 16); // pomarańczowy
+				endG = Integer.parseInt("FFA500".substring(2, 4), 16);
+				endB = Integer.parseInt("FFA500".substring(4, 6), 16);
+				break;
+			case 5: // Pomarańczowy -> Czerwony
+				startR = Integer.parseInt("FFA500".substring(0, 2), 16); // pomarańczowy
+				startG = Integer.parseInt("FFA500".substring(2, 4), 16);
+				startB = Integer.parseInt("FFA500".substring(4, 6), 16);
+
+				endR = Integer.parseInt("FF0000".substring(0, 2), 16); // czerwony
+				endG = Integer.parseInt("FF0000".substring(2, 4), 16);
+				endB = Integer.parseInt("FF0000".substring(4, 6), 16);
+				break;
+			default: // Czerwony -> Fioletowy
+				startR = Integer.parseInt("FF0000".substring(0, 2), 16); // czerwony
+				startG = Integer.parseInt("FF0000".substring(2, 4), 16);
+				startB = Integer.parseInt("FF0000".substring(4, 6), 16);
+
+				endR = Integer.parseInt("800080".substring(0, 2), 16); // fioletowy
+				endG = Integer.parseInt("800080".substring(2, 4), 16);
+				endB = Integer.parseInt("800080".substring(4, 6), 16);
+				break;
+		}
+
+		// Interpolacja w wybranym segmencie
+		int finalR = (int) (startR + (endR - startR) * segmentRatio);
+		int finalG = (int) (startG + (endG - startG) * segmentRatio);
+		int finalB = (int) (startB + (endB - startB) * segmentRatio);
+
+		// Upewniamy się, że wartości nie wychodzą poza zakres (0-255)
+		finalR = Math.min(255, Math.max(0, finalR));
+		finalG = Math.min(255, Math.max(0, finalG));
+		finalB = Math.min(255, Math.max(0, finalB));
+
+		String finalColor = String.format("%02X%02X%02X", finalR, finalG, finalB);
+
+		String result = "<!i><#" + finalColor + ">" + gs + "</#" + finalColor + ">";
+		cacheColoredGs.put(gs, result);
+		return result;
 	}
 
+	//--------------------------------------------------------------------------------------------------
 	private Map<String, Object> getDefaultAttributes(String itemName) {
 		Map<String, Object> attributes = new HashMap<>();
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(fileItemsDefault);
