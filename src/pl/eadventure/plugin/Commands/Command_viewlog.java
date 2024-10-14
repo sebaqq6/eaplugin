@@ -19,7 +19,7 @@ public class Command_viewlog implements CommandExecutor {
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 		Player player = null;
-		if(sender instanceof Player p) {
+		if (sender instanceof Player p) {
 			player = p;
 		}
 		Player finalPlayer = player;
@@ -30,7 +30,7 @@ public class Command_viewlog implements CommandExecutor {
 
 				String playerName;
 				String ip;
-				if(finalPlayer != null) {
+				if (finalPlayer != null) {
 					playerName = finalPlayer.getName();
 					ip = finalPlayer.getAddress().getAddress().getHostAddress();
 				} else {
@@ -39,8 +39,8 @@ public class Command_viewlog implements CommandExecutor {
 				}
 
 
-				int expire = (int) Utils.getUnixTimestamp() + 60 * 30;
-				if(finalPlayer == null) expire = (int) Utils.getUnixTimestamp() + 60 * 2;
+				int expire = (int) Utils.getUnixTimestamp() + 60 * 60 * 1;//1 hour
+				if (finalPlayer == null) expire = (int) Utils.getUnixTimestamp() + 60 * 2;
 				//remove other sessions
 				String sqlRemoveSessions = "DELETE FROM logviewersessions WHERE playerName = ?;";
 				ArrayList<Object> sqlParams = new ArrayList<>();
@@ -57,7 +57,7 @@ public class Command_viewlog implements CommandExecutor {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if(finalPlayer != null) {
+						if (finalPlayer != null) {
 							PlayerUtils.sendColorMessage(finalPlayer, "&d&lTwoja sesja dostępna jest pod adresem:");
 							String cmdTellRaw = String.format("tellraw %s {\"text\":\"https://logs.eadventure.pl/?session=%s\",\"bold\":true,\"underlined\":true,\"color\":\"dark_purple\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://logs.eadventure.pl/?session=%s\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[{\"text\":\"Kliknij aby otworzyć link. Sesja trwa maksymalnie 30 minut.\",\"color\":\"dark_purple\"}]}}", finalPlayer.getName(), session, session);
 							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdTellRaw);
