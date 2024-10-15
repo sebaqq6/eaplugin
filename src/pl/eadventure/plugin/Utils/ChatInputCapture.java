@@ -53,11 +53,17 @@ public class ChatInputCapture {
 	}
 
 	public void sendInfoMessages(Player player) {
-		player.sendMessage(Utils.mm("<gradient:#a500d3:#440057><strikethrough>-------------------------------------------------</gradient>"));
+		player.sendMessage(Utils.mm("" +
+				"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
+				"-------------------------------------------------" +
+				"</strikethrough><bold>༻</bold></gradient>"));
 		for (Component infoMessage : infoMessages.get(player)) {
 			player.sendMessage(infoMessage);
 		}
-		player.sendMessage(Utils.mm("<gradient:#a500d3:#440057><strikethrough>-------------------------------------------------</gradient>"));
+		player.sendMessage(Utils.mm("" +
+				"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
+				"-------------------------------------------------" +
+				"</strikethrough><bold>༻</bold></gradient>"));
 	}
 
 	public class ChatInputCaptureListeners implements Listener {

@@ -2,11 +2,15 @@ package pl.eadventure.plugin.Modules;
 
 import com.comphenix.protocol.PacketType;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.*;
 import pl.eadventure.plugin.gVar;
@@ -17,12 +21,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class AnnounceManager {
-	//TODO: ༺ ༻
+	//TODO: ༺ ༻ ❌ ✔
 	Plugin plugin;
 	MySQLStorage storage;
 	List<Announce> announceList = new ArrayList<>();
@@ -36,6 +38,18 @@ public class AnnounceManager {
 		int id;
 		String authorName;
 		Timestamp created;
+		Timestamp expire;
+		Timestamp lastViewed;
+		String text;
+
+		public Announce(int id, String authorName, Timestamp created, Timestamp expire, Timestamp lastViewed, String text) {
+			this.id = id;
+			this.authorName = authorName;
+			this.created = created;
+			this.expire = expire;
+			this.lastViewed = lastViewed;
+			this.text = text;
+		}
 
 		public String getAuthorName() {
 			return authorName;
@@ -57,19 +71,6 @@ public class AnnounceManager {
 			return lastViewed;
 		}
 
-		Timestamp expire;
-		Timestamp lastViewed;
-		String text;
-
-		public Announce(int id, String authorName, Timestamp created, Timestamp expire, Timestamp lastViewed, String text) {
-			this.id = id;
-			this.authorName = authorName;
-			this.created = created;
-			this.expire = expire;
-			this.lastViewed = lastViewed;
-			this.text = text;
-		}
-
 		public String getExpireFormated() {
 			return sdf.format(expire);
 		}
@@ -89,6 +90,10 @@ public class AnnounceManager {
 		public void setText(String text) {
 			this.text = text;
 		}
+
+		public void setLastViewed(Timestamp lastViewed) {
+			this.lastViewed = lastViewed;
+		}
 	}
 
 	//constructor
@@ -98,6 +103,12 @@ public class AnnounceManager {
 		hGreenPlus = gVar.customItems.get("hGreenPlus");
 		hBlackX = gVar.customItems.get("hBlackX");
 		chatInputCapture = new ChatInputCapture(plugin);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				sendBroadcast();
+			}
+		}.runTaskTimerAsynchronously(plugin, 20L, 20L * 60L * 30L);
 		load();
 	}
 
@@ -133,18 +144,22 @@ public class AnnounceManager {
 					text = (String) rows.get(i).get("text");
 					announceList.add(new Announce(id, author, created, expire, lastViewed, text));
 				}
+				sendBroadcast();
 			}
 		});
+
 	}
 
 	//show main menu
 	public void showMainMenuGUI(Player p) {
-		boolean canManage = p.hasPermission("eadventureplugin.annuance.manage");
+		final boolean canManage = p.hasPermission("eadventureplugin.annuance.manage");
+		//final boolean canManage = false;
 		MagicGUI mainGui = MagicGUI.create(Utils.mm("<bold><gradient:#BF00FF:#7d00a7>Ogłoszenia</bold>"), 54);
 		mainGui.setAutoRemove(true);
 		// Annuance list
 		int annInGUISlot = 0;
 		for (Announce ann : announceList) {
+			if (ann.getExpire().before(Timestamp.from(Instant.now()))) continue;// Don't show expired anns
 			ArrayList<Component> lore = new ArrayList<>();
 			String text = ann.text;
 			final int maxLineLength = 40;
@@ -161,13 +176,17 @@ public class AnnounceManager {
 			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Ostatnio wyświetlono:</gradient> <gray><bold>" + ann.lastViewedFormated()));
 			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Utworzono:</gradient> <gray><bold>" + ann.getCreatedFormated()));
 			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Wygasa:</gradient> <gray><bold>" + ann.getExpireFormated()));
-			lore.add(Utils.mm(""));
-			lore.add(Utils.mm("<!i><bold><#56c61a>LPM <gray>- Wyświetl podgląd na czacie."));
-			lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+PPM <gray>- Usuń ogłoszenie."));
-			lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+LPM <gray>- Edytuj treść ogłoszenia."));
+			if (canManage) {
+				lore.add(Utils.mm(""));
+				lore.add(Utils.mm("<!i><bold><#56c61a>LPM <gray>- Wyświetl podgląd na czacie."));
+				lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+PPM <gray>- Usuń ogłoszenie."));
+				lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+LPM <gray>- Edytuj treść ogłoszenia."));
+			}
+
 
 			ItemStack annItem = Utils.itemWithDisplayName(ItemStack.of(Material.BLUE_BANNER), Utils.mm("<!i><bold><#999999>Ogłoszenie</bold>"), lore);
 			mainGui.setItem(annInGUISlot, annItem, ((player, gui, slot, type) -> {
+				if (!canManage) return;
 				if (type == ClickType.LEFT) {
 					player.sendMessage(Utils.mm(ann.text));
 				} else if (type == ClickType.SHIFT_RIGHT) {//Delete ann
@@ -178,7 +197,7 @@ public class AnnounceManager {
 						showMainMenuGUI(player);
 					}
 				} else if (type == ClickType.SHIFT_LEFT) {//Edit ann
-					player.sendMessage(Utils.mm("<gradient:#a500d3:#440057><strikethrough>-------------------------------------------------</gradient>"));
+					player.sendMessage(Utils.mm("<gradient:#a500d3:#440057><strikethrough>༺-------------------------------------------------༻</gradient>"));
 					player.sendMessage(Utils.mm(ann.text));
 					List<Component> messages = new ArrayList<>();
 					messages.add(Utils.mm("<bold><#FF0000><underlined><click:SUGGEST_COMMAND:'" + ann.text + "'>✎ Kliknij tutaj aby edytować ✎"));
@@ -285,22 +304,58 @@ public class AnnounceManager {
 					//showMainMenuGUI(playerInput);
 					ArrayList<Object> parameters = new ArrayList<>();
 					PlayerData pd = PlayerData.get(playerInput2);
-					String insertSql = "INSERT INTO announcements (author, created, expire, text) VALUES (?, ?, ?, ?);";
+					String insertSql = "INSERT INTO announcements (author, created, expire, lastviewed, text) VALUES (?, ?, ?, ?, ?);";
 					parameters.add(pd.dbid);
 					Timestamp created = Timestamp.from(Instant.now());
 					parameters.add(created);
 					Instant instantExpire = date.atZone(ZoneId.systemDefault()).toInstant();
 					Timestamp expire = Timestamp.from(instantExpire);
 					parameters.add(expire);
+					parameters.add(created);
 					parameters.add(announceInput);
 					int insertId = storage.executeGetInsertID(insertSql, parameters);
 					Announce ann = new Announce(insertId, playerInput2.getName(), created, expire, created, announceInput);
 					announceList.add(ann);
+					showMainMenuGUI(playerInput2);
 					return 1;
 				});
 				return 0;
 			});
 		}));
+
+		if (!canManage) {
+			mainGui.setItem(45, ItemStack.of(Material.BLACK_STAINED_GLASS_PANE));
+		}
 		mainGui.open(p);
+	}
+
+	// Send broadcast
+	private void sendBroadcast() {
+		Optional<Announce> oldestAnnounce = announceList.stream()
+				.filter(a -> a.getLastViewed() != null)
+				.filter(a -> a.getExpire().after(Timestamp.from(Instant.now())))
+				.min(Comparator.comparing(Announce::getLastViewed));
+		if (oldestAnnounce.isPresent()) {
+			Announce announce = oldestAnnounce.get();
+			announce.setLastViewed(Timestamp.from(Instant.now()));
+			String saveTextSql = "UPDATE announcements SET lastviewed=? WHERE id=?;";
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(announce.getLastViewed());
+			parameters.add(announce.id);
+			storage.executeSafe(saveTextSql, parameters);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.sendMessage(Utils.mm("" +
+						"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
+						"-------------------------------------------------" +
+						"</strikethrough><bold>༻</bold></gradient>"));
+				player.sendMessage(Utils.mm(announce.getText()));
+				Location playerLocation = player.getLocation();
+				player.playSound(playerLocation, Sound.BLOCK_NOTE_BLOCK_COW_BELL, 1.0f, 1.5f);
+				player.sendMessage(Utils.mm("" +
+						"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
+						"-------------------------------------------------" +
+						"</strikethrough><bold>༻</bold></gradient>"));
+			}
+		}
 	}
 }
