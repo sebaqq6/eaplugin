@@ -106,7 +106,7 @@ public class ProtocolLibAPI {
 									while (iterator.hasNext()) {
 										Component loreLine = iterator.next();
 										Pattern pattern = Pattern.compile("\\{gs\\}");
-										Component newLore = loreLine.replaceText(builder -> builder.match(pattern).replacement(Utils.mm(gsc.getGsValueColored(gs))));
+										Component newLore = loreLine.replaceText(builder -> builder.match(pattern).replacement(Utils.mm("<!i>" + gsc.getGsValueColored(gs))));
 										iterator.set(newLore);
 									}
 									meta.lore(loreLines);
@@ -141,7 +141,7 @@ public class ProtocolLibAPI {
 									while (iterator.hasNext()) {
 										Component loreLine = iterator.next();
 										Pattern pattern = Pattern.compile("\\{gs\\}");
-										Component newLore = loreLine.replaceText(builder -> builder.match(pattern).replacement(Utils.mm(gsc.getGsValueColored(gs))));
+										Component newLore = loreLine.replaceText(builder -> builder.match(pattern).replacement(Utils.mm("<!i>" + gsc.getGsValueColored(gs))));
 										iterator.set(newLore);
 									}
 									meta.lore(loreLines);

@@ -8,19 +8,21 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.yaml.snakeyaml.Yaml;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
 
 public class GearScoreCalculator {
 	static File fileConfig = new File("plugins/EternalAdventurePlugin/gearscore/config.yml");
@@ -74,6 +76,55 @@ public class GearScoreCalculator {
 		print.ok("Wczytano config GearScoreCalculator!");
 	}
 
+	public static void convertConfig() throws IOException {
+		print.ok("Konwertowanie...");
+
+		File from = new File("plugins/EternalAdventurePlugin/gearscore/customItems.yml");
+		File convert = new File("plugins/EternalAdventurePlugin/gearscore/customItems_convert.yml");
+
+		if (!convert.exists()) {
+			List<String> lines = Files.readAllLines(from.toPath());
+			BufferedWriter writer = Files.newBufferedWriter(convert.toPath());
+
+			String lastKey = null;
+			StringBuilder currentComments = new StringBuilder();
+
+			for (String line : lines) {
+				line = line.trim();
+				if (line.startsWith("#")) {
+					// Dodajemy komentarze do bufora
+					currentComments.append(line).append("\n");
+				} else if (!line.isEmpty() && line.contains(":")) {
+					// Odczytujemy klucz i wartość
+					String[] parts = line.split(":");
+					lastKey = parts[0].trim();
+					String value = parts[1].trim();
+
+					// Zapisujemy komentarze, jeśli istnieją
+					if (currentComments.length() > 0) {
+						writer.write(currentComments.toString());
+						currentComments.setLength(0); // Resetujemy komentarze
+					}
+
+					// Zapisujemy klucz w nowym formacie
+					writer.write(lastKey + ":");
+					writer.newLine();
+
+					// Zapisujemy wartość 'gs'
+					writer.write("  gs: " + value);
+					writer.newLine();
+
+					// Zapisujemy wartość 'type'
+					writer.write("  type: default");
+					writer.newLine();
+				}
+			}
+
+			writer.close();
+			print.ok("Konwersja zakończona");
+		}
+	}
+
 	static private void loadMultipliers(File file, Map<String, Integer> map) {
 		map.clear(); //clear data when new data is load
 		if (!file.exists()) {
@@ -83,8 +134,16 @@ public class GearScoreCalculator {
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		Set<String> keys = config.getKeys(false);
 		for (String key : keys) {
-			int multiplier = config.getInt(key);
-			map.put(key, multiplier);
+			if (file.getName().equalsIgnoreCase("customItems.yml") || file.getName().equalsIgnoreCase("stockItems.yml")) {
+				int multiplier = config.getInt(key + ".gs");
+				map.put(key, multiplier);
+				//print.okRed(key + " == " + multiplier);
+			} else {
+				int multiplier = config.getInt(key);
+				map.put(key, multiplier);
+			}
+
+
 			//print.debug(String.format("load %s mp: %d", key, multiplier));
 		}
 	}
@@ -236,15 +295,18 @@ public class GearScoreCalculator {
 		cacheColoredGs.put(gs, result);
 		return result;
 	}*/
-
 	public String getGsValueColored(int gs) {
+		return getGsValueColored(gs, gsValueMax);
+	}
+
+	public String getGsValueColored(int gs, int maxGs) {
 		if (cacheColoredGs.containsKey(gs)) {
 			return cacheColoredGs.get(gs);
-		}
-		gs = Math.max(0, Math.min(gs, gsValueMax));
+		}//TODO fix cache
+		gs = Math.max(0, Math.min(gs, maxGs));
 
 		// Podział na 7 przedziałów
-		double ratio = (double) gs / gsValueMax;
+		double ratio = (double) gs / maxGs;
 		int segment = (int) (ratio * 7);  // 7 segmentów
 		double segmentRatio = (ratio * 7) - segment;  // Stosunek wewnątrz segmentu
 
@@ -330,7 +392,7 @@ public class GearScoreCalculator {
 
 		String finalColor = String.format("%02X%02X%02X", finalR, finalG, finalB);
 
-		String result = "<!i><#" + finalColor + ">" + gs + "</#" + finalColor + ">";
+		String result = "<#" + finalColor + ">" + gs + "</#" + finalColor + ">";
 		cacheColoredGs.put(gs, result);
 		return result;
 	}
@@ -361,4 +423,23 @@ public class GearScoreCalculator {
 		return attributes;
 	}
 
+	//------------------------------------------------------------------PLAYER GS CALCULATOR
+	public static String getPlayerGearScore(Player player) {
+		//Scan used slots
+		ItemStack[] armorContents = player.getInventory().getArmorContents();
+		int armorGs = 0;
+		//player.sendMessage("Start: ");
+		GearScoreCalculator gsc = new GearScoreCalculator(null);
+		for (ItemStack armor : armorContents) {
+			if (armor == null) continue;
+			//armor.getType().is
+			//player.sendMessage("armor: " + armor);
+			gsc = new GearScoreCalculator(armor);
+			armorGs += gsc.calcGearScore();
+		}
+		//Scan offhand
+		//Scan main hand
+		int totalGs = armorGs;
+		return String.valueOf(gsc.getGsValueColored(totalGs, 3000));
+	}
 }

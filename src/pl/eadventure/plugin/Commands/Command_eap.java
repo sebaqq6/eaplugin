@@ -25,6 +25,7 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,10 +141,7 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
-				if (sender instanceof Player player) {
-					PlayerData pd = PlayerData.get(player);
-					sender.sendMessage(String.valueOf(pd.breakBlocksCount));
-				}
+
 				break;
 			}
 			case "givemoney": {

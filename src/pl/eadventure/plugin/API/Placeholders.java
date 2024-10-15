@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Modules.TopTimePlayerPlayed;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
@@ -201,7 +202,7 @@ public class Placeholders extends PlaceholderExpansion {
 		// gs
 		else if (params.equalsIgnoreCase("gs")) {
 			if (player != null) {
-				return "<#FF0000>1234";
+				return GearScoreCalculator.getPlayerGearScore(player);
 			} else return "0";
 		}
 		// breakblocks
