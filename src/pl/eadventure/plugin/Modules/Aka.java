@@ -61,10 +61,13 @@ public class Aka {
 					akaInfo = String.format("<gray><bold>[<#FF0000>MULTIKONTO</#FF0000>]</bold> <#00FF00><bold>%s</bold></#00FF00> aka. <#FF0000><i>%s</i></#FF0000></gray> " +
 									"<underlined><#00AA00><hover:show_text:'<#00AA00><i>%s</i></#00AA00>'>(%d więcej)</hover></#00AA00></underlined>",
 							playerName, joiner.toString(), remainingPlayersList, remainingAccounts);
+					Bukkit.getConsoleSender().sendMessage(Utils.mm(akaInfo + " <#00AA00><i>[" + remainingPlayersList + "]</i></#00AA00>"));
 				} else {
 					akaInfo = String.format("<gray><bold>[<#FF0000>MULTIKONTO</#FF0000>]</bold> <#00FF00><bold>%s</bold></#00FF00> aka. <#FF0000><i>%s</i></#FF0000></gray>",
 							playerName, joiner.toString());
+					Bukkit.getConsoleSender().sendMessage(Utils.mm(akaInfo));
 				}
+
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					if (player.hasPermission("eadventureplugin.showaka")) {
 						player.sendMessage(Utils.mm(akaInfo));

@@ -59,7 +59,7 @@ public class playerJoinEvent implements Listener {
 								if (brandLimiter.containsKey(clientBrand)) {
 									Timestamp lastUsed = brandLimiter.get(clientBrand);
 									long timeDifference = now.getTime() - lastUsed.getTime(); // różnica w milisekundach
-									print.info("Time diff: " + timeDifference);
+									//print.info("Time diff: " + timeDifference);
 									// Sprawdzamy, czy czas od ostatniego użycia przekracza 1 minutę
 									if (timeDifference < 60000) { // 60000 ms = 1 minuta
 										// Gracz próbuje dołączyć zbyt szybko
