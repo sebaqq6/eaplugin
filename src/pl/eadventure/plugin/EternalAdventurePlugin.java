@@ -162,6 +162,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new playerBlockBreakEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerPickupItemEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerInventoryOpen(), this);
+		getServer().getPluginManager().registerEvents(new onProjectileLaunchEvent(), this);
 
 		//CHANNEL FOR VELCITY
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "velocity:relay");
@@ -222,6 +223,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		leavesDecayEvent.initCleanupBuffer();
 		RegionCommandLooper.load(this);
 		GearScoreCalculator.loadConfig();
+		ArrowFix.run(this);
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();
 		gVar.colorIssueResolverIA.loadDataFromConfig();
