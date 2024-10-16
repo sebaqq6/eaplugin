@@ -19,10 +19,7 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.*;
 import pl.eadventure.plugin.gVar;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class HomesInterface {
 	//---------------------------------------------------variables
@@ -792,7 +789,13 @@ public class HomesInterface {
 	}
 
 	//----------------------------------------------------------------------teleport to cuboid by name
+	private static final HashMap<Player, Boolean> teleportLock = new HashMap<>();
+
 	public boolean teleportToCuboidByName(Player p, String cubName) {
+		if (teleportLock.containsKey(p)) {
+			PlayerUtils.sendColorMessage(p, "&cJesteś już w trakcie teleportacji do działki.");
+			return true;
+		}
 		for (PSRegion cuboid : allCuboids) {
 			String cuboidName = cuboid.getName() == null ? cuboid.getId() : cuboid.getName();
 			if (!cuboidName.equalsIgnoreCase(cubName)) continue;
@@ -807,22 +810,47 @@ public class HomesInterface {
 	}
 
 	//------------------------------------------------------------------------better safe teleport to cuboid
+
+
 	public void teleportSafeToCuboid(Player p, PSRegion cuboid) {
-		Location posHome = cuboid.getHome();
-		Material firstBlock = posHome.getBlock().getType();
-		Location posSecondBlock = posHome.clone();
-		posSecondBlock.setY(posSecondBlock.getY() + 1);
-		Material secondBlock = posSecondBlock.getBlock().getType();
-		if (firstBlock.isAir() && secondBlock.isAir()) { //teleport is safe
-			p.teleport(posHome);
-		} else {
-			Location safePos = Utils.findFreeAirBlockAbove(posHome);
-			if (safePos == null) {//if we cant find safe pos, go to unsafe pos xD
-				p.teleport(posHome);
-			} else {
-				p.teleport(safePos);
-			}
+		if (teleportLock.containsKey(p)) {
+			return;
 		}
+		teleportLock.put(p, true);
+		Location beforeTpLocation = p.getLocation();
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (teleportLock.containsKey(p)) {
+					teleportLock.remove(p);
+					Location afterTpLocation = p.getLocation();
+					//Player moved?
+					if (afterTpLocation.getX() != beforeTpLocation.getX() ||
+							afterTpLocation.getY() != beforeTpLocation.getY() ||
+							afterTpLocation.getZ() != beforeTpLocation.getZ()) {
+						p.sendMessage(Utils.mm("<bold><red>Teleportacja przerwana - poruszyłeś/aś się.</red></bold>"));
+						return;
+					}
+					//player not moved
+					Location posHome = cuboid.getHome();
+					Material firstBlock = posHome.getBlock().getType();
+					Location posSecondBlock = posHome.clone();
+					posSecondBlock.setY(posSecondBlock.getY() + 1);
+					Material secondBlock = posSecondBlock.getBlock().getType();
+					if (firstBlock.isAir() && secondBlock.isAir()) { //teleport is safe
+						p.teleport(posHome);
+					} else {
+						Location safePos = Utils.findFreeAirBlockAbove(posHome);
+						if (safePos == null) {//if we cant find safe pos, go to unsafe pos xD
+							p.teleport(posHome);
+						} else {
+							p.teleport(safePos);
+						}
+					}
+				}
+			}
+		}.runTaskLater(staticPlugin, 20L * 3L);
 	}
 
 	//------------------------------------------------------------------------get cuboid size
