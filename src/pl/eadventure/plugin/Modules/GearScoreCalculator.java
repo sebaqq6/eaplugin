@@ -42,6 +42,7 @@ public class GearScoreCalculator {
 	static String gsValueColorStart = null;
 	static String gsValueColorEnd = null;
 	static int gsValueMax = 1000;
+	static int gsValueMaxPlayer = 5000;
 
 	static Map<String, Integer> cacheGsValues = new HashMap<>();
 	static Map<Integer, Component> cacheFormatedStock = new HashMap<>();
@@ -70,12 +71,14 @@ public class GearScoreCalculator {
 			config.set("gsValueColorStart", "#99FF00");
 			config.set("gsValueColorEnd", "#FF0000");
 			config.set("gsValueMax", 1000);
+			config.set("gsValueMaxPlayer", 5000);
 			Utils.saveConfig(fileConfig, config);
 		}
 		gsTitleForStocks = config.getString("gsTitleForStocks");
 		gsValueColorStart = config.getString("gsValueColorStart");
 		gsValueColorEnd = config.getString("gsValueColorEnd");
 		gsValueMax = config.getInt("gsValueMax");
+		gsValueMaxPlayer = config.getInt("gsValueMaxPlayer");
 		print.ok("Wczytano config GearScoreCalculator!");
 	}
 
@@ -531,8 +534,8 @@ public class GearScoreCalculator {
 			return cachePlayerGs.get(totalGs);
 		}
 		//print.okRed("cachePlayerGs.containsKey(totalGs)");
-		String result = String.valueOf(gsc.getGsValueColored(totalGs, 5000));
-		print.ok(result);
+		String result = String.valueOf(gsc.getGsValueColored(totalGs, gsValueMaxPlayer));
+		//print.ok(result);
 		cachePlayerGs.put(totalGs, result);
 		return result;
 	}
