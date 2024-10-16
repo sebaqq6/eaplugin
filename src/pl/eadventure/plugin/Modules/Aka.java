@@ -22,7 +22,6 @@ public class Aka {
 				"JOIN players p2 ON p1.ip = p2.ip " +
 				"WHERE p1.nick = ? " +
 				"AND p2.nick != ?;";
-		print.ok(sql);
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(playerName);
 		parameters.add(playerName);
