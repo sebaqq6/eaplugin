@@ -211,6 +211,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					ServerLogManager.enable(storage);
 					gVar.topBreakBlocks = new TopBreakBlocks(storage, 20);
 					gVar.announceManager = new AnnounceManager(instance, storage);
+					gVar.topGearScore = new TopGearScore(storage, 20);
 				} else
 					print.error("Błąd połączenia z MySQL!");
 			}

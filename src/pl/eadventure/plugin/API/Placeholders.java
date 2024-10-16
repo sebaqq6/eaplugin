@@ -89,6 +89,41 @@ public class Placeholders extends PlaceholderExpansion {
 				}
 			}
 		}
+		//%topgs_x_name/count%
+		if (params.startsWith("topgs_")) {
+			String[] args = params.split("_");
+			//print.debug(String.valueOf(args.length));
+			if (args.length == 3) {
+				//return name
+				if (args[2].equalsIgnoreCase("name")) {
+					int place = 0;
+					try {
+						place = Integer.valueOf(args[1]);
+					} catch (NumberFormatException e) {
+						return "errorplacenumber";
+					}
+					if (place < 1) {
+						return "errorminplacenumber:1";
+					}
+					return gVar.topGearScore.getNickNameFromPlace(place);
+				}
+				//return count
+				if (args[2].equalsIgnoreCase("count")) {
+					int place = 0;
+					try {
+						place = Integer.valueOf(args[1]);
+					} catch (NumberFormatException e) {
+						return "errorplacenumber";
+					}
+					if (place < 1) {
+						return "errorminplacenumber:1";
+					}
+					int countBlocks = gVar.topGearScore.getCountFromPlace(place);
+					if (countBlocks == -1) return "---";
+					return String.valueOf(countBlocks);
+				}
+			}
+		}
 		//%toponline_x_name/(time_h/m/s)
 		if (params.startsWith("toponline_")) {
 			String[] args = params.split("_");

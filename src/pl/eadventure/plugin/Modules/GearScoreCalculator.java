@@ -16,6 +16,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.yaml.snakeyaml.Yaml;
+import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
@@ -528,6 +531,14 @@ public class GearScoreCalculator {
 		//()
 		//SUM
 		int totalGs = armorGs + offhandGs + mainhandGs;
+		// Update GS into database
+		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+		PlayerData pd = PlayerData.get(player);
+		String sql = "UPDATE players SET lastgs=? WHERE id=?;";
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(totalGs);
+		parameters.add(pd.dbid);
+		storage.executeSafe(sql, parameters);
 		//Cache
 		if (cachePlayerGs.containsKey(totalGs)) {
 			//print.ok("cachePlayerGs.containsKey(totalGs)");

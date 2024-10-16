@@ -4,6 +4,7 @@ import org.bukkit.inventory.ItemStack;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.AnnounceManager;
 import pl.eadventure.plugin.Modules.TopBreakBlocks;
+import pl.eadventure.plugin.Modules.TopGearScore;
 import pl.eadventure.plugin.Utils.ColorIssueResolverIA;
 
 import java.net.InetAddress;
@@ -26,6 +27,7 @@ public class gVar {
 	public static ColorIssueResolverIA colorIssueResolverIA;
 	public static FunEventsManager funEventsManager;
 	public static TopBreakBlocks topBreakBlocks;
+	public static TopGearScore topGearScore;
 	public static AnnounceManager announceManager;
 	public static boolean antiBot = true;
 }
