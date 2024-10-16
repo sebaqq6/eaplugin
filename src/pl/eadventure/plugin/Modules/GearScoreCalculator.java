@@ -535,6 +535,7 @@ public class GearScoreCalculator {
 		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 		PlayerData pd = PlayerData.get(player);
 		String sql = "UPDATE players SET lastgs=? WHERE id=?;";
+		pd.gsRaw = String.valueOf(totalGs);
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(totalGs);
 		parameters.add(pd.dbid);

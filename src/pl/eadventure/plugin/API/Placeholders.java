@@ -240,6 +240,11 @@ public class Placeholders extends PlaceholderExpansion {
 				PlayerData pd = PlayerData.get(player);
 				return pd.gearScore;
 			} else return "0";
+		} else if (params.equalsIgnoreCase("gs_raw")) {
+			if (player != null) {
+				PlayerData pd = PlayerData.get(player);
+				return pd.gsRaw;
+			} else return "0";
 		}
 		// breakblocks
 		else if (params.equalsIgnoreCase("breakblocks")) {
