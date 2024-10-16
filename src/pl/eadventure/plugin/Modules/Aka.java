@@ -17,11 +17,12 @@ public class Aka {
 
 	public static void checkPlayer(String playerName) {
 		List<String> akaPlayers = new ArrayList<>();
-		String sql = "SELECT p2.nick " +
+		String sql = "SELECT p2.nick, p2.banned AS banned " +
 				"FROM players p1 " +
 				"JOIN players p2 ON p1.ip = p2.ip " +
 				"WHERE p1.nick = ? " +
 				"AND p2.nick != ?;";
+		print.ok(sql);
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(playerName);
 		parameters.add(playerName);
@@ -30,7 +31,14 @@ public class Aka {
 			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
 			if (numRows > 0) {
 				for (int i = 0; i < numRows; i++) {
-					akaPlayers.add((String) rows.get(i).get("nick"));
+					String nick = (String) rows.get(i).get("nick");
+					int banned = (int) rows.get(i).get("banned");
+					if (banned > 0) {
+						akaPlayers.add("<st>" + nick + "</st>");
+					} else {
+						akaPlayers.add(nick);
+					}
+
 				}
 			}
 
