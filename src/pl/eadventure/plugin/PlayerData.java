@@ -37,6 +37,7 @@ public class PlayerData {
 	public Location creativeLastPlacedPos = null;
 	public Location creativeLastBreakPos = null;
 	public boolean creativeMode = false;
+	public String gearScore = "0";
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID

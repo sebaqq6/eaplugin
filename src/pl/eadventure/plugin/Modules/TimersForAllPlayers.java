@@ -16,8 +16,9 @@ public class TimersForAllPlayers {
 	}
 
 	//1 second
-	private static void oneSecondTimerForAllPlayersAsync(Player player) {
+	private static void oneSecondTimerForAllPlayersAsync(Player player) {//async thread
 		triggerTimePlayed(player);
+		calcGearScore(player);
 	}
 
 	private static void triggerTimePlayed(Player player) {
@@ -35,5 +36,11 @@ public class TimersForAllPlayers {
 			if (pd.dbid != 0)
 				storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
 		}
+
+	}
+
+	private static void calcGearScore(Player player) {
+		PlayerData pd = PlayerData.get(player);
+		pd.gearScore = GearScoreCalculator.getPlayerGearScore(player);
 	}
 }

@@ -202,7 +202,8 @@ public class Placeholders extends PlaceholderExpansion {
 		// gs
 		else if (params.equalsIgnoreCase("gs")) {
 			if (player != null) {
-				return GearScoreCalculator.getPlayerGearScore(player);
+				PlayerData pd = PlayerData.get(player);
+				return pd.gearScore;
 			} else return "0";
 		}
 		// breakblocks

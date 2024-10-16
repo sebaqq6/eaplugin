@@ -2,6 +2,7 @@ package pl.eadventure.plugin.Modules;
 
 import com.google.common.collect.Multimap;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -36,6 +37,7 @@ public class GearScoreCalculator {
 	static Map<String, Integer> mpAttr = new HashMap<>();
 	static Map<String, Integer> mpStockItem = new HashMap<>();
 	static Map<String, Integer> mpCustomItem = new HashMap<>();
+	static Map<String, String> typeItems = new HashMap<>();
 	static String gsTitleForStocks = null;
 	static String gsValueColorStart = null;
 	static String gsValueColorEnd = null;
@@ -56,6 +58,7 @@ public class GearScoreCalculator {
 		cacheGsValues.clear();
 		cacheFormatedStock.clear();
 		cacheColoredGs.clear();
+		cachePlayerGs.clear();
 		loadMultipliers(fileConfigEnchants, mpEnchants);// Load enchants multipliers
 		loadMultipliers(fileConfigAttr, mpAttr);// Load attributes multipliers
 		loadMultipliers(fileConfigStockItems, mpStockItem);// Load stock items multipliers
@@ -136,6 +139,7 @@ public class GearScoreCalculator {
 		for (String key : keys) {
 			if (file.getName().equalsIgnoreCase("customItems.yml") || file.getName().equalsIgnoreCase("stockItems.yml")) {
 				int multiplier = config.getInt(key + ".gs");
+				typeItems.put(key, config.getString(key + ".type"));
 				map.put(key, multiplier);
 				//print.okRed(key + " == " + multiplier);
 			} else {
@@ -300,15 +304,16 @@ public class GearScoreCalculator {
 	}
 
 	public String getGsValueColored(int gs, int maxGs) {
-		if (cacheColoredGs.containsKey(gs)) {
+		if (cacheColoredGs.containsKey(gs) && maxGs == gsValueMax) {
 			return cacheColoredGs.get(gs);
-		}//TODO fix cache
+		}
+
 		gs = Math.max(0, Math.min(gs, maxGs));
 
 		// Podział na 7 przedziałów
 		double ratio = (double) gs / maxGs;
-		int segment = (int) (ratio * 7);  // 7 segmentów
-		double segmentRatio = (ratio * 7) - segment;  // Stosunek wewnątrz segmentu
+		int segment = (int) (ratio * 8);  // 7 segmentów
+		double segmentRatio = (ratio * 8) - segment;  // Stosunek wewnątrz segmentu
 
 		int startR = 0, startG = 0, startB = 0;
 		int endR = 0, endG = 0, endB = 0;
@@ -369,10 +374,19 @@ public class GearScoreCalculator {
 				endG = Integer.parseInt("FF0000".substring(2, 4), 16);
 				endB = Integer.parseInt("FF0000".substring(4, 6), 16);
 				break;
-			default: // Czerwony -> Fioletowy
+			case 6: // Pomarańczowy -> Czerwony
 				startR = Integer.parseInt("FF0000".substring(0, 2), 16); // czerwony
 				startG = Integer.parseInt("FF0000".substring(2, 4), 16);
 				startB = Integer.parseInt("FF0000".substring(4, 6), 16);
+
+				endR = Integer.parseInt("ab00eb".substring(0, 2), 16); // fioletowy
+				endG = Integer.parseInt("ab00eb".substring(2, 4), 16);
+				endB = Integer.parseInt("ab00eb".substring(4, 6), 16);
+				break;
+			default: // Fioletowy - Jasno fioletowy
+				startR = Integer.parseInt("ab00eb".substring(0, 2), 16); // czerwony
+				startG = Integer.parseInt("ab00eb".substring(2, 4), 16);
+				startB = Integer.parseInt("ab00eb".substring(4, 6), 16);
 
 				endR = Integer.parseInt("800080".substring(0, 2), 16); // fioletowy
 				endG = Integer.parseInt("800080".substring(2, 4), 16);
@@ -393,7 +407,9 @@ public class GearScoreCalculator {
 		String finalColor = String.format("%02X%02X%02X", finalR, finalG, finalB);
 
 		String result = "<#" + finalColor + ">" + gs + "</#" + finalColor + ">";
-		cacheColoredGs.put(gs, result);
+		if (maxGs == gsValueMax) {
+			cacheColoredGs.put(gs, result);
+		}
 		return result;
 	}
 
@@ -424,8 +440,10 @@ public class GearScoreCalculator {
 	}
 
 	//------------------------------------------------------------------PLAYER GS CALCULATOR
+	static HashMap<Integer, String> cachePlayerGs = new HashMap<>();
+
 	public static String getPlayerGearScore(Player player) {
-		//Scan used slots
+		//Scan used slots armor
 		ItemStack[] armorContents = player.getInventory().getArmorContents();
 		int armorGs = 0;
 		//player.sendMessage("Start: ");
@@ -437,9 +455,85 @@ public class GearScoreCalculator {
 			gsc = new GearScoreCalculator(armor);
 			armorGs += gsc.calcGearScore();
 		}
-		//Scan offhand
-		//Scan main hand
-		int totalGs = armorGs;
-		return String.valueOf(gsc.getGsValueColored(totalGs, 3000));
+		//main off hands gs
+		int mainhandGs = 0;
+		int offhandGs = 0;
+		//Scan offhand and mainhand custom items:
+		ItemStack[] inventory = player.getInventory().getContents();
+		for (ItemStack weapon : inventory) {
+			if (weapon == null) continue;
+			if (weapon.getType().equals(Material.AIR)) continue;
+			Set<ItemFlag> itemFlags = weapon.getItemFlags();
+
+			ItemMeta itemMeta = weapon.getItemMeta();
+			if (itemMeta != null) {
+				boolean customDetect = false;
+				PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+				NamespacedKey eiKey = NamespacedKey.fromString("executableitems:ei-id");
+				if (pdc != null && eiKey != null) {
+					String eiItemID = pdc.get(eiKey, PersistentDataType.STRING);
+					if (eiItemID != null) {
+						if (typeItems.containsKey(eiItemID)) {
+							String getType = typeItems.get(eiItemID);
+							//print.okRed("detect: " + getType);
+							//offhand
+							if (getType.equalsIgnoreCase("offhand")) {
+								gsc = new GearScoreCalculator(weapon);
+								int itemGs = gsc.calcGearScore();
+								if (itemGs > offhandGs) {
+									offhandGs = itemGs;
+									customDetect = true;
+								}
+							} else if (getType.equalsIgnoreCase("mainhand")) { //mainhand
+								gsc = new GearScoreCalculator(weapon);
+								int itemGs = gsc.calcGearScore();
+								if (itemGs > mainhandGs) {
+									mainhandGs = itemGs;
+									customDetect = true;
+								}
+							}
+						}
+					}
+				}
+				if (!customDetect) {//stock items
+					String itemId = weapon.getType().toString();
+					//print.ok("detect: " + getType);
+					if (typeItems.containsKey(itemId)) {
+						if (!itemFlags.contains(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+								&& !itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)
+								&& !itemFlags.contains(ItemFlag.HIDE_ENCHANTS)) {
+							String getType = typeItems.get(itemId);
+							//offhand
+							if (getType.equalsIgnoreCase("offhand")) {
+								gsc = new GearScoreCalculator(weapon);
+								int itemGs = gsc.calcGearScore();
+								if (itemGs > offhandGs) {
+									offhandGs = itemGs;
+								}
+							} else if (getType.equalsIgnoreCase("mainhand")) { //mainhand
+								gsc = new GearScoreCalculator(weapon);
+								int itemGs = gsc.calcGearScore();
+								if (itemGs > mainhandGs) {
+									mainhandGs = itemGs;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//()
+		//SUM
+		int totalGs = armorGs + offhandGs + mainhandGs;
+		//Cache
+		if (cachePlayerGs.containsKey(totalGs)) {
+			//print.ok("cachePlayerGs.containsKey(totalGs)");
+			return cachePlayerGs.get(totalGs);
+		}
+		//print.okRed("cachePlayerGs.containsKey(totalGs)");
+		String result = String.valueOf(gsc.getGsValueColored(totalGs, 5000));
+		print.ok(result);
+		cachePlayerGs.put(totalGs, result);
+		return result;
 	}
 }
