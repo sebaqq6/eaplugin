@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.Modules.Aka;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.ServerLogManager;
 import pl.eadventure.plugin.PlayerData;
@@ -67,6 +68,8 @@ public class playerJoinEvent implements Listener {
 			player.getInventory().setBoots(null);
 			player.setGameMode(GameMode.SURVIVAL);
 		}
+
+		Aka.checkPlayer(player.getName());
 		//JrDesmond fast login on localhost for debug
 		if (player.isOp()) {
 			String ip = player.getAddress().getAddress().getHostAddress();

@@ -117,3 +117,5 @@ permissions:
     description: "Bypass funkcjonalności dla /creative - tylko dla zaufanych osób."
   eadventureplugin.annuance.manage:
     description: "Dodawanie/usuwanie ogłoszeń."
+  eadventureplugin.showaka:
+    description: "Pokazuje multikonta dla gracza z tymi uprawnieniami."
