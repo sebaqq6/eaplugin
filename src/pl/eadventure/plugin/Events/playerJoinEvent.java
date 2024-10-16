@@ -15,7 +15,13 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.HashMap;
+
 public class playerJoinEvent implements Listener {
+	public static HashMap<String, Timestamp> brandLimiter = new HashMap<>();
+
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
@@ -41,12 +47,28 @@ public class playerJoinEvent implements Listener {
 				ServerLogManager.log(strLog, ServerLogManager.LogType.JoinLeave);
 				print.debug(strLog);
 				if (gVar.antiBot) {
-					if (clientBrand.equalsIgnoreCase("Unresolved") || clientBrand.equalsIgnoreCase("Fabric")) {//Bad client brand, bot?
+					// Sprawdzamy, czy marka klienta jest "Unresolved" lub "Fabric"
+					if (clientBrand.equalsIgnoreCase("Unresolved") || clientBrand.equalsIgnoreCase("Fabric")) {
 						print.error(String.format("'%s' by Vulcan. '%s' by paper.", clientBrand, clientBrandPaper));
+
 						if (player.isOnline()) {
-							if (pd.onlineHours < 1) {//Temp fix
-								//PunishmentSystem.notifyMessage(PunishmentSystem.LogType.BAN, player.getName(), "AntiBot", "BOT -s", -1);
-								PunishmentSystem.banPlayer(player.getName(), "AntiBot", 1, PunishmentSystem.BanType.NICK_UUID_IP, "Podejrzenie bota. Spróbuj za minutę.");
+							if (pd.onlineHours < 1) { // Sprawdzamy, czy gracz jest nowy
+								Timestamp now = Timestamp.from(Instant.now());
+
+								// Sprawdzamy, czy marka była już używana
+								if (brandLimiter.containsKey(clientBrand)) {
+									Timestamp lastUsed = brandLimiter.get(clientBrand);
+									long timeDifference = now.getTime() - lastUsed.getTime(); // różnica w milisekundach
+									print.info("Time diff: " + timeDifference);
+									// Sprawdzamy, czy czas od ostatniego użycia przekracza 1 minutę
+									if (timeDifference < 60000) { // 60000 ms = 1 minuta
+										// Gracz próbuje dołączyć zbyt szybko
+										PunishmentSystem.banPlayer(player.getName(), "AntiBot", 1, PunishmentSystem.BanType.NICK_UUID_IP, "Podejrzenie bota. Spróbuj za minutę.");
+										brandLimiter.put(clientBrand, now);
+										return; // Zatrzymujemy dalsze przetwarzanie
+									}
+								}
+								brandLimiter.put(clientBrand, now);
 							}
 						}
 					}
