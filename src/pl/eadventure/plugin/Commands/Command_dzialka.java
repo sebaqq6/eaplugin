@@ -11,6 +11,8 @@ import pl.eadventure.plugin.Modules.HomesInterface;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,7 @@ public class Command_dzialka implements TabExecutor {
 			if (sender instanceof Player player) {
 				PlayerData pd = PlayerData.get(player);
 				HomesInterface hi = pd.homesInterface;
-				if (hi == null) {
+				if (hi == null || (hi != null && Duration.between(hi.getCreated(), LocalDateTime.now()).getSeconds() > 5)) {
 					hi = new HomesInterface();
 					hi.loadFromPlayer(player);
 					pd.homesInterface = hi;

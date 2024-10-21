@@ -19,6 +19,8 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.*;
 import pl.eadventure.plugin.gVar;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class HomesInterface {
@@ -51,6 +53,7 @@ public class HomesInterface {
 	int cuboidsLimitSize = 0;
 	boolean typingCuboidName = false;
 	boolean typingAddMemberCuboid = false;
+	LocalDateTime created = null;
 
 	//-------------------------------------------------------------------use onEnable plugin
 	public static void tryLoad(Plugin plugin) {
@@ -85,6 +88,7 @@ public class HomesInterface {
 		homePane = Utils.itemWithDisplayName(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ", null);
 		homePaneManage = Utils.itemWithDisplayName(new ItemStack(Material.LIME_STAINED_GLASS_PANE), " ", null);
 		backgroundPane = Utils.itemWithDisplayName(new ItemStack(Material.WHITE_STAINED_GLASS_PANE), " ", null);
+		created = LocalDateTime.now();
 	}
 
 	//----------------------------------------------------------load data from player to HouseInterface
@@ -963,5 +967,9 @@ public class HomesInterface {
 		}
 	}
 
+	// Utility
+	public LocalDateTime getCreated() {
+		return created;
+	}
 
 }
