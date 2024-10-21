@@ -162,8 +162,10 @@ public class GearScoreCalculator {
 		// Check cache
 		if (cacheGsValues.containsKey(item.toString())) {
 			print.debug("[GET FROM CACHE] gs: " + cacheGsValues.get(item.toString()));
-			this.gearScore = cacheGsValues.get(item.toString());
-			return this.gearScore;
+			if (cacheGsValues.get(item.toString()) != null) {
+				this.gearScore = cacheGsValues.get(item.toString());
+				return this.gearScore;
+			}
 		}
 		int gearScore = 0;
 		ItemMeta itemMeta = item.getItemMeta();
@@ -543,7 +545,7 @@ public class GearScoreCalculator {
 		//Cache
 		if (cachePlayerGs.containsKey(totalGs)) {
 			//print.ok("cachePlayerGs.containsKey(totalGs)");
-			return cachePlayerGs.get(totalGs);
+			if (cachePlayerGs.get(totalGs) != null) return cachePlayerGs.get(totalGs);
 		}
 		//print.okRed("cachePlayerGs.containsKey(totalGs)");
 		String result = String.valueOf(gsc.getGsValueColored(totalGs, gsValueMaxPlayer));

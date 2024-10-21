@@ -1,13 +1,11 @@
 package pl.eadventure.plugin.Commands;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
@@ -141,6 +139,28 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
+				if (sender instanceof Player player) {
+					//Entity specTarget = player.getSpectatorTarget();
+					Entity specTarget = Bukkit.getPlayer("JrRequeim");
+					if (specTarget instanceof Player playerTarget) {
+						sender.sendMessage("Target name: " + playerTarget.getName());
+						Location playerLocation = player.getLocation();
+						Location targetLocation = playerTarget.getLocation();
+						//player.setSpectatorTarget(playerTarget);
+						if (playerLocation.getWorld() != targetLocation.getWorld() || targetLocation.distance(playerLocation) > 10) {
+							targetLocation.setY(targetLocation.getY() + 256);
+							player.teleport(targetLocation);
+							//player.setGameMode(GameMode.SPECTATOR);
+							//player.setSpectatorTarget(playerTarget);
+							player.setInvisible(true);
+							Bukkit.getScheduler().runTaskLater(EternalAdventurePlugin.getInstance(), () -> {
+								player.setInvisible(false);
+								player.setGameMode(GameMode.SPECTATOR);
+								player.setSpectatorTarget(playerTarget);
+							}, 20L);
+						}
+					}
+				}
 
 				break;
 			}

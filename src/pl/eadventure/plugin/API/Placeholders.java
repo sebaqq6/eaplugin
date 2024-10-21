@@ -9,9 +9,12 @@ import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Modules.TopTimePlayerPlayed;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
+import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.time.Instant;
 import java.util.Locale;
 
 
@@ -252,6 +255,19 @@ public class Placeholders extends PlaceholderExpansion {
 				PlayerData pd = PlayerData.get(player);
 				return String.valueOf(pd.breakBlocksCount);
 			} else return "0";
+		}
+		//spec status
+		else if (params.equalsIgnoreCase("spec")) {
+			if (player != null) {
+				PlayerData pd = PlayerData.get(player);
+				if (pd.lastSpec != null) {
+					Timestamp now = Timestamp.from(Instant.now());
+					if (now.getTime() < pd.lastSpec.getTime() + 3 * 1000) {//3 sec
+						return "yes";
+					}
+				}
+				return "no";
+			} else return "no";
 		}
 		return null; //
 	}

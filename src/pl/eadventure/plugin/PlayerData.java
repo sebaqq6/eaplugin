@@ -11,6 +11,7 @@ import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class PlayerData {
 	public boolean creativeMode = false;
 	public String gearScore = "0";
 	public String gsRaw = "0";
+	public Timestamp lastSpec = null;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
