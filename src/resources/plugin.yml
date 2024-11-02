@@ -100,6 +100,10 @@ commands:
     description: "Ogłoszenia."
     usage: "/<command>"
     permission: eadventureplugin.cmd.ogloszenia
+  adminrank:
+    description: "Statystyki administracji."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.adminrank
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."
