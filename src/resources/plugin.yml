@@ -104,6 +104,11 @@ commands:
     description: "Statystyki administracji."
     usage: "/<command>"
     permission: eadventureplugin.cmd.adminrank
+  playerhiddentabname:
+    description: "Zarządzanie nametagiem."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.playerhiddentogtabname
+
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

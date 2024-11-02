@@ -192,6 +192,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("vconsole").setExecutor(new Command_vconsole());
 		this.getCommand("creative").setExecutor(new Command_creative());
 		this.getCommand("adminrank").setExecutor(new Command_adminrank());
+		this.getCommand("playerhiddentabname").setExecutor(new Command_playerhiddentabname());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
