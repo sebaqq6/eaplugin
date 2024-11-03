@@ -33,9 +33,9 @@ public class Command_playerhiddentabname implements TabExecutor {
 		TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
 		TabAPI tabAPI = TabAPI.getInstance();
 
-		if (targetOption.equalsIgnoreCase("false")) {
+		if (targetOption.equalsIgnoreCase("true")) {
 			tabAPI.getNameTagManager().hideNameTag(tabPlayer);
-		} else if (targetOption.equalsIgnoreCase("true")) {
+		} else if (targetOption.equalsIgnoreCase("false")) {
 			tabAPI.getNameTagManager().showNameTag(tabPlayer);
 		} else {
 			sender.sendMessage("Dostepne opcje: true, false");
