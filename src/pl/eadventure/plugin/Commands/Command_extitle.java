@@ -54,7 +54,22 @@ public class Command_extitle implements TabExecutor {
 						140, 10);
 			}
 		} else if (option.equalsIgnoreCase("all")) {
-			sender.sendMessage(Utils.mm("<#FF0000>Ta opcja jeszcze nie została ogarnięta..."));
+			String[] titlesubtitle = text.split("\\|");
+			if (titlesubtitle.length < 2) {
+				sender.sendMessage(Utils.mm("<red>Nie wykryto title/subtitle. <yellow>Użyj <red>|<yellow> aby oddzielić title od subtitle."));
+				return true;
+			}
+			String title = titlesubtitle[0];
+			String subtitle = titlesubtitle[1];
+			if (target.equalsIgnoreCase("*")) {
+				Bukkit.getOnlinePlayers().forEach(allPlayers -> {
+					allPlayers.sendTitle(ChatColor.translateAlternateColorCodes('&', title), ChatColor.translateAlternateColorCodes('&', subtitle), 10,
+							140, 10);
+				});
+			} else {
+				playerTarget.sendTitle(ChatColor.translateAlternateColorCodes('&', title), ChatColor.translateAlternateColorCodes('&', subtitle), 10,
+						140, 10);
+			}
 		} else {
 			sender.sendMessage(Utils.mm("<#FF0000>Dostępne opcje: <#00FF00>subtitle, title, all"));
 			return true;
