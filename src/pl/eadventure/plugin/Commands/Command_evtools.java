@@ -38,23 +38,23 @@ public class Command_evtools implements TabExecutor {
 					Player randomizedPlayer = playersInEventWorld.get(getRandomPlayer);
 					// timer glow
 					if (!randomizedPlayer.isGlowing()) {
-						print.debug("Podświetlanie gracza: "+randomizedPlayer.getName());
+						print.debug("Podświetlanie gracza: " + randomizedPlayer.getName());
 						randomizedPlayer.setGlowing(true);
 						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(EternalAdventurePlugin.getInstance(),
 								new Runnable() {
 									@Override
 									public void run() {
 										print.debug("Deaktywacja podświetlenia gracza...");
-										if(randomizedPlayer.isOnline()) randomizedPlayer.setGlowing(false);
+										if (randomizedPlayer.isOnline()) randomizedPlayer.setGlowing(false);
 									}
 								}, 200L);// 60 L == 3 sec, 20 ticks == 1 sec
 					}
 					// timer end
 					for (Player players : Bukkit.getOnlinePlayers()) {
 						if (isPlayerInEvent(players, sender))
-							players.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7&lWylosowany gracz: &a&l" + randomizedPlayer.getName()));
+							players.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + randomizedPlayer.getName()));
 					}
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7&lWylosowany gracz: &a&l" + randomizedPlayer.getName()));
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + randomizedPlayer.getName()));
 				}
 			}
 			case "countplayers" -> {
@@ -68,19 +68,19 @@ public class Command_evtools implements TabExecutor {
 			}
 			case "teamplayers" -> {
 				if (args.length == 1) {
-					sender.sendMessage(Utils.color("&7Użyj: /eap ev_teamsplayer [ilość drużyn]"));
+					sender.sendMessage(Utils.color("&7Użyj: /evtools ev_teamsplayer [ilość drużyn]"));
 					return true;
 				}
 				Integer countTeams;
 
 				try {
 					countTeams = Integer.valueOf(args[1]);
-				} catch(NumberFormatException e) {
+				} catch (NumberFormatException e) {
 					sender.sendMessage(Utils.color("&7Nieprawidłowa ilość drużyn (wartość nie jest cyfrą)."));
 					return true;
 				}
 
-				if(countTeams <= 1 || countTeams > 4) {
+				if (countTeams <= 1 || countTeams > 4) {
 					sender.sendMessage(Utils.color("&7Prawidłowa ilość drużyn: 2, 3, 4."));
 					return true;
 				}
@@ -91,19 +91,19 @@ public class Command_evtools implements TabExecutor {
 				Team teamBlue = scoreboard.getTeam("druzynaniebieska");
 				Team teamGreen = scoreboard.getTeam("druzynazielona");
 				Team teamYellow = scoreboard.getTeam("druzynazolta");
-				if(teamRed == null) {
+				if (teamRed == null) {
 					sender.sendMessage("Błąd! Niezarejestrowana drużyna czerwona...");
 					return true;
 				}
-				if(teamBlue == null) {
+				if (teamBlue == null) {
 					sender.sendMessage("Błąd! Niezarejestrowana drużyna niebieska...");
 					return true;
 				}
-				if(teamGreen == null) {
+				if (teamGreen == null) {
 					sender.sendMessage("Błąd! Niezarejestrowana drużyna zielona...");
 					return true;
 				}
-				if(teamYellow == null) {
+				if (teamYellow == null) {
 					sender.sendMessage("Błąd! Niezarejestrowana drużyna żólta...");
 					return true;
 				}
@@ -112,42 +112,40 @@ public class Command_evtools implements TabExecutor {
 				Team selectedTeam;
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(players, sender)) {
-						if(team == 0) {
+						if (team == 0) {
 							selectedTeam = teamRed;
-							commandEI = "ei giveslot "+ players.getName() +" druzyna_czerwona 1 38 true";
-						}
-						else if(team == 1) {
+							commandEI = "ei giveslot " + players.getName() + " druzyna_czerwona 1 38 true";
+						} else if (team == 1) {
 							selectedTeam = teamBlue;
-							commandEI = "ei giveslot "+ players.getName() +" druzyna_niebieska 1 38 true";
-						}
-						else if(team == 2) {
+							commandEI = "ei giveslot " + players.getName() + " druzyna_niebieska 1 38 true";
+						} else if (team == 2) {
 							selectedTeam = teamYellow;
-							commandEI = "ei giveslot "+ players.getName() +" druzyna_zolta 1 38 true";
-						}
-						else {
+							commandEI = "ei giveslot " + players.getName() + " druzyna_zolta 1 38 true";
+						} else {
 							selectedTeam = teamGreen;
-							commandEI = "ei giveslot "+ players.getName() +" druzyna_zielona 1 38 true";
+							commandEI = "ei giveslot " + players.getName() + " druzyna_zielona 1 38 true";
 						}
 						Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandEI);
 						selectedTeam.addEntry(players.getName());
 						team++;
-						if(team == countTeams) team = 0;
+						if (team == countTeams) team = 0;
 					}
 				}
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7&lDrużyny zostały przydzielone."));
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lDrużyny zostały przydzielone."));
 			}
 			case "ann" -> {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
 					PlayerData pd = PlayerData.get(player);
-					if(pd.eventAnnChat) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7Wiadomości na środku ekranu: &c&lwyłączone&7."));
+					if (pd.eventAnnChat) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Wiadomości na środku ekranu: &c&lwyłączone&7."));
 						pd.eventAnnChat = false;
 					} else {
-						if(isPlayerInEvent(player, null)) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7Wiadomości na środku ekranu: &a&lwłączone&7."));
+						if (isPlayerInEvent(player, null)) {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Wiadomości na środku ekranu: &a&lwłączone&7."));
 							pd.eventAnnChat = true;
-						} else sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7Nie jesteś na evencie."));
+						} else
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Nie jesteś na evencie."));
 
 					}
 				} else {
@@ -176,8 +174,8 @@ public class Command_evtools implements TabExecutor {
 
 	// Czy gracz jest na evencie
 	private boolean isPlayerInEvent(Player player, CommandSender ignore) {
-		if(ignore != null) {
-			if(ignore instanceof Player) {
+		if (ignore != null) {
+			if (ignore instanceof Player) {
 				Player sender = (Player) ignore;
 				if (sender == player)
 					return false;// false

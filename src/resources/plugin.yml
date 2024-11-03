@@ -108,6 +108,10 @@ commands:
     description: "Zarządzanie nametagiem."
     usage: "/<command>"
     permission: eadventureplugin.cmd.playerhiddentogtabname
+  extitle:
+    description: "Zarządzanie wysyłanie textu na środku ekranu."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.extitle
 
 permissions:
   eadventureplugin.apanel:
