@@ -5,11 +5,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.Modules.GearScoreCalculator;
-import pl.eadventure.plugin.Modules.TopTimePlayerPlayed;
+import pl.eadventure.plugin.Modules.Top.TopTimePlayerPlayed;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
 import java.sql.Timestamp;
@@ -86,9 +84,9 @@ public class Placeholders extends PlaceholderExpansion {
 					if (place < 1) {
 						return "errorminplacenumber:1";
 					}
-					int countBlocks = gVar.topBreakBlocks.getCountFromPlace(place);
-					if (countBlocks == -1) return "---";
-					return String.valueOf(countBlocks);
+					int count = gVar.topBreakBlocks.getCountFromPlace(place);
+					if (count == -1) return "---";
+					return String.valueOf(count);
 				}
 			}
 		}
@@ -121,9 +119,44 @@ public class Placeholders extends PlaceholderExpansion {
 					if (place < 1) {
 						return "errorminplacenumber:1";
 					}
-					int countBlocks = gVar.topGearScore.getCountFromPlace(place);
-					if (countBlocks == -1) return "---";
-					return String.valueOf(countBlocks);
+					int count = gVar.topGearScore.getCountFromPlace(place);
+					if (count == -1) return "---";
+					return String.valueOf(count);
+				}
+			}
+		}
+		//%topdonate_x_name/count%
+		if (params.startsWith("topdonate_")) {
+			String[] args = params.split("_");
+			//print.debug(String.valueOf(args.length));
+			if (args.length == 3) {
+				//return name
+				if (args[2].equalsIgnoreCase("name")) {
+					int place = 0;
+					try {
+						place = Integer.valueOf(args[1]);
+					} catch (NumberFormatException e) {
+						return "errorplacenumber";
+					}
+					if (place < 1) {
+						return "errorminplacenumber:1";
+					}
+					return gVar.topDonate.getNickNameFromPlace(place);
+				}
+				//return count
+				if (args[2].equalsIgnoreCase("count")) {
+					int place = 0;
+					try {
+						place = Integer.valueOf(args[1]);
+					} catch (NumberFormatException e) {
+						return "errorplacenumber";
+					}
+					if (place < 1) {
+						return "errorminplacenumber:1";
+					}
+					int count = gVar.topDonate.getCountFromPlace(place);
+					if (count == -1) return "---";
+					return String.valueOf(count);
 				}
 			}
 		}

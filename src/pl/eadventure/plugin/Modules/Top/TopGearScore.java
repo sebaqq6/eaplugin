@@ -1,4 +1,4 @@
-package pl.eadventure.plugin.Modules;
+package pl.eadventure.plugin.Modules.Top;
 
 import org.bukkit.Bukkit;
 import pl.eadventure.plugin.EternalAdventurePlugin;
@@ -8,13 +8,13 @@ import pl.eadventure.plugin.Utils.print;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TopBreakBlocks {
+public class TopGearScore {
 	MySQLStorage storage;
 	int topCount = 0;
 	private ArrayList<String> nickName = new ArrayList<>();
 	private ArrayList<Integer> count = new ArrayList<>();
 
-	public TopBreakBlocks(MySQLStorage storage, int topCount) {
+	public TopGearScore(MySQLStorage storage, int topCount) {
 		this.storage = storage;
 		this.topCount = topCount;
 		getDataFromMySQL();
@@ -24,7 +24,7 @@ public class TopBreakBlocks {
 
 	private void getDataFromMySQL() {
 		if (storage.isConnect()) {
-			String sql = "SELECT nick, breakBlocks FROM players WHERE breakBlocks > 0 ORDER BY breakBlocks DESC LIMIT " + topCount + ";";
+			String sql = "SELECT nick, lastgs FROM players WHERE lastgs > 0 ORDER BY lastgs DESC LIMIT " + topCount + ";";
 			storage.query(sql, queryResult -> {
 				if (queryResult != null) {
 					int numRows = (int) queryResult.get("num_rows");
@@ -35,7 +35,7 @@ public class TopBreakBlocks {
 						count.clear();
 						for (int i = 0; i < numRows; i++) {
 							nickName.add(i, (String) rows.get(i).get("nick"));
-							count.add(i, (int) rows.get(i).get("breakBlocks"));
+							count.add(i, (int) rows.get(i).get("lastgs"));
 							//print.debug(String.format("i: %d, n: %s, %d", i, nickName.get(i), count.get(i)));
 						}
 					} else {
@@ -43,12 +43,12 @@ public class TopBreakBlocks {
 						count.clear();
 					}
 				} else {
-					print.error("TopBreakBlocks->getDataFromMySQL - błąd zapytania:");
+					print.error("TopGearScore->getDataFromMySQL - błąd zapytania:");
 					print.error(sql);
 				}
 			});
 		} else {
-			print.error("TopBreakBlocks->getDataFromMySQL - nie udało się ustanowić połączenia!");
+			print.error("TopGearScore->getDataFromMySQL - nie udało się ustanowić połączenia!");
 		}
 	}
 

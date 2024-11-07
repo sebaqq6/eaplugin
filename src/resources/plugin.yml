@@ -112,6 +112,10 @@ commands:
     description: "Zarządzanie wysyłanie textu na środku ekranu."
     usage: "/<command>"
     permission: eadventureplugin.cmd.extitle
+  donating:
+    description: "Zarządzanie donate."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.donating
 
 permissions:
   eadventureplugin.apanel:

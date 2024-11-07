@@ -1,4 +1,4 @@
-package pl.eadventure.plugin.Modules;
+package pl.eadventure.plugin.Modules.Top;
 
 import org.bukkit.Bukkit;
 import pl.eadventure.plugin.EternalAdventurePlugin;

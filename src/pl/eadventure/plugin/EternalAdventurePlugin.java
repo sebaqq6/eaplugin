@@ -29,6 +29,10 @@ import pl.eadventure.plugin.Commands.*;
 import pl.eadventure.plugin.Events.*;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.*;
+import pl.eadventure.plugin.Modules.Top.TopBreakBlocks;
+import pl.eadventure.plugin.Modules.Top.TopDonate;
+import pl.eadventure.plugin.Modules.Top.TopGearScore;
+import pl.eadventure.plugin.Modules.Top.TopTimePlayerPlayed;
 import pl.eadventure.plugin.Utils.*;
 
 import java.net.InetAddress;
@@ -194,6 +198,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("adminrank").setExecutor(new Command_adminrank());
 		this.getCommand("playerhiddentabname").setExecutor(new Command_playerhiddentabname());
 		this.getCommand("extitle").setExecutor(new Command_extitle());
+		this.getCommand("donating").setExecutor(new Command_donating());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
@@ -215,6 +220,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					gVar.topBreakBlocks = new TopBreakBlocks(storage, 20);
 					gVar.announceManager = new AnnounceManager(instance, storage);
 					gVar.topGearScore = new TopGearScore(storage, 20);
+					gVar.topDonate = new TopDonate(storage, 10);
 				} else
 					print.error("Błąd połączenia z MySQL!");
 			}

@@ -1,20 +1,22 @@
-package pl.eadventure.plugin.Modules;
+package pl.eadventure.plugin.Modules.Top;
 
 import org.bukkit.Bukkit;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.print;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TopGearScore {
+public class TopDonate {
 	MySQLStorage storage;
 	int topCount = 0;
 	private ArrayList<String> nickName = new ArrayList<>();
 	private ArrayList<Integer> count = new ArrayList<>();
 
-	public TopGearScore(MySQLStorage storage, int topCount) {
+	public TopDonate(MySQLStorage storage, int topCount) {
 		this.storage = storage;
 		this.topCount = topCount;
 		getDataFromMySQL();
@@ -24,7 +26,7 @@ public class TopGearScore {
 
 	private void getDataFromMySQL() {
 		if (storage.isConnect()) {
-			String sql = "SELECT nick, lastgs FROM players WHERE lastgs > 0 ORDER BY lastgs DESC LIMIT " + topCount + ";";
+			String sql = "SELECT p.nick AS player_nick, SUM(d.count) AS total_donates FROM donate d JOIN players p ON d.playerid = p.id GROUP BY d.playerid ORDER BY total_donates DESC LIMIT " + topCount + ";";
 			storage.query(sql, queryResult -> {
 				if (queryResult != null) {
 					int numRows = (int) queryResult.get("num_rows");
@@ -34,8 +36,9 @@ public class TopGearScore {
 						nickName.clear();
 						count.clear();
 						for (int i = 0; i < numRows; i++) {
-							nickName.add(i, (String) rows.get(i).get("nick"));
-							count.add(i, (int) rows.get(i).get("lastgs"));
+							nickName.add(i, (String) rows.get(i).get("player_nick"));
+							BigDecimal bigDecimalValue = new BigDecimal(String.valueOf(rows.get(i).get("total_donates")));
+							count.add(i, bigDecimalValue.intValue());
 							//print.debug(String.format("i: %d, n: %s, %d", i, nickName.get(i), count.get(i)));
 						}
 					} else {
@@ -43,12 +46,12 @@ public class TopGearScore {
 						count.clear();
 					}
 				} else {
-					print.error("TopGearScore->getDataFromMySQL - błąd zapytania:");
+					print.error("TopDonate->getDataFromMySQL - błąd zapytania:");
 					print.error(sql);
 				}
 			});
 		} else {
-			print.error("TopGearScore->getDataFromMySQL - nie udało się ustanowić połączenia!");
+			print.error("TopDonate->getDataFromMySQL - nie udało się ustanowić połączenia!");
 		}
 	}
 
