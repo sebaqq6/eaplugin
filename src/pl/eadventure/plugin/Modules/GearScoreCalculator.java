@@ -553,4 +553,38 @@ public class GearScoreCalculator {
 		cachePlayerGs.put(totalGs, result);
 		return result;
 	}
+
+	public String getItemType(ItemStack itemStack) {
+		if (itemStack == null || itemStack.getType().isAir()) return null;
+		String result = null;
+		Set<ItemFlag> itemFlags = itemStack.getItemFlags();
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		if (itemMeta != null) {
+			boolean customDetect = false;
+			PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+			NamespacedKey eiKey = NamespacedKey.fromString("executableitems:ei-id");
+			if (pdc != null && eiKey != null) {
+				String eiItemID = pdc.get(eiKey, PersistentDataType.STRING);
+				if (eiItemID != null) {
+					if (typeItems.containsKey(eiItemID)) {
+						result = typeItems.get(eiItemID);
+						//print.okRed("detect: " + getType);
+
+					}
+				}
+			}
+			if (!customDetect) {//stock items
+				String itemId = itemStack.getType().toString();
+				//print.ok("detect: " + getType);
+				if (typeItems.containsKey(itemId)) {
+					if (!itemFlags.contains(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+							&& !itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)
+							&& !itemFlags.contains(ItemFlag.HIDE_ENCHANTS)) {
+						result = typeItems.get(itemId);
+					}
+				}
+			}
+		}
+		return result;
+	}
 }
