@@ -10,6 +10,8 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.print;
 
+import java.util.ArrayList;
+
 public class playerQuitEvent implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
@@ -33,6 +35,11 @@ public class playerQuitEvent implements Listener {
 			player.getInventory().setArmorContents(pd.armorBackupCreative);
 			player.setGameMode(GameMode.SURVIVAL);
 		}
+		//Update players online
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(player.getName());
+		storage.executeSafe("DELETE FROM playersonline WHERE nick=?", parameters);
+		//Other
 		if (pd.dbid != 0)
 			storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
 		PlayerData.free(player);

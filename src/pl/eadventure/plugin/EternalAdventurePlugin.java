@@ -199,6 +199,8 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("playerhiddentabname").setExecutor(new Command_playerhiddentabname());
 		this.getCommand("extitle").setExecutor(new Command_extitle());
 		this.getCommand("donating").setExecutor(new Command_donating());
+		this.getCommand("aka").setExecutor(new Command_aka());
+		this.getCommand("streamer").setExecutor(new Command_streamer());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
@@ -221,6 +223,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					gVar.announceManager = new AnnounceManager(instance, storage);
 					gVar.topGearScore = new TopGearScore(storage, 20);
 					gVar.topDonate = new TopDonate(storage, 10);
+					storage.execute("TRUNCATE playersonline;");
 				} else
 					print.error("Błąd połączenia z MySQL!");
 			}

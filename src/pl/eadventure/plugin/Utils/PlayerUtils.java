@@ -10,6 +10,7 @@ import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 
@@ -183,5 +184,12 @@ public class PlayerUtils {
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static boolean isVanished(Player player) {
+		for (MetadataValue meta : player.getMetadata("vanished")) {
+			if (meta.asBoolean()) return true;
+		}
+		return false;
 	}
 }

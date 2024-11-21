@@ -116,6 +116,14 @@ commands:
     description: "Zarządzanie donate."
     usage: "/<command>"
     permission: eadventureplugin.cmd.donating
+  aka:
+    description: "Sprawdź multikonta."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.aka
+  streamer:
+    description: "Zarządzaj strumieniem live."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.streamer
 
 permissions:
   eadventureplugin.apanel:
@@ -136,3 +144,5 @@ permissions:
     description: "Dodawanie/usuwanie ogłoszeń."
   eadventureplugin.showaka:
     description: "Pokazuje multikonta dla gracza z tymi uprawnieniami."
+  eadventureplugin.streamer.manage:
+    description: "Pozwala dodawać/usuwać streamerów."

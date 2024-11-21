@@ -10,9 +10,11 @@ import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
+import pl.eadventure.plugin.Utils.PlayerUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 
 public class TimersForAllPlayers {
 	static MySQLStorage storage = EternalAdventurePlugin.getMySQL();
@@ -27,6 +29,7 @@ public class TimersForAllPlayers {
 	private static void oneSecondTimerForAllPlayersAsync(Player player) {//async thread
 		triggerTimePlayed(player);
 		calcGearScore(player);
+		updatePlayersOnlineVanish(player);
 		//Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------
 		Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> {
 			fixSpectatorTeleport(player);
@@ -79,5 +82,14 @@ public class TimersForAllPlayers {
 				}
 			}
 		}
+	}
+
+	private static void updatePlayersOnlineVanish(Player player) {
+		//Update players online
+		ArrayList<Object> parameters = new ArrayList<>();
+		int visibleValue = PlayerUtils.isVanished(player) ? 0 : 1;
+		parameters.add(visibleValue);
+		parameters.add(player.getName());
+		storage.executeSafe("UPDATE playersonline SET visible=? WHERE nick=?", parameters);
 	}
 }

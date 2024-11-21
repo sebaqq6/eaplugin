@@ -12,11 +12,13 @@ import pl.eadventure.plugin.Modules.Aka;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.ServerLogManager;
 import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class playerJoinEvent implements Listener {
@@ -92,6 +94,11 @@ public class playerJoinEvent implements Listener {
 		}
 
 		Aka.checkPlayer(player.getName());
+		//Update players online
+		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(player.getName());
+		storage.executeSafe("INSERT INTO playersonline VALUES (NULL, ?, 0, 0);", parameters);
 		//JrDesmond fast login on localhost for debug
 		if (player.isOp()) {
 			String ip = player.getAddress().getAddress().getHostAddress();
