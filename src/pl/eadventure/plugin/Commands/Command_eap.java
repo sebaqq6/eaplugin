@@ -47,7 +47,9 @@ public class Command_eap implements TabExecutor {
 					"plist",
 					"reconnectdb",
 					"reloadanns",
-					"rcl");
+					"rcl",
+					"disablegs",
+					"cachegs1");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
 		return Collections.emptyList();
@@ -369,6 +371,32 @@ public class Command_eap implements TabExecutor {
 			case "reconnectdb": {
 				EternalAdventurePlugin.getMySQL().reconnect();
 				sender.sendMessage(Component.text("Wykonano reconnect z bazą danych!"));
+				return true;
+			}
+			case "cachegs1": {
+				if (GearScoreCalculator.enabledCacheV1) {
+					GearScoreCalculator.enabledCacheV1 = false;
+					sender.sendMessage("GearScoreCalculator.enabledCacheV1 = false");
+				} else {
+					GearScoreCalculator.enabledCacheV1 = true;
+					sender.sendMessage("GearScoreCalculator.enabledCacheV1 = true");
+				}
+				return true;
+			}
+			case "disablegs": {
+				if (args.length == 1) {
+					sender.sendMessage("Użyj: /eap disablegs [level]");
+					return true;
+				}
+				String option = args[1];
+				int disGsLevel = 0;
+				try {
+					disGsLevel = Integer.parseInt(option);
+					GearScoreCalculator.disableGs = disGsLevel;
+					sender.sendMessage("GearScoreCalculator.disableGs = " + GearScoreCalculator.disableGs);
+				} catch (NumberFormatException e) {
+					sender.sendMessage("Niepoprawny format.");
+				}
 				return true;
 			}
 			default: {

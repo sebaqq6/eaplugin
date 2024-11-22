@@ -2,7 +2,9 @@ package pl.eadventure.plugin.Modules;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -56,7 +58,7 @@ public class LiveStream {
 		mainGui.setItem(30, editUrl, ((player1, gui, slot, type) -> {
 			mainGui.close(player1);
 			List<Component> messages = new ArrayList<>();
-			messages.add(Utils.mm("<#AAAAAA><bold>Wklej link do strumienia LIVE."));
+			messages.add(Utils.mm("<#AAAAAA><bold>Wklej link na czacie."));
 			messages.add(Utils.mm("<#AAAAAA><bold>Użyj <#FF0000>CTRL+V"));
 			messages.add(Utils.mm("<#AAAAAA><bold>Aby anulować wpisz: <#FF0000>anuluj"));
 			chatInputCapture.receiveInput(player1, messages, (playerInput, message) -> {
@@ -87,7 +89,8 @@ public class LiveStream {
 		rewardLore.add(Utils.mm("<!i><red><bold>Dostępne raz na 12 godzin."));
 		ItemStack getReward = Utils.itemWithDisplayName(rainbowDiamond, Utils.mm("<gradient:#EB0012:#BF00FF><bold>Odbierz nagrodę"), rewardLore);
 		mainGui.setItem(31, getReward, ((player1, gui, slot, type) -> {
-			player1.performCommand("playerhiddencmdstreamer");
+			player1.chat("/playerhiddencmdstreamer");
+
 		}));
 		//Start/Stop live
 		mainGui.setItem(32, liveStatusIcon(pd.onLiveStream), ((player1, gui, slot, type) -> {
@@ -103,6 +106,7 @@ public class LiveStream {
 						"<click:OPEN_URL:'" + link + "'><#FF0000><bold>Gracz <#00FF00>%s<#FF0000> rozpoczął transmisje na żywo. <yellow><underlined>Kliknij tutaj aby obejrzeć.</underlined></click>" +
 						"</hover>", player1.getName())));
 				mainGui.close(player1);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at @a run playsound my_sounds:sounds.yeah.scream ambient @p ~ ~ ~ 2 1");
 			}
 			mainGui.setUpdateItem(32, liveStatusIcon(pd.onLiveStream));
 		}));

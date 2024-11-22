@@ -33,7 +33,7 @@ public class TimersForAllPlayers {
 		triggerTimePlayed(player);
 		calcGearScore(player);
 		updatePlayersOnlineVanish(player);
-		updateOnLive(player);
+		saveBreakBlocks(player);
 		//Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------
 		Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> {
 			fixSpectatorTeleport(player);
@@ -97,15 +97,12 @@ public class TimersForAllPlayers {
 		storage.executeSafe("UPDATE playersonline SET visible=? WHERE nick=?", parameters);
 	}
 
-	private static void updateOnLive(Player player) {
-		TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
-		TabAPI tabAPI = TabAPI.getInstance();
+	private static void saveBreakBlocks(Player player) {
 		PlayerData pd = PlayerData.get(player);
-		if (tabAPI == null || tabPlayer == null) return;
-		if (pd.onLiveStream) {
-
-		} else {
-
-		}
+		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(pd.breakBlocksCount);
+		parameters.add(pd.dbid);
+		storage.executeSafe("UPDATE players SET breakBlocks=? WHERE id=?;", parameters);
 	}
 }

@@ -127,7 +127,12 @@ public class Utils {
 		}
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(displayName);
-		if (lore != null) meta.setLore(lore);
+		if (lore != null) {
+			meta.setLore(lore);
+		} else {
+			ArrayList<Component> loreNull = new ArrayList<>();
+			meta.lore(loreNull);
+		}
 		item.setItemMeta(meta);
 		return item;
 	}
@@ -136,7 +141,12 @@ public class Utils {
 		//String plainText = PlainTextComponentSerializer.plainText().serialize(displayName);
 		ItemMeta meta = item.getItemMeta();
 		meta.displayName(displayName);
-		if (lore != null) meta.lore(lore);
+		if (lore != null) {
+			meta.lore(lore);
+		} else {
+			ArrayList<Component> loreNull = new ArrayList<>();
+			meta.lore(loreNull);
+		}
 		item.setItemMeta(meta);
 		return item;
 	}

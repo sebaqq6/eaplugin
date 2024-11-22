@@ -47,6 +47,9 @@ public class GearScoreCalculator {
 	static int gsValueMax = 1000;
 	static int gsValueMaxPlayer = 5000;
 
+	public static int disableGs = 0;
+	public static boolean enabledCacheV1 = true;
+
 	static Map<String, Integer> cacheGsValues = new HashMap<>();
 	static Map<Integer, Component> cacheFormatedStock = new HashMap<>();
 	static Map<Integer, String> cacheColoredGs = new HashMap<>();
@@ -159,12 +162,20 @@ public class GearScoreCalculator {
 	}
 
 	public int calcGearScore() {
+		if (disableGs >= 1) {
+			this.gearScore = 0;
+			return this.gearScore;
+		}
 		// Check cache
-		if (cacheGsValues.containsKey(item.toString())) {
-			print.debug("[GET FROM CACHE] gs: " + cacheGsValues.get(item.toString()));
-			if (cacheGsValues.get(item.toString()) != null) {
-				this.gearScore = cacheGsValues.get(item.toString());
-				return this.gearScore;
+		String itemString = null;
+		if (enabledCacheV1) {
+			itemString = item.toString();
+			if (cacheGsValues.containsKey(itemString)) {
+				//print.debug("[GET FROM CACHE] gs: " + cacheGsValues.get(item.toString()));
+				if (cacheGsValues.get(itemString) != null) {
+					this.gearScore = cacheGsValues.get(itemString);
+					return this.gearScore;
+				}
 			}
 		}
 		int gearScore = 0;
@@ -181,7 +192,7 @@ public class GearScoreCalculator {
 						isCustom = true;
 						gearScore += mpCustomItem.get(eiItemID);
 						print.debug("CustomDetect: " + eiItemID);
-						print.debug(item.toString());
+						print.debug(itemString);
 					}
 				}
 			}
@@ -189,13 +200,14 @@ public class GearScoreCalculator {
 		//detect stock items
 		boolean isStock = false;
 		if (!isCustom) {
-			if (mpStockItem.containsKey(item.getType().toString())) {
+			String typeString = item.getType().toString();
+			if (mpStockItem.containsKey(typeString)) {
 				Set<ItemFlag> itemFlags = item.getItemFlags();
 				if (!itemFlags.contains(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
 						&& !itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)
 						&& !itemFlags.contains(ItemFlag.HIDE_ENCHANTS)) {
-					print.debug("StockDetect: " + item.getType());
-					gearScore += mpStockItem.get(item.getType().toString());
+					//print.debug("StockDetect: " + item.getType());
+					gearScore += mpStockItem.get(typeString);
 					isStock = true;
 				}
 
@@ -238,7 +250,10 @@ public class GearScoreCalculator {
 		}
 		//add to cache
 		this.gearScore = gearScore;
-		cacheGsValues.put(item.toString(), gearScore);
+
+		if (itemString != null) {
+			cacheGsValues.put(itemString, gearScore);
+		}
 //		print.debug("PUT TO CACHE");
 //		print.debug("---------------" + cacheGsValues.size() + "-----------------");
 //		int cacheCounter = 0;

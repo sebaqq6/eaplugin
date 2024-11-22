@@ -84,6 +84,7 @@ public class ProtocolLibAPI {
 
 			@Override
 			public void onPacketSending(PacketEvent event) {
+				if (GearScoreCalculator.disableGs >= 2) return;
 				if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;//disable for creative
 				PacketContainer packet = event.getPacket();
 				if (packet.getType() == PacketType.Play.Server.SET_SLOT || packet.getType() == PacketType.Play.Server.WINDOW_ITEMS) {

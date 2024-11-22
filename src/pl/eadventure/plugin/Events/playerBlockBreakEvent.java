@@ -50,11 +50,6 @@ public class playerBlockBreakEvent implements Listener {
 		//break blocks count
 		if (e.isDropItems() && player.getGameMode() != GameMode.CREATIVE) {
 			pd.breakBlocksCount++;
-			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
-			ArrayList<Object> parameters = new ArrayList<>();
-			parameters.add(pd.breakBlocksCount);
-			parameters.add(pd.dbid);
-			storage.executeSafe("UPDATE players SET breakBlocks=? WHERE id=?;", parameters);
 		}
 	}
 }
