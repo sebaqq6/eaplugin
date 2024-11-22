@@ -302,6 +302,17 @@ public class Placeholders extends PlaceholderExpansion {
 				return "no";
 			} else return "no";
 		}
+		//live placeholder
+		else if (params.equalsIgnoreCase("live")) {
+			if (player != null) {
+				PlayerData pd = PlayerData.get(player);
+				if (pd.onLiveStream) {
+					return gVar.liveStream.getLivePlaceholder();
+				} else {
+					return "";
+				}
+			} else return null;
+		}
 		return null; //
 	}
 }

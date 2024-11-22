@@ -120,10 +120,10 @@ commands:
     description: "Sprawdź multikonta."
     usage: "/<command>"
     permission: eadventureplugin.cmd.aka
-  streamer:
+  live:
     description: "Zarządzaj strumieniem live."
     usage: "/<command>"
-    permission: eadventureplugin.cmd.streamer
+    permission: eadventureplugin.cmd.live
 
 permissions:
   eadventureplugin.apanel:

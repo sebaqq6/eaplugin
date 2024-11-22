@@ -1,6 +1,8 @@
 package pl.eadventure.plugin.Modules;
 
 import com.comphenix.protocol.PacketType;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -11,6 +13,7 @@ import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.PlayerUtils;
+import pl.eadventure.plugin.Utils.print;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -30,6 +33,7 @@ public class TimersForAllPlayers {
 		triggerTimePlayed(player);
 		calcGearScore(player);
 		updatePlayersOnlineVanish(player);
+		updateOnLive(player);
 		//Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------
 		Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> {
 			fixSpectatorTeleport(player);
@@ -91,5 +95,17 @@ public class TimersForAllPlayers {
 		parameters.add(visibleValue);
 		parameters.add(player.getName());
 		storage.executeSafe("UPDATE playersonline SET visible=? WHERE nick=?", parameters);
+	}
+
+	private static void updateOnLive(Player player) {
+		TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+		TabAPI tabAPI = TabAPI.getInstance();
+		PlayerData pd = PlayerData.get(player);
+		if (tabAPI == null || tabPlayer == null) return;
+		if (pd.onLiveStream) {
+
+		} else {
+
+		}
 	}
 }

@@ -70,8 +70,8 @@ public class ServerLogManager extends AbstractFilter {
 			player.sendMessage(sender +" -> "+ message);
 		}*/
 		//CHAT
-		//[Lokalny] [Uczestnik] [Adminchat] [Gracz] [EVP] [SVP] [VIP] [A] [M] [GM] [S]
-		if (m.contains("[Lokalny]") || m.contains("[Uczestnik]") || m.contains("[Adminchat]")
+		//[Lokalny] [Uczestnik] [PROWADZĄCY] [Adminchat] [Gracz] [EVP] [SVP] [VIP] [A] [M] [GM] [S]
+		if (m.contains("[Lokalny]") || m.contains("[Uczestnik]") || m.contains("[PROWADZĄCY]") || m.contains("[Adminchat]")
 				|| m.contains("[Gracz]") || m.contains("[EVP]") || m.contains("[SVP]") || m.contains("[VIP]")
 				|| m.contains("[A]") || m.contains("[M]") || m.contains("[GM]") || m.contains("[S]")) {
 			log(m, LogType.Chat);

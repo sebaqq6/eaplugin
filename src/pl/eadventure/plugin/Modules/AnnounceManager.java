@@ -102,7 +102,7 @@ public class AnnounceManager {
 		this.storage = storage;
 		hGreenPlus = gVar.customItems.get("hGreenPlus");
 		hBlackX = gVar.customItems.get("hBlackX");
-		chatInputCapture = new ChatInputCapture(plugin);
+		chatInputCapture = gVar.chatInputCapture;
 		new BukkitRunnable() {
 			@Override
 			public void run() {

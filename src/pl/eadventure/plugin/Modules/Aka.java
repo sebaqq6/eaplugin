@@ -67,7 +67,7 @@ public class Aka {
 							playerName, joiner.toString());
 					Bukkit.getConsoleSender().sendMessage(Utils.mm(akaInfo));
 				}
-
+				//refactor
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					if (player.hasPermission("eadventureplugin.showaka")) {
 						player.sendMessage(Utils.mm(akaInfo));

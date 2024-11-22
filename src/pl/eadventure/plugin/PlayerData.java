@@ -52,6 +52,11 @@ public class PlayerData {
 	public String mutedBy = " ";
 	public String mutedReason = " ";
 	public int breakBlocksCount = 0;
+	//stream live
+	public int isStreamer = 0;
+	public String streamerService = " ";
+	public String streamerURL = " ";
+	public boolean onLiveStream = false;
 
 
 	//end variables
@@ -122,6 +127,9 @@ public class PlayerData {
 		mutedBy = (String) row.get("mutedBy");
 		mutedReason = (String) row.get("mutedReason");
 		breakBlocksCount = (int) row.get("breakBlocks");
+		isStreamer = (int) row.get("streamer");
+		streamerService = (String) row.get("streamer_service");
+		streamerURL = (String) row.get("streamer_url");
 		//Load data end
 		//Update some information
 		ArrayList<Object> parameters = new ArrayList<>();

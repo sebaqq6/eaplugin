@@ -3,9 +3,11 @@ package pl.eadventure.plugin;
 import org.bukkit.inventory.ItemStack;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.AnnounceManager;
+import pl.eadventure.plugin.Modules.LiveStream;
 import pl.eadventure.plugin.Modules.Top.TopBreakBlocks;
 import pl.eadventure.plugin.Modules.Top.TopDonate;
 import pl.eadventure.plugin.Modules.Top.TopGearScore;
+import pl.eadventure.plugin.Utils.ChatInputCapture;
 import pl.eadventure.plugin.Utils.ColorIssueResolverIA;
 
 import java.net.InetAddress;
@@ -31,5 +33,7 @@ public class gVar {
 	public static TopGearScore topGearScore;
 	public static TopDonate topDonate;
 	public static AnnounceManager announceManager;
+	public static LiveStream liveStream;
 	public static boolean antiBot = true;
+	public static ChatInputCapture chatInputCapture;
 }
