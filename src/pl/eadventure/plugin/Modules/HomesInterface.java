@@ -721,7 +721,7 @@ public class HomesInterface {
 			}
 
 			ItemStack cuboidIcon = new ItemStack(cuboid.getProtectBlock().getRelative(BlockFace.DOWN).getType());
-			if (!cuboidIcon.getType().isSolid()) {//if air change to block type
+			if (!cuboidIcon.getType().isSolid() || cuboidIcon.getType() == Material.END_PORTAL) {//if air/endportal change to block type
 				cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
 			}
 
