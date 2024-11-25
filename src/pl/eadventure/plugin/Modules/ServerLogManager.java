@@ -96,6 +96,10 @@ public class ServerLogManager extends AbstractFilter {
 			if (m.contains("/r") || m.contains("/msg") || m.contains("/adminczat")) {
 				return Result.NEUTRAL;
 			}
+			//ignore commands like playerhidden
+			if (m.contains("/playerhidden")) {
+				return Result.NEUTRAL;
+			}
 			String finalMessage = m.replaceAll("issued server command:", "wpisał/a komendę:");
 			log(finalMessage, LogType.Command);
 			return Result.NEUTRAL;

@@ -124,7 +124,10 @@ commands:
     description: "Zarządzaj strumieniem live."
     usage: "/<command>"
     permission: eadventureplugin.cmd.live
-
+  fixresourcepack:
+    description: "Naprawia resource pack dla gracza."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.fixresourcepack
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

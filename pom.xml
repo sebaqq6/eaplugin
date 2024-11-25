@@ -88,6 +88,10 @@
             <id>nickuc-repo</id>
             <url>https://repo.nickuc.com/maven-releases/</url>
         </repository>
+        <repository>
+            <id>matteodev</id>
+            <url>https://www.matteodev.it/spigot/public/maven/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!--This adds the Spigot API artifact to the build -->
@@ -185,6 +189,18 @@
             <groupId>com.github.NEZNAMY</groupId>
             <artifactId>TAB-API</artifactId>
             <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>3.6.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.lone</groupId>
+            <artifactId>LoneLibs</artifactId>
+            <version>1.0.58</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -201,6 +201,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("donating").setExecutor(new Command_donating());
 		this.getCommand("aka").setExecutor(new Command_aka());
 		this.getCommand("live").setExecutor(new Command_streamer());
+		this.getCommand("fixresourcepack").setExecutor(new Command_fixresourcepack());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
