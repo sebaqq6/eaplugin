@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.gVar;
 
 import java.util.List;
 
@@ -35,8 +36,10 @@ public class Command_playerhiddentabname implements TabExecutor {
 
 		if (targetOption.equalsIgnoreCase("true")) {
 			tabAPI.getNameTagManager().hideNameTag(tabPlayer);
+			gVar.hiddenTabName.put(tabPlayer.getUniqueId(), true);
 		} else if (targetOption.equalsIgnoreCase("false")) {
 			tabAPI.getNameTagManager().showNameTag(tabPlayer);
+			gVar.hiddenTabName.put(tabPlayer.getUniqueId(), false);
 		} else {
 			sender.sendMessage("Dostepne opcje: true, false");
 		}

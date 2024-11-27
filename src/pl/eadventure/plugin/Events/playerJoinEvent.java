@@ -1,6 +1,8 @@
 package pl.eadventure.plugin.Events;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -112,7 +114,17 @@ public class playerJoinEvent implements Listener {
 				}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
 			}
 		}
-
+		//Load tab name config
+		if (gVar.hiddenTabName.containsKey(player.getUniqueId())) {
+			boolean hiddenTabStatus = gVar.hiddenTabName.get(player.getUniqueId());
+			TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+			TabAPI tabAPI = TabAPI.getInstance();
+			if (hiddenTabStatus) {
+				tabAPI.getNameTagManager().hideNameTag(tabPlayer);
+			} else {
+				tabAPI.getNameTagManager().showNameTag(tabPlayer);
+			}
+		}
 		// Variables
 		if (player.isOp() == true) {
 			print.error("Gracz: " + player.getName() + " ma OP.");

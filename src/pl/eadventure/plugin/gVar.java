@@ -12,6 +12,7 @@ import pl.eadventure.plugin.Utils.ColorIssueResolverIA;
 
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class gVar {
 	public static HashMap<InetAddress, Boolean> isBanned = new HashMap<>();
@@ -36,4 +37,5 @@ public class gVar {
 	public static LiveStream liveStream;
 	public static boolean antiBot = true;
 	public static ChatInputCapture chatInputCapture;
+	public static HashMap<UUID, Boolean> hiddenTabName = new HashMap<>();
 }
