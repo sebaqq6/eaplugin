@@ -203,6 +203,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("aka").setExecutor(new Command_aka());
 		this.getCommand("live").setExecutor(new Command_streamer());
 		this.getCommand("fixresourcepack").setExecutor(new Command_fixresourcepack());
+		this.getCommand("fixmob").setExecutor(new Command_fixmob());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
@@ -240,6 +241,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		RegionCommandLooper.load(this);
 		GearScoreCalculator.loadConfig();
 		ArrowFix.run(this);
+		MobFixer.load();
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();
 		gVar.colorIssueResolverIA.loadDataFromConfig();

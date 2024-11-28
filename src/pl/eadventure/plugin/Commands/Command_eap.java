@@ -6,16 +6,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
-import pl.eadventure.plugin.Modules.GearScoreCalculator;
-import pl.eadventure.plugin.Modules.LeavesDecay;
-import pl.eadventure.plugin.Modules.PunishmentSystem;
-import pl.eadventure.plugin.Modules.RegionCommandLooper;
+import pl.eadventure.plugin.Modules.*;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.PlayerUtils;
@@ -49,7 +47,8 @@ public class Command_eap implements TabExecutor {
 					"reloadanns",
 					"rcl",
 					"disablegs",
-					"cachegs1");
+					"cachegs1",
+					"autofixmob");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
 		return Collections.emptyList();
@@ -397,6 +396,15 @@ public class Command_eap implements TabExecutor {
 				} catch (NumberFormatException e) {
 					sender.sendMessage("Niepoprawny format.");
 				}
+				return true;
+			}
+			case "autofixmob": {
+				if (MobFixer.autoModeEnabled) {
+					MobFixer.autoModeEnabled = false;
+				} else {
+					MobFixer.autoModeEnabled = true;
+				}
+				sender.sendMessage("MobFixer.autoModeEnabled = " + MobFixer.autoModeEnabled);
 				return true;
 			}
 			default: {

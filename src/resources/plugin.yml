@@ -128,6 +128,10 @@ commands:
     description: "Naprawia resource pack dla gracza."
     usage: "/<command>"
     permission: eadventureplugin.cmd.fixresourcepack
+  fixmob:
+    description: "Naprawia moba."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.fixmob
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."
