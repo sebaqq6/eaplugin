@@ -10,11 +10,14 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
+import pl.eadventure.plugin.Modules.MobFixer;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,7 @@ public class ProtocolLibAPI {
 		this.plugin = plugin;
 		//fabricPacketListener();
 		initGearScoreLore();
+		disableAnimationWhenMobfixerWork();
 	}
 
 	/*public void fabricPacketListener() {
@@ -74,6 +78,7 @@ public class ProtocolLibAPI {
 		});
 	}*/
 
+	//-----------------------------------------GERA SCORE
 	private void initGearScoreLore() {
 		protocolManager.addPacketListener(new PacketAdapter(
 				plugin,
@@ -157,6 +162,20 @@ public class ProtocolLibAPI {
 							}
 						}
 					}
+				}
+			}
+		});
+	}
+
+	//------------------------------------------------------MobFixer
+	private void disableAnimationWhenMobfixerWork() {
+		protocolManager.addPacketListener(new PacketAdapter(plugin,
+				ListenerPriority.NORMAL,
+				PacketType.Play.Server.DAMAGE_EVENT) {
+			@Override
+			public void onPacketSending(PacketEvent event) {
+				if (MobFixer.isWorking()) {
+					event.setCancelled(true);
 				}
 			}
 		});
