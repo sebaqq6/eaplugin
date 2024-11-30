@@ -191,8 +191,8 @@ public class GearScoreCalculator {
 					if (mpCustomItem.containsKey(eiItemID)) {
 						isCustom = true;
 						gearScore += mpCustomItem.get(eiItemID);
-						print.debug("CustomDetect: " + eiItemID);
-						print.debug(itemString);
+						//print.debug("CustomDetect: " + eiItemID);
+						//print.debug(itemString);
 					}
 				}
 			}
@@ -276,11 +276,11 @@ public class GearScoreCalculator {
 
 	private int getScoreForAttribute(Map.Entry<Attribute, AttributeModifier> attribute) {
 		String finalAttribute = attribute.getKey().getKey().getKey().replaceAll("generic.", "");
-		print.debug("finalAttribute: " + finalAttribute);
+		//print.debug("finalAttribute: " + finalAttribute);
 		if (attribute.getValue().getKey().value().contains("base")) return 0;
 		if (mpAttr.containsKey(finalAttribute)) {
 			int level = mpAttr.get(finalAttribute);
-			print.debug(finalAttribute + " (lvl: " + level + ")");
+			//print.debug(finalAttribute + " (lvl: " + level + ")");
 			return level;
 		}
 		return 0;
