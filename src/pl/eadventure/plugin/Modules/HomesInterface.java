@@ -720,10 +720,15 @@ public class HomesInterface {
 				description.add(Utils.color("&2&lTutaj jesteś."));
 			}
 
-			ItemStack cuboidIcon = new ItemStack(cuboid.getProtectBlock().getRelative(BlockFace.DOWN).getType());
-			if (!cuboidIcon.getType().isSolid() || cuboidIcon.getType() == Material.END_PORTAL) {//if air/endportal change to block type
+			ItemStack cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
+			try {
+				cuboidIcon = new ItemStack(cuboid.getProtectBlock().getRelative(BlockFace.DOWN).getType());
+			} catch (Exception e) {
 				cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
 			}
+			/*if (!cuboidIcon.getType().isSolid() || cuboidIcon.getType() == Material.END_PORTAL) {//if air/endportal change to block type
+				cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
+			}*/
 
 			String formatCuboidName = Utils.color(String.format("&5&l%s", cuboidName));
 
