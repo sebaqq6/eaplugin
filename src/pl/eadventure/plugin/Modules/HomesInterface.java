@@ -721,11 +721,12 @@ public class HomesInterface {
 			}
 
 			ItemStack cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
-			try {
+			/*try {
 				cuboidIcon = new ItemStack(cuboid.getProtectBlock().getRelative(BlockFace.DOWN).getType());
 			} catch (Exception e) {
 				cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
 			}
+			*/
 			/*if (!cuboidIcon.getType().isSolid() || cuboidIcon.getType() == Material.END_PORTAL) {//if air/endportal change to block type
 				cuboidIcon = new ItemStack(Material.valueOf(cuboid.getType()));
 			}*/

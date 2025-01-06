@@ -34,10 +34,16 @@ public class TimersForAllPlayers {
 		calcGearScore(player);
 		updatePlayersOnlineVanish(player);
 		saveBreakBlocks(player);
-		//Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------
+		//--------------------------------------------------------------------------
 		Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> {
-			fixSpectatorTeleport(player);
+			oneSecondTimerForAllPlayersSync(player);
 		});
+	}
+
+	//Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------Sync section--------
+	private static void oneSecondTimerForAllPlayersSync(Player player) {//sync thread
+		fixSpectatorTeleport(player);
+		MobFixer.timerFixTargetMob(player);
 	}
 
 	private static void triggerTimePlayed(Player player) {

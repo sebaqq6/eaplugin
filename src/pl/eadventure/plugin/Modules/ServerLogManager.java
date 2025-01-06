@@ -62,6 +62,53 @@ public class ServerLogManager extends AbstractFilter {
 		if (m.contains("EternalAntibot")) {//block console spam
 			return Result.DENY;
 		}
+		//console spam from Pocket Games
+		if (m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:228)")
+				|| m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:232)")
+				|| m.contains("at java.base/jdk.internal.reflect.MethodHandleObjectFieldAccessorImpl.set(MethodHandleObjectFieldAccessorImpl.java:115)")
+				|| m.contains("at java.base/java.lang.reflect.Field.set(Field.java:836)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.utils.gameUtils.SkullUtil.getSkullFromPlayer(SkullUtil.java:41)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.games.Game.highscoreUpdateYML(Game.java:422)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.games.Game.access$300(Game.java:26)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.games.Game$2.run(Game.java:235)")
+				|| m.contains("at org.bukkit.craftbukkit.scheduler.CraftTask.run(CraftTask.java:86)")
+				|| m.contains("at org.bukkit.craftbukkit.scheduler.CraftScheduler.mainThreadHeartbeat(CraftScheduler.java:475)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1770)")
+				|| m.contains("at net.minecraft.server.dedicated.DedicatedServer.tickChildren(DedicatedServer.java:513)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:1642)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:1342)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.lambda$spin$0(MinecraftServer.java:333)")
+				|| m.contains("at java.base/java.lang.Thread.run(Thread.java:1583)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.utils.ItemUtil.getSkullFromURL(ItemUtil.java:219)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.utils.ItemUtil.getSkull(ItemUtil.java:191)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.utils.ItemUtil.getItemStack(ItemUtil.java:156)")
+				|| m.contains("at PocketGames.jar//com.live.bemmamin.pocketgames.Events.onInventoryClick(Events.java:196)")
+				|| m.contains("at com.destroystokyo.paper.event.executor.MethodHandleEventExecutor.execute(MethodHandleEventExecutor.java:44)")
+				|| m.contains("at co.aikar.timings.TimedEventExecutor.execute(TimedEventExecutor.java:80)")
+				|| m.contains("at org.bukkit.plugin.RegisteredListener.callEvent(RegisteredListener.java:70)")
+				|| m.contains("at io.papermc.paper.plugin.manager.PaperEventManager.callEvent(PaperEventManager.java:54)")
+				|| m.contains("at io.papermc.paper.plugin.manager.PaperPluginManagerImpl.callEvent(PaperPluginManagerImpl.java:131)")
+				|| m.contains("at org.bukkit.plugin.SimplePluginManager.callEvent(SimplePluginManager.java:630)")
+				|| m.contains("at net.minecraft.server.network.ServerGamePacketListenerImpl.handleContainerClick(ServerGamePacketListenerImpl.java:3306)")
+				|| m.contains("at net.minecraft.network.protocol.game.ServerboundContainerClickPacket.handle(ServerboundContainerClickPacket.java:69)")
+				|| m.contains("at net.minecraft.network.protocol.game.ServerboundContainerClickPacket.handle(ServerboundContainerClickPacket.java:33)")
+				|| m.contains("at net.minecraft.network.protocol.PacketUtils.lambda$ensureRunningOnSameThread$0(PacketUtils.java:56)")
+				|| m.contains("at net.minecraft.server.TickTask.run(TickTask.java:18)")
+				|| m.contains("at net.minecraft.util.thread.BlockableEventLoop.doRunTask(BlockableEventLoop.java:151)")
+				|| m.contains("at net.minecraft.util.thread.ReentrantBlockableEventLoop.doRunTask(ReentrantBlockableEventLoop.java:24)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.doRunTask(MinecraftServer.java:1581)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.doRunTask(MinecraftServer.java:201)")
+				|| m.contains("at net.minecraft.util.thread.BlockableEventLoop.pollTask(BlockableEventLoop.java:125)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.pollTaskInternal(MinecraftServer.java:1558)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.pollTask(MinecraftServer.java:1551)")
+				|| m.contains("at net.minecraft.util.thread.BlockableEventLoop.runAllTasks(BlockableEventLoop.java:114)")
+				|| m.contains("at net.minecraft.util.thread.BlockableEventLoop.managedBlock(BlockableEventLoop.java:135)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.managedBlock(MinecraftServer.java:1510)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.waitUntilNextTick(MinecraftServer.java:1517)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:1362)")
+				|| m.contains("at net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:1673)")) {
+			return Result.DENY;
+		}
 		//String sender = event.getLoggerName();
 		/*if(m.contains("mfnalex")) {
 			return Result.DENY; // mfnalex is a ninja
