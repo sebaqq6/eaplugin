@@ -147,6 +147,8 @@ permissions:
     description: "Możliwość usuwanie warna gracza przez /warnlist."
   eadventureplugin.creative.bypass:
     description: "Bypass funkcjonalności dla /creative - tylko dla zaufanych osób."
+  eadventureplugin.creative.cangive:
+    description: "Pozwala nadawać innym graczom /creative."
   eadventureplugin.annuance.manage:
     description: "Dodawanie/usuwanie ogłoszeń."
   eadventureplugin.showaka:
