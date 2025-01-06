@@ -76,7 +76,7 @@ public class AnnounceManager {
 		}
 
 		public String getCreatedFormated() {
-			return sdf.format(expire);
+			return sdf.format(created);
 		}
 
 		public String lastViewedFormated() {
