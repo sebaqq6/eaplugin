@@ -188,4 +188,8 @@ public class LiveStream {
 			}
 		});
 	}
+
+	private void announceStream() {
+		
+	}
 }

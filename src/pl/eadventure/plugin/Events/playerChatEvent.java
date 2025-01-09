@@ -51,9 +51,11 @@ public class playerChatEvent implements Listener {
 		if (pd.eventAnnChat) {
 			if (isPlayerInEvent(player)) {
 				for (Player players : Bukkit.getOnlinePlayers()) {
-					if (isPlayerInEvent(players))
+					if (isPlayerInEvent(players)) {
 						players.sendTitle("", ChatColor.translateAlternateColorCodes('&', "&e" + e.getMessage()), 10,
 								140, 10);
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + players.getName() + " run playsound my_sounds:sounds.warning master @p ~ ~ ~ 0.6 1");
+					}
 				}
 				isAnnMessage = true;
 				e.setCancelled(true);
