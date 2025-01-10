@@ -1,8 +1,9 @@
 package pl.eadventure.plugin.Events;
 
-
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +17,8 @@ import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
+
+import java.time.Duration;
 
 public class playerChatEvent implements Listener {
 	@EventHandler
@@ -52,9 +55,18 @@ public class playerChatEvent implements Listener {
 			if (isPlayerInEvent(player)) {
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(players)) {
-						players.sendTitle("", ChatColor.translateAlternateColorCodes('&', "&e" + e.getMessage()), 10,
-								140, 10);
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + players.getName() + " run playsound my_sounds:sounds.warning master @p ~ ~ ~ 0.6 1");
+						players.showTitle(Title.title(Utils.mm(""),
+								Utils.mm("<#FF0000>" + e.getMessage()),
+								Title.Times.times(Duration.ofMillis(500),
+										Duration.ofMillis(7000),
+										Duration.ofMillis(500))));
+						players.playSound(
+								players.getLocation(),                     // Lokalizacja odtworzenia dźwięku
+								"my_sounds:sounds.warning",              // Ścieżka do dźwięku (namespace:sound)
+								SoundCategory.MASTER,                    // Kategoria dźwięku
+								0.15f,                                    // Głośność
+								1.0f                                     // Ton (1.0 = standardowy ton)
+						);
 					}
 				}
 				isAnnMessage = true;
