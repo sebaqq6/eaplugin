@@ -132,6 +132,10 @@ commands:
     description: "Naprawia moba."
     usage: "/<command>"
     permission: eadventureplugin.cmd.fixmob
+  redflag:
+    description: "Komenda do zarządzania tarczą Anty-DDoS."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.redflag
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

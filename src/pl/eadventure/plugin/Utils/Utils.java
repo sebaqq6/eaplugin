@@ -14,13 +14,15 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.permissions.Permission;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
@@ -583,4 +585,65 @@ public class Utils {
 		return null;
 	}
 	// Split lines with minimessage tags - END
+
+	/**
+	 * Wysyła asynchroniczne zapytanie HTTPS do danego URL.
+	 *
+	 * @param urlString Adres URL API.
+	 * @param method    Metoda HTTP (np. "GET", "POST").
+	 * @param body      Treść zapytania (dla POST/PUT), lub null dla GET.
+	 * @return CompletableFuture z odpowiedzią serwera.
+	 */
+	public static CompletableFuture<String> sendHttpsRequest(String urlString, String method, String body) {
+		return CompletableFuture.supplyAsync(() -> {
+			HttpURLConnection connection = null;
+			try {
+				// Tworzenie obiektu URL
+				URL url = new URL(urlString);
+				connection = (HttpURLConnection) url.openConnection();
+
+				// Konfiguracja połączenia
+				connection.setRequestMethod(method);
+				connection.setRequestProperty("Content-Type", "application/json");
+				connection.setRequestProperty("Accept", "application/json");
+				connection.setDoOutput(true);
+
+				// Jeśli jest treść zapytania (dla POST/PUT)
+				if (body != null && !body.isEmpty()) {
+					try (OutputStream os = connection.getOutputStream()) {
+						os.write(body.getBytes());
+						os.flush();
+					}
+				}
+
+				// Odczyt odpowiedzi
+				int responseCode = connection.getResponseCode();
+				if (responseCode >= 200 && responseCode < 300) { // Kod 2xx oznacza sukces
+					try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+						StringBuilder response = new StringBuilder();
+						String line;
+						while ((line = reader.readLine()) != null) {
+							response.append(line);
+						}
+						return response.toString();
+					}
+				} else { // Obsługa błędów
+					try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
+						StringBuilder errorResponse = new StringBuilder();
+						String line;
+						while ((line = reader.readLine()) != null) {
+							errorResponse.append(line);
+						}
+						throw new RuntimeException("Błąd HTTP " + responseCode + ": " + errorResponse.toString());
+					}
+				}
+			} catch (Exception e) {
+				throw new RuntimeException("Błąd podczas wysyłania zapytania HTTPS: " + e.getMessage(), e);
+			} finally {
+				if (connection != null) {
+					connection.disconnect();
+				}
+			}
+		});
+	}
 }
