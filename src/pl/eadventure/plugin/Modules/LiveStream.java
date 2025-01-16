@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.Modules;
 
+import mineverse.Aust1n46.chat.command.chat.Broadcast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,7 @@ public class LiveStream {
 	ChatInputCapture chatInputCapture = gVar.chatInputCapture;
 	static ItemStack hBlackX = gVar.customItems.get("hBlackX");
 	static ItemStack rainbowDiamond = gVar.customItems.get("rainbowDiamond");
+	static int announceTimer = 0;
 
 	public LiveStream() {
 		new BukkitRunnable() {
@@ -145,6 +147,12 @@ public class LiveStream {
 	String livePlaceHolder = null;
 
 	private void oneSecondTimer() {
+		if (announceTimer <= 0) {
+			announceStream();
+			announceTimer = 10;
+		} else {
+			announceTimer--;
+		}
 		if (livePlaceholderStep == 0) {
 			livePlaceholderStep = 1;
 			livePlaceHolder = "#FF0000&lʟɪᴠᴇ #FF0000\uD83C\uDFA5";
@@ -190,6 +198,6 @@ public class LiveStream {
 	}
 
 	private void announceStream() {
-		
+		//print.error("announceStream");
 	}
 }

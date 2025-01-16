@@ -228,7 +228,9 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					gVar.topGearScore = new TopGearScore(storage, 20);
 					gVar.topDonate = new TopDonate(storage, 10);
 					gVar.liveStream = new LiveStream();
+					//gVar.onlineCountHistory = new OnlineCountHistory(storage, getInstance());
 					storage.execute("TRUNCATE playersonline;");
+					PlayerData.fixSessions();
 				} else
 					print.error("Błąd połączenia z MySQL!");
 			}
@@ -243,6 +245,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		GearScoreCalculator.loadConfig();
 		ArrowFix.run(this);
 		MobFixer.load();
+
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();
 		gVar.colorIssueResolverIA.loadDataFromConfig();
@@ -270,6 +273,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		PlayerData.fixSessions();
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
 			placeholders.unregister();
 		}

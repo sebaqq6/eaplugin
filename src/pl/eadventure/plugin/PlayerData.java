@@ -44,6 +44,7 @@ public class PlayerData {
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
+	private int sessionId = 0;
 	public int registerDate = 0;
 	public boolean immunity = false; //
 	public int onlineHours = 0, onlineMinutes = 0, onlineSeconds = 0;
@@ -74,8 +75,11 @@ public class PlayerData {
 	}
 
 	public static void free(Player player) {
-		if (players.containsKey(player.getUniqueId())) players.remove(player.getUniqueId());
-		else print.error("Gracz: " + player.getName() + " - Brak instancji danych! Coś jest nie tak!");
+		if (players.containsKey(player.getUniqueId())) {
+			PlayerData pd = PlayerData.get(player);
+			pd.endSession();
+			players.remove(player.getUniqueId());
+		} else print.error("Gracz: " + player.getName() + " - Brak instancji danych! Coś jest nie tak!");
 	}
 
 	public void loadDataFromMySQL(Player player) {
@@ -142,6 +146,7 @@ public class PlayerData {
 			nick = player.getName();
 		}
 		storage.executeSafe("UPDATE players SET ip=?, nick=? WHERE id=?;", parameters);
+		startSession();
 	}
 
 	//Register
@@ -162,9 +167,39 @@ public class PlayerData {
 				parameters.add(player.getUniqueId().toString());
 				parameters.add(Utils.getUnixTimestamp());
 				parameters.add(player.getAddress().getAddress().getHostAddress());
-				dbid = storage.executeGetInsertID("INSERT INTO `players`(`nick`, `uuid`, `registerdate`, `ip`) VALUES (?, ?, ?, ?);", parameters);
+				dbid = storage.executeGetInsertID("INSERT INTO `players` (`nick`, `uuid`, `registerdate`, `ip`) VALUES (?, ?, ?, ?);", parameters);
 				print.debug("Gracz: " + player.getName() + " - zarejestrowano konto EAP o ID: " + dbid + ".");
+				startSession();
 			}
 		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
+	}
+
+	private void startSession() {
+		if (dbid != 0) {
+			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(dbid);
+			String sql = "INSERT INTO `sessions` (`uid`) VALUES (?);";
+			sessionId = storage.executeGetInsertID(sql, parameters);
+		}
+	}
+
+	private void endSession() {
+		if (sessionId != 0) {
+			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(sessionId);
+			String sql = "UPDATE `sessions` SET `end`=CURRENT_TIMESTAMP WHERE `id`=?";
+			storage.executeSafe(sql, parameters);
+		}
+	}
+
+	public static void fixSessions() {
+		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+		if (storage.isConnect()) {
+			String sql = "UPDATE `sessions` SET `end`=CURRENT_TIMESTAMP WHERE `end` IS NULL";
+			storage.execute(sql);
+		}
+
 	}
 }
