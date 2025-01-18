@@ -116,7 +116,9 @@ public class PlayerData {
 		HashMap<?, ?> row = (HashMap<?, ?>) queryResult.get("row");
 
 		dbid = (int) row.get("id");
+		sessionId = 0;
 		print.debug("Gracz: " + player.getName() + " - posiada konto EAP(ID: " + dbid + ").");
+		startSession();
 		//Load data start
 		nick = (String) row.get("nick");
 		registerDate = (int) row.get("registerdate");
@@ -144,7 +146,6 @@ public class PlayerData {
 			nick = player.getName();
 		}
 		storage.executeSafe("UPDATE players SET ip=?, nick=? WHERE id=?;", parameters);
-		startSession();
 	}
 
 	//Register
@@ -167,12 +168,13 @@ public class PlayerData {
 				parameters.add(player.getAddress().getAddress().getHostAddress());
 				dbid = storage.executeGetInsertID("INSERT INTO `players` (`nick`, `uuid`, `registerdate`, `ip`) VALUES (?, ?, ?, ?);", parameters);
 				print.debug("Gracz: " + player.getName() + " - zarejestrowano konto EAP o ID: " + dbid + ".");
+				sessionId = 0;
 				startSession();
 			}
 		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
 	}
 
-	private void startSession() {
+	public void startSession() {
 		if (dbid != 0 && sessionId == 0) {
 			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 			ArrayList<Object> parameters = new ArrayList<>();
@@ -190,6 +192,10 @@ public class PlayerData {
 			String sql = "UPDATE `sessions` SET `end`=CURRENT_TIMESTAMP WHERE `id`=?";
 			storage.executeSafe(sql, parameters);
 		}
+	}
+
+	public void resetSessionId() {
+		sessionId = 0;
 	}
 
 	public static void fixSessions() {

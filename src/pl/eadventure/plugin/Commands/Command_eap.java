@@ -407,6 +407,16 @@ public class Command_eap implements TabExecutor {
 				sender.sendMessage("MobFixer.autoModeEnabled = " + MobFixer.autoModeEnabled);
 				return true;
 			}
+			case "fixsessions": {
+				PlayerData.fixSessions();
+				Bukkit.getOnlinePlayers().forEach(players -> {
+					PlayerData pd = PlayerData.get(players);
+					pd.resetSessionId();
+					pd.startSession();
+				});
+				sender.sendMessage("Naprawiono sesje graczy.");
+				return true;
+			}
 			default: {
 				usage(sender);
 			}

@@ -60,7 +60,7 @@ public class TimersForAllPlayers {
 			}
 			if (pd.dbid != 0) {
 				storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
-				//pd.updateSession();
+				pd.updateSession();
 			}
 		}
 	}
