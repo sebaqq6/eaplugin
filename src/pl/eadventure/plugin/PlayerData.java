@@ -76,8 +76,6 @@ public class PlayerData {
 
 	public static void free(Player player) {
 		if (players.containsKey(player.getUniqueId())) {
-			PlayerData pd = PlayerData.get(player);
-			pd.endSession();
 			players.remove(player.getUniqueId());
 		} else print.error("Gracz: " + player.getName() + " - Brak instancji danych! Coś jest nie tak!");
 	}
@@ -175,7 +173,7 @@ public class PlayerData {
 	}
 
 	private void startSession() {
-		if (dbid != 0) {
+		if (dbid != 0 && sessionId == 0) {
 			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 			ArrayList<Object> parameters = new ArrayList<>();
 			parameters.add(dbid);
@@ -184,7 +182,7 @@ public class PlayerData {
 		}
 	}
 
-	private void endSession() {
+	public void updateSession() {
 		if (sessionId != 0) {
 			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 			ArrayList<Object> parameters = new ArrayList<>();

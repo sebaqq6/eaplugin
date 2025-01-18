@@ -40,8 +40,10 @@ public class playerQuitEvent implements Listener {
 		parameters.add(player.getName());
 		storage.executeSafe("DELETE FROM playersonline WHERE nick=?", parameters);
 		//Other
-		if (pd.dbid != 0)
+		if (pd.dbid != 0) {
 			storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
+			pd.updateSession();
+		}
 		PlayerData.free(player);
 	}
 }

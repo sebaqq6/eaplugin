@@ -58,10 +58,11 @@ public class TimersForAllPlayers {
 				pd.onlineMinutes = 0;
 				pd.onlineHours++;
 			}
-			if (pd.dbid != 0)
+			if (pd.dbid != 0) {
 				storage.execute(String.format("UPDATE `players` SET `onlineHours`='%d', `onlineMinutes`='%d', `onlineSeconds`='%d', `maxSessionOnlineSeconds`='%d' WHERE `id`='%d';", pd.onlineHours, pd.onlineMinutes, pd.onlineSeconds, pd.maxSessionOnlineSeconds, pd.dbid));
+				//pd.updateSession();
+			}
 		}
-
 	}
 
 	private static void calcGearScore(Player player) {
