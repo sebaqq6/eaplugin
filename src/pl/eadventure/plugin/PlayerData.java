@@ -118,7 +118,6 @@ public class PlayerData {
 		dbid = (int) row.get("id");
 		sessionId = 0;
 		print.debug("Gracz: " + player.getName() + " - posiada konto EAP(ID: " + dbid + ").");
-		startSession();
 		//Load data start
 		nick = (String) row.get("nick");
 		registerDate = (int) row.get("registerdate");
@@ -135,6 +134,7 @@ public class PlayerData {
 		streamerService = (String) row.get("streamer_service");
 		streamerURL = (String) row.get("streamer_url");
 		//Load data end
+		startSession();
 		//Update some information
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(player.getAddress().getAddress().getHostAddress());
@@ -191,6 +191,8 @@ public class PlayerData {
 			parameters.add(sessionId);
 			String sql = "UPDATE `sessions` SET `end`=CURRENT_TIMESTAMP WHERE `id`=?";
 			storage.executeSafe(sql, parameters);
+		} else {
+			startSession();
 		}
 	}
 
