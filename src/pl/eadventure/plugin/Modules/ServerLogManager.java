@@ -41,6 +41,7 @@ public class ServerLogManager extends AbstractFilter {
 		int Command = 1;
 		int Chat = 2;
 		int JoinLeave = 3;
+		int Inventory = 4;
 	}
 
 	public static void disable() {

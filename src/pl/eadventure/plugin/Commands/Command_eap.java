@@ -140,7 +140,7 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
-				if (sender instanceof Player player) {
+				/*if (sender instanceof Player player) {
 					//Entity specTarget = player.getSpectatorTarget();
 					Entity specTarget = Bukkit.getPlayer("JrRequeim");
 					if (specTarget instanceof Player playerTarget) {
@@ -161,8 +161,13 @@ public class Command_eap implements TabExecutor {
 							}, 20L);
 						}
 					}
-				}
+				}*/
 
+				if (sender instanceof Player player) {
+					player.getInventory().clear();
+					player.getInventory().setContents(EqSaver.loadInventoryFromFile(sender.getName()));
+					player.sendMessage("gotowe");
+				}
 				break;
 			}
 			case "givemoney": {

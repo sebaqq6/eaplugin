@@ -40,7 +40,11 @@ public class playerCommandPreprocessEvent implements Listener {
 		}
 
 		if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
-			if (!args[0].equalsIgnoreCase("/creative")) {
+			if (!args[0].equalsIgnoreCase("/creative")
+					&& !args[0].equalsIgnoreCase("/czatlokalny")
+					&& !args[0].equalsIgnoreCase("/czatglobalny")
+					&& !args[0].equalsIgnoreCase("/adminczat")
+			) {
 				player.sendMessage(Utils.mm("<#888888>Nie możesz używać komend w <b>trybie kreatywnym</b>!</#888888>"));
 				e.setCancelled(true);
 				return;

@@ -3,6 +3,7 @@ package pl.eadventure.plugin;
 import org.bukkit.inventory.ItemStack;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.AnnounceManager;
+import pl.eadventure.plugin.Modules.EqSaver;
 import pl.eadventure.plugin.Modules.LiveStream;
 import pl.eadventure.plugin.Modules.Top.TopBreakBlocks;
 import pl.eadventure.plugin.Modules.Top.TopDonate;
@@ -37,5 +38,6 @@ public class gVar {
 	public static LiveStream liveStream;
 	public static boolean antiBot = true;
 	public static ChatInputCapture chatInputCapture;
+	public static EqSaver eqSaver;
 	public static HashMap<UUID, Boolean> hiddenTabName = new HashMap<>();
 }

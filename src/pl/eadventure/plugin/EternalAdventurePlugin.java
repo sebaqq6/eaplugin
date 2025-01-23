@@ -228,6 +228,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					gVar.topGearScore = new TopGearScore(storage, 20);
 					gVar.topDonate = new TopDonate(storage, 10);
 					gVar.liveStream = new LiveStream();
+					gVar.eqSaver = new EqSaver(instance, storage);
 					//gVar.onlineCountHistory = new OnlineCountHistory(storage, getInstance());
 					storage.execute("TRUNCATE playersonline;");
 					PlayerData.fixSessions();
