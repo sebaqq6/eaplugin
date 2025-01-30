@@ -77,7 +77,7 @@ public class playerJoinEvent implements Listener {
 						}
 					}
 				}
-
+				gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "join");
 				/*else if(clientBrand.length() < 2) {
 					if(player.isOnline()) {
 						player.kickPlayer("Twoje połączenie nie zostało poprawnie zweryfikowane.\nDołącz ponownie!");
