@@ -136,6 +136,10 @@ commands:
     description: "Komenda do zarządzania tarczą Anty-DDoS."
     usage: "/<command>"
     permission: eadventureplugin.cmd.redflag
+  eqs:
+    description: "Komenda do podglądu/przywracania EQ."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.eqs
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."
