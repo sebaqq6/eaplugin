@@ -64,6 +64,7 @@ public class EqSaver {
 			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "respawn");
 		}
 
+		//----------------------------------------------CHANGE WORLD
 		@EventHandler(priority = EventPriority.MONITOR)
 		public void onPlayerDeath(PlayerChangedWorldEvent e) {
 			Player player = e.getPlayer();
