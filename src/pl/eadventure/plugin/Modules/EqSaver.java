@@ -17,6 +17,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
@@ -60,14 +61,19 @@ public class EqSaver {
 
 		//----------------------------------------------RESPAWN
 		@EventHandler(priority = EventPriority.MONITOR)
-		public void onPlayerDeath(PlayerRespawnEvent e) {
+		public void onPlayerRespawn(PlayerRespawnEvent e) {
 			Player player = e.getPlayer();
-			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "respawn");
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "respawn");
+				}
+			}.runTaskLater(EternalAdventurePlugin.getInstance(), 10L);
 		}
 
 		//----------------------------------------------CHANGE WORLD
 		@EventHandler(priority = EventPriority.MONITOR)
-		public void onPlayerDeath(PlayerChangedWorldEvent e) {
+		public void onPlayerChangeWorld(PlayerChangedWorldEvent e) {
 			Player player = e.getPlayer();
 			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "change_world");
 		}
@@ -78,7 +84,7 @@ public class EqSaver {
 			Player player = e.getPlayer();
 			EqSaver eqSaver = gVar.eqSaver;
 			eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "leave");
-			eqSaver.taskSaveInventory(player, eqSaver.getTrackedInv(player, 30), "30s_before_leave");
+			eqSaver.taskSaveInventory(player, eqSaver.getTrackedInv(player, 35), "35s_before_leave");
 		}
 	}
 
