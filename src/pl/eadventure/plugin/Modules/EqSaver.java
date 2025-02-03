@@ -5,7 +5,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.logging.log4j.core.net.Priority;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,15 +27,13 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class EqSaver {
 	Plugin plugin;
 	MySQLStorage storage;
 	EqSaverListener listener;
+	private final Map<Player, LinkedList<ItemStack[]>> inventoryHistory = new HashMap<>();
 
 	public EqSaver(Plugin plugin, MySQLStorage storage) {
 		this.plugin = plugin;
@@ -43,6 +43,7 @@ public class EqSaver {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
+				trackInventoryLast();
 				taskRestoreInventory();
 			}
 		}.runTaskTimerAsynchronously(plugin, 20L, 20L);
@@ -75,21 +76,27 @@ public class EqSaver {
 		@EventHandler(priority = EventPriority.MONITOR)
 		public void onPlayerQuit(PlayerQuitEvent e) {
 			Player player = e.getPlayer();
-			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "leave");
+			EqSaver eqSaver = gVar.eqSaver;
+			eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "leave");
+			eqSaver.taskSaveInventory(player, eqSaver.getTrackedInv(player, 30), "30s_before_leave");
 		}
 	}
 
 	//***************************************************************************************************TASK SAVE INVENTORY
 	public void taskSaveInventory(Player player, ItemStack[] inventory, String event) {
+		if (inventory == null) return;
 		String uuid = player.getUniqueId().toString();
 		String playerName = player.getName();
 		Location location = player.getLocation();
+		ItemStack[] snapshot = Arrays.stream(inventory)
+				.map(item -> item != null ? item.clone() : null)
+				.toArray(ItemStack[]::new);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				StringBuilder infoBuilder = new StringBuilder();
 
-				for (ItemStack item : inventory) {
+				for (ItemStack item : snapshot) {
 					if (item != null && item.getType() != Material.AIR) {
 						// Pobierz komponent tekstowy
 						Component displayName = item.displayName();
@@ -117,7 +124,7 @@ public class EqSaver {
 				String sql = "INSERT INTO `invback` (`uuid`, `event`, `info`, `location`) VALUES (?, ?, ?, ?);";
 				int insertId = storage.executeGetInsertID(sql, parameters);
 				//save file
-				saveInventoryToFile(inventory, String.valueOf(insertId));
+				saveInventoryToFile(snapshot, String.valueOf(insertId));
 				//Log data
 				String log;
 				log = String.format("Zapis EQ gracza: %s. Zdarzenie: %s. Lokalizacja: %.2f, %.2f, %.2f, %s. %s /eqs %d info:%s", playerName, event, location.getX(), location.getY(), location.getZ(), worldName, Utils.getCurrentDate(), insertId, info);
@@ -126,6 +133,62 @@ public class EqSaver {
 		}.runTaskAsynchronously(plugin);
 	}
 
+	//************************************************************************************TASK HISTORY INVENT LAST MINUTE
+	private void trackInventoryLast() {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			inventoryHistory.putIfAbsent(player, new LinkedList<>());
+			LinkedList<ItemStack[]> history = inventoryHistory.get(player);
+
+			if (history.size() >= 60) {
+				history.removeFirst(); // Usuwamy najstarszy zapis
+			}
+			ItemStack[] snapshot = Arrays.stream(player.getInventory().getContents())
+					.map(item -> item != null ? item.clone() : null)
+					.toArray(ItemStack[]::new);
+
+			history.add(snapshot);
+		}
+	}
+
+	public ItemStack[] getTrackedInv(Player player, int lastSeconds) {
+		LinkedList<ItemStack[]> history = inventoryHistory.get(player);
+
+		if (history == null || lastSeconds <= 0 || lastSeconds > history.size()) {
+			return null; // Zabezpieczenie przed błędnym indeksem
+		}
+
+		// Indeks od początku listy, a nie od końca!
+		return history.get(history.size() - lastSeconds - 1);
+	}
+
+	public void debugInventoryHistory(CommandSender sender) {
+		print.info("----------------------------");
+		if (sender instanceof Player player) {
+			for (int x = 1; x < 60; x++) {
+
+				ItemStack[] eq = getTrackedInv(player, x);
+				if (eq == null) {
+					print.info(x + ": Brak danych");
+					continue;
+				}
+				StringBuilder infoBuilder = new StringBuilder();
+				for (ItemStack item : eq) {
+					if (item != null && item.getType() != Material.AIR) {
+						Component displayName = item.displayName();
+						if (displayName != null) {
+							if (infoBuilder.length() > 0) {
+								infoBuilder.append(", ");
+							}
+							infoBuilder.append(PlainTextComponentSerializer.plainText().serialize(displayName));
+						}
+					}
+				}
+				String info = infoBuilder.toString();
+				print.info(x + " sekund temu: " + info);
+			}
+			print.info("----------------------------");
+		}
+	}
 
 	//**************************************************************************************************RESTORE EQ TASK
 	private void taskRestoreInventory() {
@@ -145,15 +208,22 @@ public class EqSaver {
 					//restore eq...
 					Player player = Bukkit.getPlayer(UUID.fromString(uuid));
 					if (player != null && player.isOnline()) {
+						taskSaveInventory(player, player.getInventory().getContents(), "before_restore");
+
 						player.getInventory().clear();
 						ItemStack[] backup = loadInventoryFromFile(String.valueOf(id));
 						player.getInventory().setContents(backup);
-						//log
-						print.info(String.format("Przywrócono EQ gracza %s (/eqs %d)", player.getName(), id));
-						String log = String.format("Zapis EQ gracza: %s - Przywrócono ekwipunek (/eqs %d).", player.getName(), id);
-						ServerLogManager.log(log, ServerLogManager.LogType.Inventory);
 						//update db
 						storage.execute("UPDATE invback SET status = 2 WHERE id = " + id);
+						//log
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								print.info(String.format("Przywrócono EQ gracza %s (/eqs %d)", player.getName(), id));
+								String log = String.format("Zapis EQ gracza: %s - Przywrócono ekwipunek (/eqs %d).", player.getName(), id);
+								ServerLogManager.log(log, ServerLogManager.LogType.Inventory);
+							}
+						}.runTaskLaterAsynchronously(plugin, 20L);
 					}
 				}
 			}

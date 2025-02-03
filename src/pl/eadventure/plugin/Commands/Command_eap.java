@@ -1,6 +1,7 @@
 package pl.eadventure.plugin.Commands;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -163,11 +164,7 @@ public class Command_eap implements TabExecutor {
 					}
 				}*/
 
-				if (sender instanceof Player player) {
-					player.getInventory().clear();
-					player.getInventory().setContents(EqSaver.loadInventoryFromFile(sender.getName()));
-					player.sendMessage("gotowe");
-				}
+				gVar.eqSaver.debugInventoryHistory(sender);
 				break;
 			}
 			case "givemoney": {
