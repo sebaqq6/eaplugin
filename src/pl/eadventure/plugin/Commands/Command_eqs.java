@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.gVar;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class Command_eqs implements TabExecutor {
 				sender.sendMessage(Utils.mm("<#FF0000>Nieprawidłowe <bold>ID ekwipunku</bold>."));
 				return true;
 			}
-			sender.sendMessage("EQID: " + eqId);
+			gVar.eqSaver.showEqsGUI(player, eqId);
 		} else {
 			sender.sendMessage("Komenda dostępna tylko z poziomu gry.");
 		}

@@ -236,6 +236,11 @@ public class EqSaver {
 		});
 	}
 
+	//**************************************************************************************************GUI
+	public void showEqsGUI(Player player, int eqid) {
+
+	}
+
 	//**************************************************************************************************UTILS
 	public static void saveInventoryToFile(ItemStack[] inventory, String fileName) {
 		File folder = new File("plugins/EternalAdventurePlugin/inventory_backups");
