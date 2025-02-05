@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.MagicGUI;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
@@ -34,6 +35,7 @@ public class EqSaver {
 	Plugin plugin;
 	MySQLStorage storage;
 	EqSaverListener listener;
+	static ItemStack hBlackX = gVar.customItems.get("hBlackX");
 	private final Map<Player, LinkedList<ItemStack[]>> inventoryHistory = new HashMap<>();
 
 	public EqSaver(Plugin plugin, MySQLStorage storage) {
@@ -160,10 +162,9 @@ public class EqSaver {
 		LinkedList<ItemStack[]> history = inventoryHistory.get(player);
 
 		if (history == null || lastSeconds <= 0 || lastSeconds > history.size()) {
-			return null; // Zabezpieczenie przed błędnym indeksem
+			return null;
 		}
 
-		// Indeks od początku listy, a nie od końca!
 		return history.get(history.size() - lastSeconds - 1);
 	}
 
@@ -238,7 +239,22 @@ public class EqSaver {
 
 	//**************************************************************************************************GUI
 	public void showEqsGUI(Player player, int eqid) {
-
+		MagicGUI mainGui = MagicGUI.create("/eqs " + eqid, 54);
+		mainGui.setAutoRemove(true);
+		ItemStack[] items = loadInventoryFromFile(String.valueOf(eqid));
+		for (ItemStack item : items) {
+			if (item == null) continue;
+			mainGui.addItem(item);
+		}
+		//menu
+		for (int m = 45; m <= 53; m++) {
+			mainGui.setItem(m, Utils.itemWithDisplayName(ItemStack.of(Material.BLACK_STAINED_GLASS_PANE), " ", null));
+		}
+		ItemStack exitButton = Utils.itemWithDisplayName(hBlackX, Utils.color("&r&7&lZamknij"), null);
+		mainGui.setItem(49, exitButton, ((player1, gui, slot, type) -> {
+			mainGui.close(player1);
+		}));
+		mainGui.open(player);
 	}
 
 	//**************************************************************************************************UTILS
