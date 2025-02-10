@@ -17,6 +17,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import pl.eadventure.plugin.API.ProtocolLibAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MagicGUI;
@@ -86,6 +87,12 @@ public class EqSaver {
 			Player player = e.getPlayer();
 			EqSaver eqSaver = gVar.eqSaver;
 			eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "leave");
+			int lastSeen = (int) ProtocolLibAPI.getLastSeen(e.getPlayer().getUniqueId());
+			if (lastSeen > 0 && lastSeen < 60) {
+				eqSaver.taskSaveInventory(player, eqSaver.getTrackedInv(player, lastSeen), lastSeen + "s_before_leave");
+			} else {
+				eqSaver.taskSaveInventory(player, eqSaver.getTrackedInv(player, 1), "1s_before_leave");
+			}
 			eqSaver.taskSaveInventory(player, eqSaver.getTrackedInv(player, 35), "35s_before_leave");
 		}
 	}

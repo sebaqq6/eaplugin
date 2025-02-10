@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,12 +17,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Modules.MobFixer;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ProtocolLibAPI {
@@ -34,9 +36,46 @@ public class ProtocolLibAPI {
 		//fabricPacketListener();
 		initGearScoreLore();
 		disableAnimationWhenMobfixerWork();
+		registerKeepAlive();
 	}
 
-	/*public void fabricPacketListener() {
+	//==================================================================================================================
+	private static HashMap<UUID, Timestamp> lastOnline = new HashMap<>();
+
+	private void registerKeepAlive() {
+		protocolManager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.POSITION) {
+			@Override
+			public void onPacketReceiving(PacketEvent e) {
+				Player player = e.getPlayer();
+				Timestamp now = Timestamp.from(Instant.now());
+				lastOnline.put(player.getUniqueId(), now);
+				//print.info(player.getName() + " keep alive: " + now.getNanos());
+			}
+		});
+	}
+
+	private static final long TIMEOUT_MS = 1000;
+
+	public static boolean isOnline(UUID playerUUID) {
+		Timestamp lastSeen = lastOnline.get(playerUUID);
+		if (lastSeen == null) {
+			return false;
+		}
+		long now = System.currentTimeMillis();
+		return (now - lastSeen.getTime()) <= TIMEOUT_MS;
+	}
+
+	public static long getLastSeen(UUID playerUUID) {
+		Timestamp lastSeen = lastOnline.get(playerUUID);
+		if (lastSeen == null) {
+			return -1; // Gracz nigdy nie był online
+		}
+		long now = System.currentTimeMillis();
+		return (now - lastSeen.getTime()) / 1000; // Konwersja z milisekund na sekundy
+	}
+
+	//==================================================================================================================
+	public void fabricPacketListener() {
 		protocolManager.addPacketListener(new PacketAdapter(
 				plugin,
 				ListenerPriority.NORMAL,
@@ -76,7 +115,7 @@ public class ProtocolLibAPI {
 				}
 			}
 		});
-	}*/
+	}
 
 	//-----------------------------------------GERA SCORE
 	private void initGearScoreLore() {
