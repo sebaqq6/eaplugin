@@ -236,7 +236,9 @@ public class MagicGUI {
 				MagicGUI gui = guis.get(menu);
 				if (gui != null) {
 					e.setCancelled(true);
-					gui.processClick((Player) e.getWhoClicked(), e.getClick(), e.getRawSlot());
+					Player player = (Player) e.getWhoClicked();
+					gui.processClick(player, e.getClick(), e.getRawSlot());
+					//print.error(String.format("Gracz: %s -> click: %s -> rawSlot: %d", player.getName(), e.getClick().toString(), e.getRawSlot()));
 				} else {
 					actives.remove(clicker);
 				}

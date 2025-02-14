@@ -85,7 +85,7 @@ public class Command_evtools implements TabExecutor {
 					return true;
 				}
 
-				ScoreboardManager manager = Bukkit.getScoreboardManager();
+				/*ScoreboardManager manager = Bukkit.getScoreboardManager();
 				Scoreboard scoreboard = manager.getMainScoreboard();
 				Team teamRed = scoreboard.getTeam("druzynaczerwona");
 				Team teamBlue = scoreboard.getTeam("druzynaniebieska");
@@ -107,26 +107,28 @@ public class Command_evtools implements TabExecutor {
 					sender.sendMessage("Błąd! Niezarejestrowana drużyna żólta...");
 					return true;
 				}
+				Team selectedTeam;
+				 */
 				int team = 0;
 				String commandEI;
-				Team selectedTeam;
+
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(players, sender)) {
 						if (team == 0) {
-							selectedTeam = teamRed;
+							//selectedTeam = teamRed;
 							commandEI = "ei giveslot " + players.getName() + " druzyna_czerwona 1 38 true";
 						} else if (team == 1) {
-							selectedTeam = teamBlue;
+							//selectedTeam = teamBlue;
 							commandEI = "ei giveslot " + players.getName() + " druzyna_niebieska 1 38 true";
 						} else if (team == 2) {
-							selectedTeam = teamYellow;
+							//selectedTeam = teamYellow;
 							commandEI = "ei giveslot " + players.getName() + " druzyna_zolta 1 38 true";
 						} else {
-							selectedTeam = teamGreen;
+							//selectedTeam = teamGreen;
 							commandEI = "ei giveslot " + players.getName() + " druzyna_zielona 1 38 true";
 						}
 						Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandEI);
-						selectedTeam.addEntry(players.getName());
+						//selectedTeam.addEntry(players.getName());
 						team++;
 						if (team == countTeams) team = 0;
 					}
