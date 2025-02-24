@@ -235,10 +235,14 @@ public class MagicGUI {
 				UUID menu = actives.get(clicker);
 				MagicGUI gui = guis.get(menu);
 				if (gui != null) {
+					int rawSlot = e.getRawSlot();
+					ClickType clickType = e.getClick();
+					//if (rawSlot < gui.getSize()) {//fix player invent
 					e.setCancelled(true);
 					Player player = (Player) e.getWhoClicked();
-					gui.processClick(player, e.getClick(), e.getRawSlot());
-					//print.error(String.format("Gracz: %s -> click: %s -> rawSlot: %d", player.getName(), e.getClick().toString(), e.getRawSlot()));
+					gui.processClick(player, clickType, rawSlot);
+					//print.error(String.format("Gracz: %s -> click: %s -> rawSlot: %d", player.getName(), clickType.toString(), rawSlot));
+					//}
 				} else {
 					actives.remove(clicker);
 				}

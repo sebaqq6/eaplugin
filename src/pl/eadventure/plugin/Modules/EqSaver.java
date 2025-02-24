@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -246,17 +247,45 @@ public class EqSaver {
 
 	//**************************************************************************************************GUI
 	public void showEqsGUI(Player player, int eqid) {
-		MagicGUI mainGui = MagicGUI.create("/eqs " + eqid, 54);
+		MagicGUI mainGui = MagicGUI.create(Utils.mm("<bold><#FF0000>/eqs " + eqid), 54);
 		mainGui.setAutoRemove(true);
 		ItemStack[] items = loadInventoryFromFile(String.valueOf(eqid));
-		for (ItemStack item : items) {
-			if (item == null) continue;
-			mainGui.addItem(item);
+		for (int i = 0; i < items.length; i++) {
+			final int index = i;
+			ItemStack item = items[i];
+			if (item == null) {
+				mainGui.setItem(i, ItemStack.of(Material.AIR));
+			} else {
+				mainGui.setItem(i, item, ((player1, gui, slot, type) -> {
+					if (type.isShiftClick()) {
+						items[index] = null;
+						player1.getInventory().addItem(item);
+						mainGui.setUpdateItem(index, ItemStack.of(Material.AIR));
+						saveInventoryToFile(items, String.valueOf(eqid));
+						storage.execute("UPDATE invback SET status = 200 WHERE id = " + eqid);
+						Component displayName = item.displayName();
+						String itemName = PlainTextComponentSerializer.plainText().serialize(displayName);
+						String log = String.format("Admin o nicku: %s wyciągnął przedmiot %sx%d z (/eqs %d).", player1.getName(), itemName, item.getAmount(), eqid);
+						ServerLogManager.log(log, ServerLogManager.LogType.Inventory);
+					}
+				}));
+			}
 		}
 		//menu
 		for (int m = 45; m <= 53; m++) {
 			mainGui.setItem(m, Utils.itemWithDisplayName(ItemStack.of(Material.BLACK_STAINED_GLASS_PANE), " ", null));
 		}
+		//info
+		ArrayList<Component> description = new ArrayList<>();
+		description.add(Utils.mm("<!i><gray>Aby wyciągnąć przedmiot użyj <red><bold>SHIFT+LPM</bold></red>."));
+		description.add(Utils.mm(""));
+		description.add(Utils.mm("<!i><gray>Jeśli jakikolwiek przedmiot zostanie wyciągnięty"));
+		description.add(Utils.mm("<!i><gray>nie będzie go można przywrócić. Pozostanie ręczne"));
+		description.add(Utils.mm("<!i><gray>wyciągniecie przedmiotów i użycie <bold>/invsee</bold> do"));
+		description.add(Utils.mm("<!i><gray>umieszczenia ich w ekwipunku gracza."));
+		ItemStack infoItem = Utils.itemWithDisplayName(gVar.customItems.get("hInfo"), Utils.mm("<yellow><bold><!i>Informacja"), description);
+		mainGui.setItem(45, infoItem);//Info
+		//end info
 		ItemStack exitButton = Utils.itemWithDisplayName(hBlackX, Utils.color("&r&7&lZamknij"), null);
 		mainGui.setItem(49, exitButton, ((player1, gui, slot, type) -> {
 			mainGui.close(player1);
