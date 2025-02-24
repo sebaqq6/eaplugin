@@ -18,6 +18,7 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Command_evtools implements TabExecutor {
 	@Override
@@ -112,7 +113,10 @@ public class Command_evtools implements TabExecutor {
 				int team = 0;
 				String commandEI;
 
-				for (Player players : Bukkit.getOnlinePlayers()) {
+				List<Player> playerList = new ArrayList<>(Bukkit.getOnlinePlayers());
+				Collections.shuffle(playerList);
+
+				for (Player players : playerList) {
 					if (isPlayerInEvent(players, sender)) {
 						if (team == 0) {
 							//selectedTeam = teamRed;
