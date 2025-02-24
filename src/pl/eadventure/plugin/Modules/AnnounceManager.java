@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Modules;
 
-import com.comphenix.protocol.PacketType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -6,7 +6,6 @@ import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;

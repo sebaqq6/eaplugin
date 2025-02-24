@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
 import java.util.HashMap;

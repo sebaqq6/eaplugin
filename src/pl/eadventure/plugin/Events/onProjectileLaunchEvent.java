@@ -5,7 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import pl.eadventure.plugin.Utils.ArrowFix;
-import pl.eadventure.plugin.Utils.print;
 
 import java.util.UUID;
 

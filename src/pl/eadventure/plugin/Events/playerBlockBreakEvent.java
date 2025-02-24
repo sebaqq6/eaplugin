@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
-import pl.eadventure.plugin.Utils.MySQLStorage;
-
-import java.util.ArrayList;
 
 public class playerBlockBreakEvent implements Listener {
 	@EventHandler
