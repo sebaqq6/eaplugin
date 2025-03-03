@@ -269,8 +269,8 @@ public class Command_evtools implements TabExecutor {
 		if (ignore != null) {
 			if (ignore instanceof Player) {
 				Player sender = (Player) ignore;
-				//if (sender == player)
-				//return false;// false
+				if (sender == player)
+					return false;// false
 			}
 		}
 
