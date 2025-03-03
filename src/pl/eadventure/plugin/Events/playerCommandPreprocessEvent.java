@@ -19,6 +19,8 @@ import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.gVar;
 
+import java.util.Set;
+
 public class playerCommandPreprocessEvent implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommandPreprocess(PlayerCommandPreprocessEvent e) {
@@ -39,16 +41,35 @@ public class playerCommandPreprocessEvent implements Listener {
 		}
 
 		if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
-			if (!args[0].equalsIgnoreCase("/creative")
-					&& !args[0].equalsIgnoreCase("/czatlokalny")
-					&& !args[0].equalsIgnoreCase("/czatglobalny")
-					&& !args[0].equalsIgnoreCase("/adminczat")
-			) {
+			Set<String> allowedCommands = Set.of(
+					"/creative",
+					"/czatlokalny",
+					"/czatglobalny",
+					"/adminczat",
+					"/cg",
+					"/cl",
+					"/ca",
+					"/r",
+					"/msg",
+					"/kick",
+					"/mute",
+					"/unmute",
+					"/ban",
+					"/unban",
+					"/banlist",
+					"/warn",
+					"/warnlist",
+					"/viewlog",
+					"/kartoteka"
+			);
+
+			if (!allowedCommands.contains(args[0].toLowerCase())) {
 				player.sendMessage(Utils.mm("<#888888>Nie możesz używać komend w <b>trybie kreatywnym</b>!</#888888>"));
 				e.setCancelled(true);
 				return;
 			}
 		}
+
 		if (pd.creativeMode) {
 			if (args[0].equalsIgnoreCase("/survival")) {
 				player.performCommand("creative");
