@@ -2,10 +2,12 @@ package pl.eadventure.plugin.Commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,16 +19,20 @@ import pl.eadventure.plugin.Utils.print;
 import java.util.*;
 
 public class Command_evtools implements TabExecutor {
+	boolean rollingPlayers = false;
+
 	@Override
+
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 0)
 			return usage(sender);
 		switch (args[0].toLowerCase()) {
-			case "randomplayer" -> {
+			case "randomplayerold" -> {
 				ArrayList<Player> playersInEventWorld = new ArrayList<Player>();
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(players, sender))
 						playersInEventWorld.add(players);
+
 				}
 				if (playersInEventWorld.size() == 0) {
 					sender.sendMessage(Utils.color("&7Brak graczy na evencie!"));
@@ -52,6 +58,90 @@ public class Command_evtools implements TabExecutor {
 							players.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + randomizedPlayer.getName()));
 					}
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + randomizedPlayer.getName()));
+				}
+			}
+			case "randomplayer" -> {
+				if (rollingPlayers) {
+					sender.sendMessage(Utils.color("&7Aktualnie trwa losowanie."));
+					return true;
+				}
+				ArrayList<Player> playersInEventWorld = new ArrayList<>();
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					if (isPlayerInEvent(player, sender)) {
+						playersInEventWorld.add(player);
+						player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&f&l\uD83C\uDFB2"), ChatColor.translateAlternateColorCodes('&', "&e&kxxxxxxxx"), 10,
+								140, 10);
+						player.playSound(
+								player.getLocation(),                     // Lokalizacja odtworzenia dźwięku
+								"my_sounds:sounds.clock.ticking",              // Ścieżka do dźwięku (namespace:sound)
+								SoundCategory.MASTER,                    // Kategoria dźwięku
+								1.0f,                                    // Głośność
+								2.0f                                     // Ton (1.0 = standardowy ton)
+						);
+					}
+				}
+
+				if (playersInEventWorld.isEmpty()) {
+					sender.sendMessage(Utils.color("&7Brak graczy na evencie!"));
+				} else {
+					rollingPlayers = true;
+					Random random = new Random();
+					int rollCount = 10; // Ile razy "zakręci" ruletka
+					long interval = 10L; // Co ile ticków zmienia się podświetlenie (10L = 0.5 sekundy)
+
+					new BukkitRunnable() {
+						int index = 0;
+						Player lastGlowingPlayer = null;
+
+						@Override
+						public void run() {
+							if (lastGlowingPlayer != null) {
+								lastGlowingPlayer.setGlowing(false);
+							}
+
+							Player currentPlayer = playersInEventWorld.get(index % playersInEventWorld.size());
+							currentPlayer.setGlowing(true);
+							lastGlowingPlayer = currentPlayer;
+							index++;
+
+							if (index >= rollCount) {
+								rollingPlayers = false;
+								this.cancel();
+								lastGlowingPlayer.setGlowing(false); // Upewniamy się, że ostatni gracz z ruletki zostaje wyłączony
+
+								Player chosenPlayer = playersInEventWorld.get(random.nextInt(playersInEventWorld.size()));
+								chosenPlayer.setGlowing(true);
+
+								// Opóźnione wyłączenie podświetlenia o 200 ticków (10 sekund)
+								new BukkitRunnable() {
+									@Override
+									public void run() {
+										if (chosenPlayer.isOnline()) {
+											chosenPlayer.setGlowing(false);
+										}
+									}
+								}.runTaskLater(EternalAdventurePlugin.getInstance(), 200L);
+
+								// Ogłoszenie wylosowanego gracza
+								for (Player player : Bukkit.getOnlinePlayers()) {
+									if (isPlayerInEvent(player, sender)) {
+										player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + chosenPlayer.getName()));
+										player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&f&l\uD83C\uDFB2"), ChatColor.translateAlternateColorCodes('&', "&a" + chosenPlayer.getName()), 10,
+												140, 10);
+										player.stopSound("my_sounds:sounds.clock.ticking");
+										player.playSound(
+												player.getLocation(),                     // Lokalizacja odtworzenia dźwięku
+												"my_sounds:sounds.treasury",              // Ścieżka do dźwięku (namespace:sound)
+												SoundCategory.MASTER,                    // Kategoria dźwięku
+												1.0f,                                    // Głośność
+												0.8f                                     // Ton (1.0 = standardowy ton)
+										);
+									}
+								}
+								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + chosenPlayer.getName()));
+							}
+						}
+					}.runTaskTimer(EternalAdventurePlugin.getInstance(), 0L, interval);
 				}
 			}
 			case "countplayers" -> {
@@ -179,8 +269,8 @@ public class Command_evtools implements TabExecutor {
 		if (ignore != null) {
 			if (ignore instanceof Player) {
 				Player sender = (Player) ignore;
-				if (sender == player)
-					return false;// false
+				//if (sender == player)
+				//return false;// false
 			}
 		}
 
