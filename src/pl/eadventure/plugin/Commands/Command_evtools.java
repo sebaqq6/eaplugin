@@ -65,21 +65,15 @@ public class Command_evtools implements TabExecutor {
 					sender.sendMessage(Utils.color("&7Aktualnie trwa losowanie."));
 					return true;
 				}
+
 				ArrayList<Player> playersInEventWorld = new ArrayList<>();
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(player, sender)) {
 						playersInEventWorld.add(player);
-						player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&f&l\uD83C\uDFB2"), ChatColor.translateAlternateColorCodes('&', "&e&kxxxxxxxx"), 10,
-								140, 10);
-						player.playSound(
-								player.getLocation(),                     // Lokalizacja odtworzenia dźwięku
-								"my_sounds:sounds.clock.ticking",              // Ścieżka do dźwięku (namespace:sound)
-								SoundCategory.MASTER,                    // Kategoria dźwięku
-								1.0f,                                    // Głośność
-								2.0f                                     // Ton (1.0 = standardowy ton)
-						);
+						startRollingEffect(player);
 					}
 				}
+				startRollingEffect(sender);
 
 				if (playersInEventWorld.isEmpty()) {
 					sender.sendMessage(Utils.color("&7Brak graczy na evencie!"));
@@ -125,20 +119,10 @@ public class Command_evtools implements TabExecutor {
 								// Ogłoszenie wylosowanego gracza
 								for (Player player : Bukkit.getOnlinePlayers()) {
 									if (isPlayerInEvent(player, sender)) {
-										player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + chosenPlayer.getName()));
-										player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&f&l\uD83C\uDFB2"), ChatColor.translateAlternateColorCodes('&', "&a" + chosenPlayer.getName()), 10,
-												140, 10);
-										player.stopSound("my_sounds:sounds.clock.ticking");
-										player.playSound(
-												player.getLocation(),                     // Lokalizacja odtworzenia dźwięku
-												"my_sounds:sounds.treasury",              // Ścieżka do dźwięku (namespace:sound)
-												SoundCategory.MASTER,                    // Kategoria dźwięku
-												1.0f,                                    // Głośność
-												0.8f                                     // Ton (1.0 = standardowy ton)
-										);
+										endRollingEffect(player, chosenPlayer);
 									}
 								}
-								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + chosenPlayer.getName()));
+								endRollingEffect(sender, chosenPlayer);
 							}
 						}
 					}.runTaskTimer(EternalAdventurePlugin.getInstance(), 0L, interval);
@@ -280,4 +264,29 @@ public class Command_evtools implements TabExecutor {
 
 		return false;
 	}
+
+	//rolling effect
+	private void startRollingEffect(CommandSender sender) {
+		//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eRozpoczęto losowanie..."));
+
+		if (sender instanceof Player player) {
+			player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&f&l\uD83C\uDFB2"),
+					ChatColor.translateAlternateColorCodes('&', "&e&kxxxxxxxx"), 10, 140, 10);
+			player.playSound(player.getLocation(), "my_sounds:sounds.clock.ticking",
+					SoundCategory.MASTER, 1.0f, 2.0f);
+		}
+	}
+
+	private void endRollingEffect(CommandSender sender, Player chosenPlayer) {
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + chosenPlayer.getName()));
+
+		if (sender instanceof Player player) {
+			player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&f&l\uD83C\uDFB2"),
+					ChatColor.translateAlternateColorCodes('&', "&a" + chosenPlayer.getName()), 10, 140, 10);
+			player.stopSound("my_sounds:sounds.clock.ticking");
+			player.playSound(player.getLocation(), "my_sounds:sounds.treasury",
+					SoundCategory.MASTER, 1.0f, 0.8f);
+		}
+	}
+
 }
