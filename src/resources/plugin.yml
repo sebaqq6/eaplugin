@@ -140,6 +140,10 @@ commands:
     description: "Komenda do podglądu/przywracania EQ."
     usage: "/<command>"
     permission: eadventureplugin.cmd.eqs
+  itemclear:
+    description: "Komenda do usuwania przedmiotów leżących na ziemi w wybranym promieniu."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.itemclear
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

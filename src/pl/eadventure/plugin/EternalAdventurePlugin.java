@@ -207,6 +207,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("fixmob").setExecutor(new Command_fixmob());
 		this.getCommand("redflag").setExecutor(new Command_redflag());
 		this.getCommand("eqs").setExecutor(new Command_eqs());
+		this.getCommand("itemclear").setExecutor(new Command_itemclear());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
