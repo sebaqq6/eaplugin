@@ -93,6 +93,28 @@ public class AnnounceManager {
 		public void setLastViewed(Timestamp lastViewed) {
 			this.lastViewed = lastViewed;
 		}
+
+		public void broadcast(MySQLStorage storage) {
+			this.setLastViewed(Timestamp.from(Instant.now()));
+			String saveTextSql = "UPDATE announcements SET lastviewed=? WHERE id=?;";
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(this.getLastViewed());
+			parameters.add(this.id);
+			storage.executeSafe(saveTextSql, parameters);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.sendMessage(Utils.mm("" +
+						"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
+						"-------------------------------------------------" +
+						"</strikethrough><bold>༻</bold></gradient>"));
+				player.sendMessage(Utils.mm(this.getText()));
+				Location playerLocation = player.getLocation();
+				player.playSound(playerLocation, Sound.BLOCK_NOTE_BLOCK_COW_BELL, 1.0f, 1.5f);
+				player.sendMessage(Utils.mm("" +
+						"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
+						"-------------------------------------------------" +
+						"</strikethrough><bold>༻</bold></gradient>"));
+			}
+		}
 	}
 
 	//constructor
@@ -107,7 +129,7 @@ public class AnnounceManager {
 			public void run() {
 				sendBroadcast();
 			}
-		}.runTaskTimerAsynchronously(plugin, 20L, 20L * 60L * 30L);
+		}.runTaskTimerAsynchronously(plugin, 20L, 20L * 60L * 15L);
 		load();
 	}
 
@@ -177,6 +199,7 @@ public class AnnounceManager {
 			lore.add(Utils.mm("<!i><gradient:#730088:#740DC6>Wygasa:</gradient> <gray><bold>" + ann.getExpireFormated()));
 			if (canManage) {
 				lore.add(Utils.mm(""));
+				lore.add(Utils.mm("<!i><bold><#56c61a>PPM <gray>- Wymuś wyświetlenie."));
 				lore.add(Utils.mm("<!i><bold><#56c61a>LPM <gray>- Wyświetl podgląd na czacie."));
 				lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+PPM <gray>- Usuń ogłoszenie."));
 				lore.add(Utils.mm("<!i><bold><#56c61a>SHIFT+LPM <gray>- Edytuj treść ogłoszenia."));
@@ -186,6 +209,10 @@ public class AnnounceManager {
 			ItemStack annItem = Utils.itemWithDisplayName(ItemStack.of(Material.BLUE_BANNER), Utils.mm("<!i><bold><#999999>Ogłoszenie</bold>"), lore);
 			mainGui.setItem(annInGUISlot, annItem, ((player, gui, slot, type) -> {
 				if (!canManage) return;
+				if (type == ClickType.RIGHT) {
+					player.sendMessage(Utils.mm("<#FF0000>Wymusiłeś/aś wyświetlenie ogłoszenia:"));
+					ann.broadcast(storage);
+				}
 				if (type == ClickType.LEFT) {
 					player.sendMessage(Utils.mm(ann.text));
 				} else if (type == ClickType.SHIFT_RIGHT) {//Delete ann
@@ -336,25 +363,7 @@ public class AnnounceManager {
 				.min(Comparator.comparing(Announce::getLastViewed));
 		if (oldestAnnounce.isPresent()) {
 			Announce announce = oldestAnnounce.get();
-			announce.setLastViewed(Timestamp.from(Instant.now()));
-			String saveTextSql = "UPDATE announcements SET lastviewed=? WHERE id=?;";
-			ArrayList<Object> parameters = new ArrayList<>();
-			parameters.add(announce.getLastViewed());
-			parameters.add(announce.id);
-			storage.executeSafe(saveTextSql, parameters);
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.sendMessage(Utils.mm("" +
-						"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
-						"-------------------------------------------------" +
-						"</strikethrough><bold>༻</bold></gradient>"));
-				player.sendMessage(Utils.mm(announce.getText()));
-				Location playerLocation = player.getLocation();
-				player.playSound(playerLocation, Sound.BLOCK_NOTE_BLOCK_COW_BELL, 1.0f, 1.5f);
-				player.sendMessage(Utils.mm("" +
-						"<gradient:#a500d3:#440057><bold>༺</bold><strikethrough>" +
-						"-------------------------------------------------" +
-						"</strikethrough><bold>༻</bold></gradient>"));
-			}
+			announce.broadcast(storage);
 		}
 	}
 }
