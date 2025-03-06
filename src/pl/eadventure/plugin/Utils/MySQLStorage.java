@@ -53,6 +53,7 @@ public class MySQLStorage {
 			link.close();
 			isConnect = false;
 		} catch (SQLException e) {
+			catchMySQLException(e);
 			isConnect = false;
 		}
 	}
@@ -65,8 +66,9 @@ public class MySQLStorage {
 		open(hostname, port, database, username, password);
 		if (isConnect()) {
 			print.ok("Połączono z bazą danych MySQL!");
-		} else
+		} else {
 			print.error("Błąd połączenia z MySQL!");
+		}
 	}
 
 	public void query(String sql, QueryCallback callback) {
@@ -97,9 +99,9 @@ public class MySQLStorage {
 					// Call the callback method on the main server thread
 					Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> callback.onQueryComplete(queryResult));
 				} catch (SQLException e) {
+					catchMySQLException(e);
 					// Call the callback method on the main server thread with null query result
 					Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> callback.onQueryComplete(null));
-					print.error(e.getMessage());
 				}
 			}
 		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
@@ -138,9 +140,9 @@ public class MySQLStorage {
 					// Call the callback method on the main server thread
 					Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> callback.onQueryComplete(queryResult));
 				} catch (SQLException e) {
+					catchMySQLException(e);
 					// Call the callback method on the main server thread with null query result
 					Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> callback.onQueryComplete(null));
-					print.error(e.getMessage());
 				}
 			}
 		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
@@ -151,7 +153,7 @@ public class MySQLStorage {
 		try (PreparedStatement stmt = link.prepareStatement(sql)) {
 			stmt.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			catchMySQLException(e);
 		}
 	}
 
@@ -164,7 +166,7 @@ public class MySQLStorage {
 			// Wykonanie zapytania
 			stmt.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			catchMySQLException(e);
 		}
 	}
 
@@ -181,7 +183,7 @@ public class MySQLStorage {
 				insertid = result.getInt(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			catchMySQLException(e);
 			insertid = 0;
 		}
 		return insertid;
@@ -228,5 +230,20 @@ public class MySQLStorage {
 
 	public interface QueryCallback {
 		void onQueryComplete(HashMap<Object, Object> queryResult);
+	}
+
+	private void catchMySQLException(SQLException exception) {
+		String message = exception.getMessage();
+		int errorCode = exception.getErrorCode();
+		print.error(message + " [ErrorCode: " + errorCode + "]");
+		exception.printStackTrace();
+		if (errorCode == 0 || errorCode == 2006) {
+			print.error("Naprawa połączenia MySQL metoda 1 (int)...");
+			reconnect();
+		} else if (message.equalsIgnoreCase("No operations allowed after statement closed")
+				|| message.equalsIgnoreCase("Communications link failure")) {
+			print.error("Naprawa połączenia MySQL metoda 2 (string)...");
+			reconnect();
+		}
 	}
 }
