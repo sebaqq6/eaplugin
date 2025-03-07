@@ -62,6 +62,7 @@ public class MySQLStorage {
 
 	public void reconnect() {
 		if (reconnecting) return;
+		print.info("Ponowne łączenie z bazą danych MySQL...");
 		reconnecting = true;
 		if (isConnect()) {
 			close();
