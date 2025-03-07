@@ -58,7 +58,11 @@ public class MySQLStorage {
 		}
 	}
 
+	boolean reconnecting = false;
+
 	public void reconnect() {
+		if (reconnecting) return;
+		reconnecting = true;
 		if (isConnect()) {
 			close();
 			print.okRed("Rozłączono z bazą danych...");
@@ -69,6 +73,7 @@ public class MySQLStorage {
 		} else {
 			print.error("Błąd połączenia z MySQL!");
 		}
+		reconnecting = false;
 	}
 
 	public void query(String sql, QueryCallback callback) {
