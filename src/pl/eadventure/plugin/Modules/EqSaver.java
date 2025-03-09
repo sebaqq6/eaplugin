@@ -7,10 +7,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -59,7 +63,28 @@ public class EqSaver {
 		@EventHandler(priority = EventPriority.MONITOR)
 		public void onPlayerDeath(PlayerDeathEvent e) {
 			Player player = e.getPlayer();
-			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "death");
+			EntityDamageEvent lastDamage = player.getLastDamageCause();
+			String reason = "nieznany";
+			String killer = "brak";
+			//who kill
+			if (lastDamage instanceof EntityDamageByEntityEvent entityEvent) {
+				Entity damager = entityEvent.getDamager();
+
+				if (damager instanceof Player playerKiller) {
+					killer = playerKiller.getName();
+				} else if (damager instanceof LivingEntity mob) {
+					killer = mob.getName();
+				} else {
+					killer = damager.getType().toString();
+				}
+			}
+			//reason
+			if (lastDamage != null) {
+				reason = lastDamage.getCause().toString();
+			}
+			//add _ for spaces killer
+			killer = killer.replaceAll(" ", "_");
+			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "death_{" + reason + "}_{" + killer + "}");
 		}
 
 		//----------------------------------------------RESPAWN
