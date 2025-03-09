@@ -83,7 +83,7 @@ public class EqSaver {
 				reason = lastDamage.getCause().toString();
 			}
 			//add _ for spaces killer
-			killer = killer.replaceAll(" ", "_");
+			killer = killer.replaceAll(" ", "#");
 			gVar.eqSaver.taskSaveInventory(player, player.getInventory().getContents(), "death_{" + reason + "}_{" + killer + "}");
 		}
 
