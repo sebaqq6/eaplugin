@@ -1,8 +1,6 @@
 package pl.eadventure.plugin.Commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -20,6 +18,7 @@ import java.util.*;
 
 public class Command_evtools implements TabExecutor {
 	boolean rollingPlayers = false;
+	boolean kickingFromEvent = false;
 
 	@Override
 
@@ -80,8 +79,8 @@ public class Command_evtools implements TabExecutor {
 				} else {
 					rollingPlayers = true;
 					Random random = new Random();
-					int rollCount = 10; // Ile razy "zakręci" ruletka
-					long interval = 10L; // Co ile ticków zmienia się podświetlenie (10L = 0.5 sekundy)
+					int rollCount = 10;
+					long interval = 10L;
 
 					new BukkitRunnable() {
 						int index = 0;
@@ -101,12 +100,11 @@ public class Command_evtools implements TabExecutor {
 							if (index >= rollCount) {
 								rollingPlayers = false;
 								this.cancel();
-								lastGlowingPlayer.setGlowing(false); // Upewniamy się, że ostatni gracz z ruletki zostaje wyłączony
+								lastGlowingPlayer.setGlowing(false);
 
 								Player chosenPlayer = playersInEventWorld.get(random.nextInt(playersInEventWorld.size()));
 								chosenPlayer.setGlowing(true);
 
-								// Opóźnione wyłączenie podświetlenia o 200 ticków (10 sekund)
 								new BukkitRunnable() {
 									@Override
 									public void run() {
@@ -116,7 +114,6 @@ public class Command_evtools implements TabExecutor {
 									}
 								}.runTaskLater(EternalAdventurePlugin.getInstance(), 200L);
 
-								// Ogłoszenie wylosowanego gracza
 								for (Player player : Bukkit.getOnlinePlayers()) {
 									if (isPlayerInEvent(player, sender)) {
 										endRollingEffect(player, chosenPlayer);
@@ -139,7 +136,7 @@ public class Command_evtools implements TabExecutor {
 			}
 			case "teamplayers" -> {
 				if (args.length == 1) {
-					sender.sendMessage(Utils.color("&7Użyj: /evtools ev_teamsplayer [ilość drużyn]"));
+					sender.sendMessage(Utils.color("&7Użyj: /evtools teamsplayer [ilość drużyn]"));
 					return true;
 				}
 				Integer countTeams;
@@ -228,6 +225,68 @@ public class Command_evtools implements TabExecutor {
 					sender.sendMessage("Komenda dostępna tylko z poziomu gry.");
 				}
 			}
+			case "kickall" -> {
+				if (kickingFromEvent) {
+					sender.sendMessage(Utils.color("&7Aktualnie trwa wyrzucanie graczy z mapy eventowej..."));
+					return true;
+				}
+
+				if (args.length < 3) {
+					Utils.commandUsageMessage(sender, "/evtools kickall [max_group(domyślnie: 1)] [tick_period(domyślnie: 21)]");
+					return true;
+				}
+				Integer var_maxGroup = 1;
+				Integer var_tickPeriod = 21;
+				try {
+					var_maxGroup = Integer.valueOf(args[1]);
+				} catch (NumberFormatException e) {
+					sender.sendMessage(Utils.color("&7Nieprawidłowa wartość max_group (wartość nie jest cyfrą)."));
+					return true;
+				}
+
+				try {
+					var_tickPeriod = Integer.valueOf(args[2]);
+				} catch (NumberFormatException e) {
+					sender.sendMessage(Utils.color("&7Nieprawidłowa wartość tick_period (wartość nie jest cyfrą)."));
+					return true;
+				}
+				if (var_maxGroup < 1 || var_tickPeriod < 1) {
+					sender.sendMessage(Utils.color("&7Nieprawidłowe parametry."));
+					return true;
+				}
+
+				print.debug("var_maxGroup: " + var_maxGroup);
+				print.debug("var_tickPeriod: " + var_tickPeriod);
+
+				kickingFromEvent = true;
+				World world = Bukkit.getWorld("world");
+				Random random = new Random();
+				Integer finalVar_maxGroup = var_maxGroup;
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						int kickedPlayers = 0;
+						for (Player player : Bukkit.getOnlinePlayers()) {
+							if (!isPlayerInEvent(player, sender)) continue;
+							double randomDouble = 1 + (3 * random.nextDouble());
+							Location tpPos = new Location(world, 31 + randomDouble, 169, -22 - randomDouble);
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									player.teleport(tpPos);
+								}
+							}.runTask(EternalAdventurePlugin.getInstance());
+							kickedPlayers++;
+							if (kickedPlayers >= finalVar_maxGroup) break;
+						}
+						if (kickedPlayers == 0) {
+							sender.sendMessage(Utils.mm("<#FF0000>Procedura wyrzucania graczy z mapy eventowej <bold>zakończona</bold>."));
+							kickingFromEvent = false;
+							cancel();
+						}
+					}
+				}.runTaskTimerAsynchronously(EternalAdventurePlugin.getInstance(), 20L, var_tickPeriod);
+			}
 		}
 		return true;
 	}
@@ -237,7 +296,7 @@ public class Command_evtools implements TabExecutor {
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1) {
 			List<String> cmdlist = new ArrayList<>();
-			cmdlist.addAll(Arrays.asList("randomplayer", "countplayers", "teamplayers", "ann"));
+			cmdlist.addAll(Arrays.asList("randomplayer", "countplayers", "teamplayers", "ann", "kickall"));
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
 		return Collections.emptyList();
