@@ -17,13 +17,15 @@ public class MySQLStorage {
 	private String database;
 	private String username;
 	private String password;
+	private String tag;
 
-	public MySQLStorage(String hostname, int port, String database, String username, String password) {
+	public MySQLStorage(String hostname, int port, String database, String username, String password, String tag) {
 		this.hostname = hostname;
 		this.port = port;
 		this.database = database;
 		this.username = username;
 		this.password = password;
+		this.tag = tag;
 		open(hostname, port, database, username, password);
 	}
 
@@ -62,17 +64,17 @@ public class MySQLStorage {
 
 	public void reconnect() {
 		if (reconnecting) return;
-		print.info("Ponowne łączenie z bazą danych MySQL...");
+		print.info("Ponowne łączenie z bazą danych MySQL... TAG: " + tag);
 		reconnecting = true;
 		if (isConnect()) {
 			close();
-			print.okRed("Rozłączono z bazą danych...");
+			print.okRed("Rozłączono z bazą danych... - TAG: " + tag);
 		}
 		open(hostname, port, database, username, password);
 		if (isConnect()) {
-			print.ok("Połączono z bazą danych MySQL!");
+			print.ok("Połączono z bazą danych MySQL! - TAG: " + tag);
 		} else {
-			print.error("Błąd połączenia z MySQL!");
+			print.error("Błąd połączenia z MySQL! - TAG: " + tag);
 		}
 		reconnecting = false;
 	}
@@ -241,14 +243,14 @@ public class MySQLStorage {
 	private void catchMySQLException(SQLException exception) {
 		String message = exception.getMessage();
 		int errorCode = exception.getErrorCode();
-		print.error(message + " [ErrorCode: " + errorCode + "]");
+		print.error(message + " [ErrorCode: " + errorCode + "][TAG: " + tag + "]");
 		exception.printStackTrace();
 		if (errorCode == 0 || errorCode == 2006) {
-			print.error("Naprawa połączenia MySQL metoda 1 (int)...");
+			print.error("Naprawa połączenia MySQL metoda 1 (int)... - TAG: " + tag);
 			reconnect();
 		} else if (message.equalsIgnoreCase("No operations allowed after statement closed")
 				|| message.equalsIgnoreCase("Communications link failure")) {
-			print.error("Naprawa połączenia MySQL metoda 2 (string)...");
+			print.error("Naprawa połączenia MySQL metoda 2 (string)... - TAG: " + tag);
 			reconnect();
 		}
 	}

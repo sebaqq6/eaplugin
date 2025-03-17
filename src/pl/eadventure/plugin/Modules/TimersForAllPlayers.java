@@ -25,6 +25,7 @@ public class TimersForAllPlayers {
 
 	//1 second
 	private static void oneSecondTimerForAllPlayersAsync(Player player) {//async thread
+		banCheck(player);
 		triggerTimePlayed(player);
 		calcGearScore(player);
 		updatePlayersOnlineVanish(player);
@@ -106,5 +107,14 @@ public class TimersForAllPlayers {
 		parameters.add(pd.breakBlocksCount);
 		parameters.add(pd.dbid);
 		storage.executeSafe("UPDATE players SET breakBlocks=? WHERE id=?;", parameters);
+	}
+
+	private static void banCheck(Player player) {
+		String ip = player.getAddress().getAddress().getHostAddress();
+		PunishmentSystem.BanData bd = PunishmentSystem.isBanned(player.getName(), ip, player.getUniqueId());
+		if (bd != null) {
+			String bannedMessage = PunishmentSystem.getBannedMessage(bd.nick(), bd.bannedByNick(), bd.reason(), bd.expiresTimestamp(), bd.bannedDate());
+			Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> player.kickPlayer(bannedMessage));
+		}
 	}
 }

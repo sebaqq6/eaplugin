@@ -8,6 +8,8 @@ import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
+import java.util.UUID;
+
 public class playerPreLoginEvent implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent e) {
@@ -17,10 +19,10 @@ public class playerPreLoginEvent implements Listener {
 				e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Nieautoryzowany dostęp!");
 			}
 		}
-		PunishmentSystem.BanData bd = PunishmentSystem.BanData.getByNick(e.getName());
-		if (bd == null) bd = PunishmentSystem.BanData.getByIP(e.getAddress().getHostAddress());
-		if (bd == null) bd = PunishmentSystem.BanData.getByUUID(e.getUniqueId());
-		if (bd != null)
+		PunishmentSystem.BanData bd = PunishmentSystem.isBanned(e.getName(), e.getAddress().getHostAddress(), e.getUniqueId());
+
+		if (bd != null) {
 			e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, PunishmentSystem.getBannedMessage(bd.nick(), bd.bannedByNick(), bd.reason(), bd.expiresTimestamp(), bd.bannedDate()));
+		}
 	}
 }

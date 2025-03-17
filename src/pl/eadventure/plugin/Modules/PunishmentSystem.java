@@ -167,12 +167,12 @@ public class PunishmentSystem {
 	}
 
 	public static void reloadBans() {
-		BanData.clear();
 		storage.execute(String.format("UPDATE players SET banned=0, bannedBy=NULL, banExpires=NULL, banReason=NULL, banDate=NULL WHERE banExpires < %d AND banExpires!=-1;", Utils.getUnixTimestamp()));
 		storage.query("SELECT nick, uuid, ip, banned, bannedBy, banExpires, banReason, banDate FROM players WHERE banned>=1 ORDER BY banDate DESC;", queryResult -> {
 			int numRows = (int) queryResult.get("num_rows");
 			@SuppressWarnings("unchecked")
 			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
+			BanData.clear();
 			if (numRows > 0) {
 				for (int i = 0; i < numRows; i++) {
 					int banType = (int) rows.get(i).get("banned");
@@ -193,6 +193,7 @@ public class PunishmentSystem {
 					}
 				}
 			}
+			print.info("Lista banów została przeładowana.");
 		});
 		reloadFastCacheBanList();
 	}
@@ -233,6 +234,13 @@ public class PunishmentSystem {
 				}*/
 			}
 		});
+	}
+
+	public static BanData isBanned(String nick, String ip, UUID uuid) {
+		PunishmentSystem.BanData bd = PunishmentSystem.BanData.getByNick(nick);
+		if (bd == null) bd = PunishmentSystem.BanData.getByIP(ip);
+		if (bd == null) bd = PunishmentSystem.BanData.getByUUID(uuid);
+		return bd;//return ban data, or null if not is banned
 	}
 
 	public static void banPlayer(String playerNick, String adminNick, final int timeMinutes, int power, String reason) {

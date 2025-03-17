@@ -219,12 +219,12 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				storage = new MySQLStorage(gVar.mysqlHost, gVar.mysqlPort, gVar.mysqlDatabase, gVar.mysqlUser, gVar.mysqlPassword);
+				storage = new MySQLStorage(gVar.mysqlHost, gVar.mysqlPort, gVar.mysqlDatabase, gVar.mysqlUser, gVar.mysqlPassword, "#GLOBAL");
 				if (storage.isConnect()) {
 					print.ok("Połączono z bazą danych MySQL!");
 					TimersForAllPlayers.startTimers(getInstance());
 					TopTimePlayerPlayed.load(storage, 20);
-					PunishmentSystem.init(storage);
+					PunishmentSystem.init(new MySQLStorage(gVar.mysqlHost, gVar.mysqlPort, gVar.mysqlDatabase, gVar.mysqlUser, gVar.mysqlPassword, "#PUNISHMENT"));
 					ServerLogManager.enable(storage);
 					gVar.topBreakBlocks = new TopBreakBlocks(storage, 20);
 					gVar.announceManager = new AnnounceManager(instance, storage);
