@@ -46,7 +46,7 @@ public class GearScoreCalculator {
 	static int gsValueMax = 1000;
 	static int gsValueMaxPlayer = 5000;
 
-	public static int disableGs = 0;
+	public static int disableGs = 2;
 	public static boolean enabledCacheV1 = false;
 
 	static Map<String, Integer> cacheGsValues = new HashMap<>();
