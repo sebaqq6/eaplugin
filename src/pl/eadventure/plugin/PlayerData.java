@@ -141,7 +141,7 @@ public class PlayerData {
 		parameters.add(player.getName());
 		parameters.add(dbid);
 		if (!nick.equalsIgnoreCase(player.getName())) {//player change nick detect
-			print.info(String.format("Wykryto zmianę nicku %s -> %s", player.getName(), nick));
+			print.info(String.format("Wykryto zmianę nicku %s -> %s", nick, player.getName()));
 			PunishmentSystem.reloadFastCacheBanList();
 			nick = player.getName();
 		}
