@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-//TODO default cmd 7 days
 public class Command_warn implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -31,7 +30,7 @@ public class Command_warn implements TabExecutor {
 			public void run() {
 				// /warn [nick] [czas] [powód]
 				if (args.length == 0) {//get target nick args[0]
-					Utils.commandUsageMessage(sender, String.format("/%s [nick gracza] [czas] [powód]", label));
+					Utils.commandUsageMessage(sender, String.format("/%s [nick gracza] [powód]", label));
 					return;
 				}
 				String targetName = args[0];
@@ -54,23 +53,23 @@ public class Command_warn implements TabExecutor {
 					return;
 				}
 				if (args.length == 1) {//time args[1]
-					Utils.commandUsageMessage(sender, String.format("/%s %s [czas] [powód]", label, targetName));
+					Utils.commandUsageMessage(sender, String.format("/%s %s [powód]", label, targetName));
 					return;
 				}
-				String timeParam = args[1];
+				/*String timeParam = args[1];
 				int timeMinutes = Utils.parseTimeToMinutes(timeParam);
 				if (timeMinutes == -1) {
 					sender.sendMessage(Utils.color("&7Niepoprawnie podany czas."));
 					return;
 				}
-				if (args.length == 2) {//ban type args[2]
+				if (args.length == 2) {
 					Utils.commandUsageMessage(sender, String.format("/%s %s %s [powód]", label, targetName, timeParam));
 					return;
-				}
-
+				}*/
+				int timeMinutes = Utils.parseTimeToMinutes("7d");
 				// Build reason from other args
 				StringBuilder reasonBuilder = new StringBuilder();
-				for (int i = 2; i < args.length; i++) {//param 2
+				for (int i = 1; i < args.length; i++) {//param 2
 					reasonBuilder.append(args[i]).append(" ");
 				}
 				String reason = reasonBuilder.toString().trim(); // Remove redundant spaces
