@@ -3,6 +3,7 @@ package pl.eadventure.plugin.Modules;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 
@@ -68,7 +69,8 @@ public class Aka {
 				}
 				//refactor
 				for (Player player : Bukkit.getOnlinePlayers()) {
-					if (player.hasPermission("eadventureplugin.showaka")) {
+					PlayerData pd = PlayerData.get(player);
+					if (player.hasPermission("eadventureplugin.showaka") && !pd.onLiveStream) {
 						player.sendMessage(Utils.mm(akaInfo));
 					}
 				}
