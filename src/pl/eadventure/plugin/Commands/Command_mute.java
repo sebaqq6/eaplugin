@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-//TODO default cmd 10 min
 public class Command_mute implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -46,7 +45,9 @@ public class Command_mute implements TabExecutor {
 					}
 				}
 				if (args.length == 1) {//time args[1]
-					Utils.commandUsageMessage(sender, String.format("/%s %s [czas] [powód]", label, targetName));
+					//Utils.commandUsageMessage(sender, String.format("/%s %s [czas] [powód]", label, targetName));
+					String[] newArgs = {targetName, "10m", "Zaśmiecanie czatu."};
+					onCommand(sender, command, label, newArgs);
 					return;
 				}
 				String timeParam = args[1];
@@ -99,7 +100,7 @@ public class Command_mute implements TabExecutor {
 			List<String> cmdlist = Arrays.asList("2m", "5m", "10m", "15m", "30m");
 			return StringUtil.copyPartialMatches(args[1], cmdlist, new ArrayList<>());
 		} else if (args.length == 3) {//reason
-			List<String> cmdlist = Arrays.asList("Wulgaryzmy.", "Obraza.", "Spam.", "Reklama.", "Nieprzestrzeganie regulaminu.");
+			List<String> cmdlist = Arrays.asList("Zaśmiecanie czatu.", "Wulgaryzmy.", "Obraza.", "Spam.", "Reklama.", "Nieprzestrzeganie regulaminu.");
 			return StringUtil.copyPartialMatches(args[2], cmdlist, new ArrayList<>());
 		} else
 			return Collections.emptyList();
