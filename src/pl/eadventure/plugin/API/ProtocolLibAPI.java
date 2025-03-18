@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -36,6 +37,25 @@ public class ProtocolLibAPI {
 		initGearScoreLore();
 		disableAnimationWhenMobfixerWork();
 		registerKeepAlive();
+		disableVulcanAlert();
+	}
+
+	//==================================================================================================================
+	private void disableVulcanAlert() {
+		final String BLOCKED_TEXT = "{\"text\":\"ALERT\",\"italic\":false,\"color\":\"dark_red\",\"bold\":true}";
+		protocolManager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.SYSTEM_CHAT) {
+			@Override
+			public void onPacketSending(PacketEvent event) {
+				PacketContainer packet = event.getPacket();
+				WrappedChatComponent chatComponent = packet.getChatComponents().read(0);
+				if (chatComponent != null && chatComponent.getJson().contains(BLOCKED_TEXT)) {
+					PlayerData pd = PlayerData.get(event.getPlayer());
+					if (pd.onLiveStream) {
+						event.setCancelled(true);
+					}
+				}
+			}
+		});
 	}
 
 	//==================================================================================================================
