@@ -144,13 +144,13 @@ public class Command_warn implements TabExecutor {
 		if (args.length == 1) {//nick
 			if (args[0].isEmpty()) return List.of("Wpisz pierwszą literę...");
 			return StringUtil.copyPartialMatches(args[0], PunishmentSystem.getListPlayersCanBeBanned(), new ArrayList<>());
-		} else if (args.length == 2) {//time
+		} /*else if (args.length == 2) {//time
 			List<String> cmdlist = Arrays.asList("30m", "2h", "1d", "7d", "30d", "60d", "120d", "1d,12h",
 					"1d,12h,30m", "1d,30m");
 			return StringUtil.copyPartialMatches(args[1], cmdlist, new ArrayList<>());
-		} else if (args.length == 3) {//reason
+		}*/ else if (args.length == 2) {//reason
 			List<String> cmdlist = Arrays.asList("Cheater.", "Szkodnik.", "Griefing.", "Reklama.", "Nieprzestrzeganie regulaminu.");
-			return StringUtil.copyPartialMatches(args[2], cmdlist, new ArrayList<>());
+			return StringUtil.copyPartialMatches(args[1], cmdlist, new ArrayList<>());
 		} else
 			return Collections.emptyList();
 	}
