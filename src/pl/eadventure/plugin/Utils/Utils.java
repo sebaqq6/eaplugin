@@ -205,7 +205,7 @@ public class Utils {
 	}
 
 	public static boolean isAdminPermissionHigherThan(String permission, String thanPermission) {
-		String[] permissions = {"eadventureplugin.apanel", "eadventureplugin.mpanel", "eadventureplugin.gpanel", "eadventureplugin.spanel"};
+		String[] permissions = {"plhide.group.admin", "plhide.group.moderator", "plhide.group.gamemaster", "plhide.group.support"};
 		int indexPermission = -1;
 		int indexThanPermission = -1;
 		for (int i = 0; i < permissions.length; i++) {

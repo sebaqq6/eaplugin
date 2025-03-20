@@ -133,7 +133,7 @@ public class PlayerUtils {
 	public static boolean isAdminPermissionHasHigher(String playerName, String targetName) {
 		Player player = Bukkit.getPlayer(playerName);
 		if (player != null) {
-			String[] permissionsToCheck = {"eadventureplugin.apanel", "eadventureplugin.mpanel", "eadventureplugin.gpanel", "eadventureplugin.spanel"};
+			String[] permissionsToCheck = {"plhide.group.admin", "plhide.group.moderator", "plhide.group.gamemaster", "plhide.group.support"};
 
 			String playerPermission = null;
 			for (String permission : permissionsToCheck) {
