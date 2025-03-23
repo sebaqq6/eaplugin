@@ -161,7 +161,7 @@ public class GearScoreCalculator {
 	}
 
 	public int calcGearScore() {
-		print.debug("calcGearScore: " + item.getType());
+		//print.debug("calcGearScore: " + item.getType());
 		if (disableGs >= 1) {
 			this.gearScore = 0;
 			return this.gearScore;
