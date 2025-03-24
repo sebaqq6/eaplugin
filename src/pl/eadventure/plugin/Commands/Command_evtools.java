@@ -317,6 +317,9 @@ public class Command_evtools implements TabExecutor {
 					));
 					AtomicReference<Location> playerLocation = new AtomicReference<>(player.getLocation());
 					for (Player nearbyPlayer : Bukkit.getOnlinePlayers()) {
+						if (!nearbyPlayer.getWorld().equals(playerLocation.get().getWorld())) {
+							continue;
+						}
 						if (nearbyPlayer.getLocation().distance(playerLocation.get()) <= 50) {
 							nearbyPlayer.sendMessage(message.get());
 						}
@@ -354,6 +357,9 @@ public class Command_evtools implements TabExecutor {
 						));
 						playerLocation.set(player.getLocation());
 						for (Player nearbyPlayer : Bukkit.getOnlinePlayers()) {
+							if (!nearbyPlayer.getWorld().equals(playerLocation.get().getWorld())) {
+								continue;
+							}
 							if (nearbyPlayer.getLocation().distance(playerLocation.get()) <= 50) {
 								nearbyPlayer.sendMessage(message.get());
 							}

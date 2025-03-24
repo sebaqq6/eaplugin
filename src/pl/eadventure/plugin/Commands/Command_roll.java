@@ -32,6 +32,9 @@ public class Command_roll implements TabExecutor {
 			);
 			Location playerLocation = player.getLocation();
 			for (Player nearbyPlayer : Bukkit.getOnlinePlayers()) {
+				if (!nearbyPlayer.getWorld().equals(playerLocation.getWorld())) {
+					continue;
+				}
 				if (nearbyPlayer.getLocation().distance(playerLocation) <= 50) {
 					nearbyPlayer.sendMessage(message);
 					PlayerData pd = PlayerData.get(nearbyPlayer);
