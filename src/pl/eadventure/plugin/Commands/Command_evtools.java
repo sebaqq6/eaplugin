@@ -316,6 +316,7 @@ public class Command_evtools implements TabExecutor {
 									+ "<dark_purple><bold>༻</bold></dark_purple>"
 					));
 					AtomicReference<Location> playerLocation = new AtomicReference<>(player.getLocation());
+					//start rolling
 					for (Player nearbyPlayer : Bukkit.getOnlinePlayers()) {
 						if (!nearbyPlayer.getWorld().equals(playerLocation.get().getWorld())) {
 							continue;
@@ -360,8 +361,11 @@ public class Command_evtools implements TabExecutor {
 							if (!nearbyPlayer.getWorld().equals(playerLocation.get().getWorld())) {
 								continue;
 							}
+							//end rolling
 							if (nearbyPlayer.getLocation().distance(playerLocation.get()) <= 50) {
 								nearbyPlayer.sendMessage(message.get());
+								nearbyPlayer.playSound(player.getLocation(), "my_sounds:sounds.treasury",
+										SoundCategory.MASTER, 1.0f, 0.8f);
 							}
 						}
 						rollOut = false;
