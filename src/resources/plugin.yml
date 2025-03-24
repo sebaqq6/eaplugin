@@ -144,6 +144,10 @@ commands:
     description: "Komenda do usuwania przedmiotów leżących na ziemi w wybranym promieniu."
     usage: "/<command>"
     permission: eadventureplugin.cmd.itemclear
+  roll:
+    description: "Komenda do losowania liczby od 0-100."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.roll
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

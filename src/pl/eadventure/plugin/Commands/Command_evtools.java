@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.Commands;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,15 +11,19 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.Modules.RollTool;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Command_evtools implements TabExecutor {
 	boolean rollingPlayers = false;
 	boolean kickingFromEvent = false;
+	boolean rollOut = false;
 
 	@Override
 
@@ -69,10 +74,10 @@ public class Command_evtools implements TabExecutor {
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(player, sender)) {
 						playersInEventWorld.add(player);
-						startRollingEffect(player);
+						startRollingPlayerEffect(player);
 					}
 				}
-				startRollingEffect(sender);
+				startRollingPlayerEffect(sender);
 
 				if (playersInEventWorld.isEmpty()) {
 					sender.sendMessage(Utils.color("&7Brak graczy na evencie!"));
@@ -116,10 +121,10 @@ public class Command_evtools implements TabExecutor {
 
 								for (Player player : Bukkit.getOnlinePlayers()) {
 									if (isPlayerInEvent(player, sender)) {
-										endRollingEffect(player, chosenPlayer);
+										endRollingPlayerEffect(player, chosenPlayer);
 									}
 								}
-								endRollingEffect(sender, chosenPlayer);
+								endRollingPlayerEffect(sender, chosenPlayer);
 							}
 						}
 					}.runTaskTimer(EternalAdventurePlugin.getInstance(), 0L, interval);
@@ -287,6 +292,76 @@ public class Command_evtools implements TabExecutor {
 					}
 				}.runTaskTimerAsynchronously(EternalAdventurePlugin.getInstance(), 20L, var_tickPeriod);
 			}
+			case "rollout" -> {
+				if (rollOut) {
+					sender.sendMessage(Utils.color("&7Aktualnie trwa rollout..."));
+					return true;
+				}
+				if (args.length < 2) {
+					Utils.commandUsageMessage(sender, "/evtools rollout [czas w sekundach]");
+					return true;
+				}
+				Integer time = 20;
+				try {
+					time = Integer.valueOf(args[1]);
+				} catch (NumberFormatException e) {
+					sender.sendMessage(Utils.color("&7Nieprawidłowa wartość czasu(wartość nie jest cyfrą)."));
+					return true;
+				}
+				if (sender instanceof Player player) {
+					AtomicReference<Component> message = new AtomicReference<>(Utils.mm(
+							"<dark_purple><bold>༺</bold></dark_purple><dark_purple><strikethrough>-----</strikethrough>"
+									+ "<dark_purple><bold>༻</bold></dark_purple> <green><bold>START /ROLL</bold></green> "
+									+ "<dark_purple><bold>༺</bold></dark_purple><dark_purple><strikethrough>-----</strikethrough>"
+									+ "<dark_purple><bold>༻</bold></dark_purple>"
+					));
+					AtomicReference<Location> playerLocation = new AtomicReference<>(player.getLocation());
+					for (Player nearbyPlayer : Bukkit.getOnlinePlayers()) {
+						if (nearbyPlayer.getLocation().distance(playerLocation.get()) <= 50) {
+							nearbyPlayer.sendMessage(message.get());
+						}
+					}
+
+					rollOut = true;
+					PlayerData pd = PlayerData.get(player);
+					RollTool rt = pd.rollTool;
+					if (rt == null) {
+						rt = new RollTool();
+						pd.rollTool = rt;
+
+					}
+					//start and get roll result
+					AtomicReference<String> playersWin = new AtomicReference<>("-brak-");
+					AtomicInteger bestRoll = new AtomicInteger(0);
+					rt.startRegisterRolls(time, result -> {
+						List<String> winners = new ArrayList<>();
+
+						for (Map.Entry<String, Integer> entry : result.entrySet()) {
+							winners.add(entry.getKey());
+							bestRoll.set(entry.getValue());
+						}
+
+						if (!winners.isEmpty()) {
+							playersWin.set(String.join(", ", winners));
+						}
+						//send message
+						message.set(Utils.mm(
+								"<dark_purple><bold>༺</bold></dark_purple><dark_purple><strikethrough>-----</strikethrough>"
+										+ "<dark_purple><bold>༻</bold></dark_purple> <yellow><bold>WYGRYWA:</bold></yellow> "
+										+ "<green>" + playersWin + "</green> <dark_purple>-</dark_purple> <yellow>" + bestRoll + "</yellow> "
+										+ "<dark_purple><bold>༺</bold></dark_purple><dark_purple><strikethrough>-----</strikethrough>"
+										+ "<dark_purple><bold>༻</bold></dark_purple>"
+						));
+						playerLocation.set(player.getLocation());
+						for (Player nearbyPlayer : Bukkit.getOnlinePlayers()) {
+							if (nearbyPlayer.getLocation().distance(playerLocation.get()) <= 50) {
+								nearbyPlayer.sendMessage(message.get());
+							}
+						}
+						rollOut = false;
+					});
+				}
+			}
 		}
 		return true;
 	}
@@ -296,14 +371,14 @@ public class Command_evtools implements TabExecutor {
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1) {
 			List<String> cmdlist = new ArrayList<>();
-			cmdlist.addAll(Arrays.asList("randomplayer", "countplayers", "teamplayers", "ann", "kickall"));
+			cmdlist.addAll(Arrays.asList("randomplayer", "countplayers", "teamplayers", "ann", "kickall", "rollout"));
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
 		return Collections.emptyList();
 	}
 
 	private boolean usage(CommandSender s) {
-		s.sendMessage(Utils.color("&7Użyj: /evtools [randomplayer, countplayers, teamplayers, ann]"));
+		s.sendMessage(Utils.color("&7Użyj: /evtools [randomplayer, countplayers, teamplayers, ann, kickall, rollout]"));
 		return true;
 	}
 
@@ -325,7 +400,7 @@ public class Command_evtools implements TabExecutor {
 	}
 
 	//rolling effect
-	private void startRollingEffect(CommandSender sender) {
+	private void startRollingPlayerEffect(CommandSender sender) {
 		//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eRozpoczęto losowanie..."));
 
 		if (sender instanceof Player player) {
@@ -336,7 +411,7 @@ public class Command_evtools implements TabExecutor {
 		}
 	}
 
-	private void endRollingEffect(CommandSender sender, Player chosenPlayer) {
+	private void endRollingPlayerEffect(CommandSender sender, Player chosenPlayer) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7&lWylosowany gracz: &a&l" + chosenPlayer.getName()));
 
 		if (sender instanceof Player player) {

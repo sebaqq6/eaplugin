@@ -140,8 +140,9 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
-				String message = String.format("&8&l[&4&lALERT&8&l]");
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+				RollTool.test();
+				//String message = String.format("&8&l[&4&lALERT&8&l]");
+				//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 				/*if (sender instanceof Player player) {
 					//Entity specTarget = player.getSpectatorTarget();
 					Entity specTarget = Bukkit.getPlayer("JrRequeim");

@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.Modules.HomesInterface;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.RegionCommandLooper;
+import pl.eadventure.plugin.Modules.RollTool;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
@@ -41,6 +42,7 @@ public class PlayerData {
 	public String gearScore = "0";
 	public String gsRaw = "0";
 	public Timestamp lastSpec = null;
+	public RollTool rollTool = null;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
