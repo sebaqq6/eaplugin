@@ -37,7 +37,6 @@ public class Command_roll implements TabExecutor {
 					PlayerData pd = PlayerData.get(nearbyPlayer);
 					if (pd.rollTool != null && pd.rollTool.isRegisterRolls()) {
 						pd.rollTool.addRoll(player.getName(), randomNumber);
-						pd.rollTool.addRoll("Gracz2", randomNumber);
 					}
 				}
 			}
