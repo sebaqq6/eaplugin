@@ -49,7 +49,6 @@ public class ChatInputCapture {
 		this.activeCallbacks.remove(player);
 		this.titleQueue.remove(player);
 		this.infoMessages.remove(player);
-		print.debug("RemovePlayer");
 	}
 
 	public void sendInfoMessages(Player player) {
