@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.Modules;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -125,7 +126,38 @@ public class PunishmentSystem {
 			reason = reason.replace("-s", "");
 			reason = reason.trim();
 		}
-		if (disableNotify) return;
+		if (disableNotify) {
+			Component message = null;
+			switch (type) {
+				case LogType.MUTE -> {
+					String timeFormat = PunishmentSystem.getFormatedExpiresShort((int) expire);
+					message = Utils.mm(String.format("<grey><bold>[<yellow>CICHY MUTE<grey>]</bold> Admin: <yellow>%s</yellow>, Gracz: <yellow>%s</yellow>, Czas: <yellow>%s</yellow>, Powód: <yellow>%s</yellow>", adminName, targetName, timeFormat, reason));
+				}
+				case LogType.BAN -> {
+					String timeFormat = "Permanentny";
+					if (expire != -1) {
+						long expireTimestamp = Utils.getUnixTimestamp() + expire * 60L;
+						timeFormat = PunishmentSystem.getFormatedExpiresShort((int) expireTimestamp);
+					}
+					message = Utils.mm(String.format("<grey><bold>[<yellow>CICHY BAN<grey>]</bold> Admin: <yellow>%s</yellow>, Gracz: <yellow>%s</yellow>, Czas: <yellow>%s</yellow>, Powód: <yellow>%s</yellow>", adminName, targetName, timeFormat, reason));
+				}
+				case LogType.KICK -> {
+					message = Utils.mm(String.format("<grey><bold>[<yellow>CICHY KICK<grey>]</bold>  Admin: <yellow>%s</yellow>, Gracz: <yellow>%s</yellow>, Powód: <yellow>%s</yellow>", adminName, targetName, reason));
+				}
+				case LogType.WARN -> {
+					String timeFormat = PunishmentSystem.getFormatedExpiresShort((int) expire);
+					message = Utils.mm(String.format("<grey><bold>[<yellow>CICHY WARN<grey>]</bold> Admin: <yellow>%s</yellow>, Gracz: <yellow>%s</yellow>, Czas: <yellow>%s</yellow>, Powód: <yellow>%s</yellow>", adminName, targetName, timeFormat, reason));
+				}
+			}
+			if (message != null) {
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					if (PlayerUtils.hasAnyAdminPermission(p)) {
+						p.sendMessage(message);
+					}
+				}
+			}
+			return;
+		}
 		switch (type) {
 			case LogType.MUTE -> {
 				PlayerUtils.sendColorMessageToAll(String.format("&4&l&c&l%s &4&lzostał/a uciszony/a przez &3&l%s", targetName, adminName));
@@ -143,9 +175,10 @@ public class PunishmentSystem {
 
 		PlayerUtils.sendColorMessageToAll(String.format("&4&lPowód: &7%s", reason));
 
+		//time format
 		if (type != LogType.KICK) { //all others have time
 			String timeFormat = "Permanentny";
-			if (type == LogType.BAN) {//only ban have other time format... (my bad, rework coming soon)
+			if (type == LogType.BAN) {//only ban have other time format...
 				if (expire != -1) {
 					long expireTimestamp = Utils.getUnixTimestamp() + expire * 60L;
 					timeFormat = PunishmentSystem.getFormatedExpiresShort((int) expireTimestamp);
@@ -237,9 +270,9 @@ public class PunishmentSystem {
 	}
 
 	public static BanData isBanned(String nick, String ip, UUID uuid) {
-		PunishmentSystem.BanData bd = PunishmentSystem.BanData.getByNick(nick);
-		if (bd == null) bd = PunishmentSystem.BanData.getByIP(ip);
-		if (bd == null) bd = PunishmentSystem.BanData.getByUUID(uuid);
+		BanData bd = BanData.getByNick(nick);
+		if (bd == null) bd = BanData.getByIP(ip);
+		if (bd == null) bd = BanData.getByUUID(uuid);
 		return bd;//return ban data, or null if not is banned
 	}
 

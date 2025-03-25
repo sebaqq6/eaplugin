@@ -167,6 +167,16 @@ public class PlayerUtils {
 		return false;
 	}
 
+	public static boolean hasAnyAdminPermission(Player player) {
+		if (player.hasPermission("plhide.group.admin")
+				|| player.hasPermission("plhide.group.moderator")
+				|| player.hasPermission("plhide.group.gamemaster")
+				|| player.hasPermission("plhide.group.support")) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void glowBlock(Block block, Player receiver, ChatColor color, long timeTick) {
 		GlowingBlocks gb = EternalAdventurePlugin.getGlowningBlockAPI();
 		try {
