@@ -64,7 +64,7 @@ public class ServerLogManager extends AbstractFilter {
 			return Result.DENY;
 		}
 		//console spam from Pocket Games
-		if (m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:228)")
+		if (/*m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:228)")
 				|| m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:232)")
 				|| m.contains("at java.base/jdk.internal.reflect.MethodHandleObjectFieldAccessorImpl.set(MethodHandleObjectFieldAccessorImpl.java:115)")
 				|| m.contains("at java.base/java.lang.reflect.Field.set(Field.java:836)")
@@ -107,7 +107,7 @@ public class ServerLogManager extends AbstractFilter {
 				|| m.contains("at net.minecraft.server.MinecraftServer.managedBlock(MinecraftServer.java:1510)")
 				|| m.contains("at net.minecraft.server.MinecraftServer.waitUntilNextTick(MinecraftServer.java:1517)")
 				|| m.contains("at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:1362)")
-				|| m.contains("at net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:1673)")) {
+				|| */m.contains("at PocketGames-3.25.0.jar/com.live.bemmamin.pocketgames.UpdateChecker.isLatestVersion")) {
 			return Result.DENY;
 		}
 		//String sender = event.getLoggerName();
@@ -137,7 +137,7 @@ public class ServerLogManager extends AbstractFilter {
 				return Result.NEUTRAL;
 			}
 			//IGNORE
-			if ((m.contains("JrDesmond") || m.contains("JrRequeim") || m.contains("MsKarolsa")) && !m.contains("dbgxd")) {
+			if ((m.contains("MgrDesmond") || m.contains("JrRequeim") || m.contains("MsKarolsa")) && !m.contains("dbgxd")) {
 				return Result.NEUTRAL;
 			}
 			//ignore private message /msg and /r (because is SPY) and other chats commands
