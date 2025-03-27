@@ -10,10 +10,12 @@ import pl.eadventure.plugin.gVar;
 import java.util.Collections;
 import java.util.List;
 
+import static pl.eadventure.plugin.FunEvents.FunEventsCommands.onFunEventCommand;
+
 public class Command_fe implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		gVar.funEventsManager.getFunEventsCommands().onFunEventCommand(sender, args);
+		onFunEventCommand(sender, args);
 		return true;
 	}
 
