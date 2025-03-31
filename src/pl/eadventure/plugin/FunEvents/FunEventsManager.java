@@ -1,6 +1,8 @@
 package pl.eadventure.plugin.FunEvents;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -15,13 +17,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.FunEvents.Event.ParkourEvent;
+import pl.eadventure.plugin.FunEvents.Event.TestEvent;
+import pl.eadventure.plugin.FunEvents.Event.WarGangs;
+import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class FunEventsManager {
 	Plugin plugin;
@@ -37,12 +40,23 @@ public class FunEventsManager {
 	public FunEventsManager(Plugin plugin) {
 		this.plugin = plugin;
 		records = false;
-		bossBar = Bukkit.createBossBar("Zapisy na event...", BarColor.YELLOW, BarStyle.SEGMENTED_20);
-		runTask();
+		bossBar = Bukkit.createBossBar("_", BarColor.YELLOW, BarStyle.SEGMENTED_20);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				oneSecondTimer();
+			}
+		}.runTaskTimer(plugin, 20L, 20L);
 		listeners = new FunEventManagerListeners();
 		Bukkit.getPluginManager().registerEvents(listeners, plugin);
 		//Events
-		registerEvent("parkour", new ParkourEvent("parkour"));
+		registerEvents();
+	}
+
+	public void registerEvents() {
+		events.clear();
+		registerEvent("wg", new WarGangs("Wojna Gangów", 5));
+		registerEvent("test", new TestEvent("Event Testowy", 1));
 	}
 
 	public boolean startRecord(String eventName, int recordsCountDown) {//rozpoczynanie zapisów
@@ -57,6 +71,7 @@ public class FunEventsManager {
 			this.recordsCountDownMax = recordsCountDown;
 			this.recordsCountDown = recordsCountDown;
 			this.actualFunEvent = event;
+			oneSecondTimer();
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				bossBar.addPlayer(p);
 			}
@@ -86,6 +101,10 @@ public class FunEventsManager {
 		events.put(name, event);
 	}//rejestracja eventy
 
+	public FunEvent getActualFunEvent() {
+		return actualFunEvent;
+	}
+
 	public FunEvent getEvent(String name) {
 		return events.get(name);
 	}//pobieranie eventu po nazwie
@@ -103,6 +122,37 @@ public class FunEventsManager {
 			return actualFunEvent.removePlayer(player);
 		}
 		return false;
+	}
+
+	int barTitleStep = 0;
+
+	private void oneSecondTimer() {
+		if (records) {
+			if (recordsCountDown > 0) {
+				double progressValue = (double) recordsCountDown / (double) recordsCountDownMax;
+				bossBar.setProgress(progressValue);
+				String title = "_";
+				switch (barTitleStep) {
+					case 0, 1 -> title = String.format("&5&lZapisy na &6%s &d- &a/123", actualFunEvent.getEventName());
+					case 2, 3 ->
+							title = String.format("&aZapisało się już &6&l%d &aosób!", actualFunEvent.getPlayersCount());
+				}
+				//String.format("&d&lZapisy na &6%s &d- &a/event", actualFunEvent.getEventName());
+				bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', title));
+				recordsCountDown--;
+				barTitleStep++;
+				if (barTitleStep > 3) barTitleStep = 0;
+			} else {
+				if (actualFunEvent.getPlayersCount() < actualFunEvent.getMinPlayers()) {//zbyt mało osób
+					actualFunEvent.msgAll(String.format("<grey>Niestety, na <blue><bold>%s</bold></blue> zapisało się <bold>zbyt mało osób</bold>, aby mogło się odbyć.", actualFunEvent.getEventName()));
+					actualFunEvent.setStatus(FunEvent.Status.FREE);
+				} else {
+					actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);
+					actualFunEvent.start();
+				}
+				stopRecord();
+			}
+		}
 	}
 
 	//----------------------------------STATIC SECTION------------------------------------------------------------------
@@ -130,26 +180,6 @@ public class FunEventsManager {
 		return null;
 	}
 
-	private void runTask() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				if (records) {
-					if (recordsCountDown > 0) {
-						double progressValue = (double) recordsCountDown / (double) recordsCountDownMax;
-						print.debug("Setprogress(" + recordsCountDown + "/" + recordsCountDownMax + ": " + progressValue);
-						bossBar.setProgress(progressValue);
-						recordsCountDown--;
-					} else {
-						actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);
-						actualFunEvent.start();
-						stopRecord();
-					}
-				}
-			}
-		}.runTaskTimer(plugin, 20L, 20L);
-	}
-
 	//---------------------------------------------------------------------------------------------------------LISTENERS
 	public static class FunEventManagerListeners implements Listener {
 		//==============================JOIN TO THE SERVER=============
@@ -171,6 +201,7 @@ public class FunEventsManager {
 			if (funEvent != null) {
 				funEvent.removePlayer(player);
 				player.teleport(spawnLocation);
+				funEvent.playerQuit(player);
 			} else {
 				funEvent = isPlayerSavedOnEvent(player);
 				if (funEvent != null) {
@@ -184,6 +215,10 @@ public class FunEventsManager {
 		public void onPlayerDeath(PlayerDeathEvent e) {
 			FunEventsManager funEventManager = gVar.funEventsManager;
 			Player player = e.getPlayer();
+			FunEvent funEvent = isPlayerOnEvent(player);
+			if (funEvent != null) {
+				funEvent.playerDeath(e);
+			}
 		}
 
 		//==============================RESPAWN===========
@@ -191,6 +226,10 @@ public class FunEventsManager {
 		public void onPlayerRespawn(PlayerRespawnEvent e) {
 			FunEventsManager funEventManager = gVar.funEventsManager;
 			Player player = e.getPlayer();
+			FunEvent funEvent = isPlayerOnEvent(player);
+			if (funEvent != null) {
+				Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> funEvent.playerRespawn(e), 20L);
+			}
 		}
 
 		//==============================COMMAND===========
@@ -198,6 +237,21 @@ public class FunEventsManager {
 		public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
 			FunEventsManager funEventManager = gVar.funEventsManager;
 			Player player = e.getPlayer();
+			String rawData = e.getMessage();
+			String[] args = rawData.split(" ");
+			String command = args[0];
+			if (funEventManager.isRecords()) {
+				if (command.equalsIgnoreCase("/123")) {
+					if (funEventManager.registerPlayer(player)) {
+						Component message = Utils.mm(String.format("" +
+								"<green><bold>Zapisałeś/aś</bold> się na: <blue><bold>%s</bold><green>. Wpisz ponownie <#FF0000>/123</#FF0000> aby <bold>zrezygnować</bold>. ", funEventManager.actualFunEvent.getEventName()));
+						player.sendMessage(message);
+					} else if (funEventManager.unregisterPlayer(player)) {
+						player.sendMessage(Utils.mm("<#FF0000>Zrezygnowałeś/aś z zabawy: <blue><bold>" + funEventManager.actualFunEvent.getEventName()));
+					}
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
 }
