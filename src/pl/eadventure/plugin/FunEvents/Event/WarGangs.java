@@ -6,8 +6,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import pl.eadventure.plugin.FunEvents.FunEvent;
 
 public class WarGangs extends FunEvent {
-	public WarGangs(String eventName, int minPlayers) {
-		super(eventName, minPlayers);
+	public WarGangs(String eventName, int minPlayers, int maxPlayers) {
+		super(eventName, minPlayers, maxPlayers);
 	}
 
 	@Override

@@ -36,6 +36,7 @@ public class FunEventsManager {
 	private FunEvent actualFunEvent;//event aktualnie ogarniany przez menagera
 	private FunEventManagerListeners listeners;
 	public static Location spawnLocation = new Location(Bukkit.getWorld("world"), 31, 169, -23);
+	public static Location worldEvents = new Location(Bukkit.getWorld("world_utility"), -1, 65, 0);
 
 	public FunEventsManager(Plugin plugin) {
 		this.plugin = plugin;
@@ -55,8 +56,8 @@ public class FunEventsManager {
 
 	public void registerEvents() {
 		events.clear();
-		registerEvent("wg", new WarGangs("Wojna Gangów", 5));
-		registerEvent("test", new TestEvent("Event Testowy", 1));
+		registerEvent("wg", new WarGangs("Wojna Gangów", 2, 19));
+		registerEvent("test", new TestEvent("Event Testowy", 1, 1));
 	}
 
 	public boolean startRecord(String eventName, int recordsCountDown) {//rozpoczynanie zapisów
@@ -111,6 +112,9 @@ public class FunEventsManager {
 
 	public boolean registerPlayer(Player player) {//dodawanie gracza do eventu
 		if (!records) return false;
+		if (actualFunEvent.getPlayersCount() >= actualFunEvent.getMaxPlayers()) {
+			return false;
+		}
 		if (actualFunEvent == null) {
 			return false;
 		}
@@ -229,6 +233,14 @@ public class FunEventsManager {
 			FunEvent funEvent = isPlayerOnEvent(player);
 			if (funEvent != null) {
 				Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> funEvent.playerRespawn(e), 20L);
+			} else {
+				if (worldEvents.getWorld().equals(player.getLocation().getWorld())) {
+					if (worldEvents.distance(player.getLocation()) > 10) {
+						Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> player.teleport(spawnLocation), 20L);
+						print.error("Gracz " + player.getName() + " zrespawnował się na spawnie  " + worldEvents.getWorld().getName() + ". Teleportuje go na główny spawn w world.");
+					}
+				}
+
 			}
 		}
 
@@ -248,6 +260,8 @@ public class FunEventsManager {
 						player.sendMessage(message);
 					} else if (funEventManager.unregisterPlayer(player)) {
 						player.sendMessage(Utils.mm("<#FF0000>Zrezygnowałeś/aś z zabawy: <blue><bold>" + funEventManager.actualFunEvent.getEventName()));
+					} else {
+						player.sendMessage(Utils.mm("<#FF0000>Brak wolnych miejsc, aby uczestniczyć w: <blue><bold>" + funEventManager.actualFunEvent.getEventName()));
 					}
 					e.setCancelled(true);
 				}
