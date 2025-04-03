@@ -1,6 +1,7 @@
 package pl.eadventure.plugin.Events;
 
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,10 +15,10 @@ public class playerInteractEntityEvent implements Listener {
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
 		Player player = e.getPlayer();
 		PlayerData pd = PlayerData.get(player);
-		if (e.getRightClicked() instanceof ItemFrame) {
+		if (e.getRightClicked() instanceof ItemFrame || e.getRightClicked() instanceof LivingEntity) {
 			if (pd.creativeMode && !player.hasPermission("eadventureplugin.creative.bypass")) {
 				e.setCancelled(true);
-				player.sendMessage(Utils.mm("<#888888>Nie możesz modyfikować ItemFrame w <b>trybie kreatywnym</b>!</#888888>"));
+				player.sendMessage(Utils.mm("<#888888>Ta czynność jest niedozwolona na <b>trybie kreatywnym</b>!</#888888>"));
 			}
 		}
 	}
