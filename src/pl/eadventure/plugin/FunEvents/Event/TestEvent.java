@@ -25,10 +25,10 @@ public class TestEvent extends FunEvent {
 
 	@Override
 	public void start() {
-		clearPlayersVariables();
 		tpAll(eventLocation);
 		for (Player player : getPlayers()) {
 			getEvPlayer(player).setTeam(1);
+			clearPlayerInventory(player);
 		}
 	}
 

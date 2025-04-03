@@ -45,7 +45,19 @@ public class FunEventsCommands {
 					fe.setStatus(FunEvent.Status.FREE);
 					sender.sendMessage(Utils.mm("<#FF0000><bold>Anulowano</bold> aktualnie trwające zapisy."));
 				} else {
-					sender.sendMessage(Utils.mm("<blue>W tym momencie nie trwają żadne zapisy."));
+					sender.sendMessage(Utils.mm("<grey>W tym momencie nie trwają żadne zapisy."));
+				}
+			}
+			case "forcefinish" -> {//----------------------------------------------------------------/fe forcefinish nazwa_eventu
+				if (args.length < 2) {
+					Utils.commandUsageMessage(sender, "/fe forcefinish [event]");
+					return;
+				}
+				String eventName = args[1];
+				if (fem.getEvent(eventName).finishEvent()) {
+					sender.sendMessage(Utils.mm("<#FF0000><bold>Wymuszono</bold> zakończenie eventu: " + fem.getEvent(eventName).getEventName()));
+				} else {
+					sender.sendMessage(Utils.mm("<grey>Ten event obecnie nie trwa."));
 				}
 			}
 			case "world" -> {

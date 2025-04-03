@@ -56,7 +56,7 @@ public class FunEventsManager {
 
 	public void registerEvents() {
 		events.clear();
-		registerEvent("wg", new WarGangs("Wojna Gangów", 2, 19));
+		registerEvent("wg", new WarGangs("Wojna Gangów", 2, 20));
 		registerEvent("test", new TestEvent("Event Testowy", 1, 1));
 	}
 
@@ -152,6 +152,8 @@ public class FunEventsManager {
 					actualFunEvent.setStatus(FunEvent.Status.FREE);
 				} else {
 					actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);
+					actualFunEvent.clearPlayersVariables();//clear players variables
+					actualFunEvent.saveEqBeforeJoinForAll();//save player variables
 					actualFunEvent.start();
 				}
 				stopRecord();
@@ -202,11 +204,12 @@ public class FunEventsManager {
 			FunEventsManager funEventManager = gVar.funEventsManager;
 			Player player = e.getPlayer();
 			FunEvent funEvent = isPlayerOnEvent(player);
-			if (funEvent != null) {
+			if (funEvent != null) {//in progress
+				funEvent.getEvPlayer(player).restoreEqBeforeJoin();
 				funEvent.removePlayer(player);
 				player.teleport(spawnLocation);
 				funEvent.playerQuit(player);
-			} else {
+			} else {//only saved on event
 				funEvent = isPlayerSavedOnEvent(player);
 				if (funEvent != null) {
 					funEvent.removePlayer(player);

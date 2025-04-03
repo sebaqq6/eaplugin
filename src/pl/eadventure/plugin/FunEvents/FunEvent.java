@@ -9,12 +9,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,9 +34,12 @@ public abstract class FunEvent {
 	protected class EvPlayer {
 		private Player player;
 		private int team = 0;
+		private ItemStack[] beforeJoinEq = null;
+		private boolean beforeJoinEqSaved = false;
 		private final HashMap<String, String> strings = new HashMap<>();
 		private final HashMap<String, Integer> integers = new HashMap<>();
 		private final HashMap<String, Float> floatvar = new HashMap<>();
+
 
 		public EvPlayer(Player player) {
 			this.player = player;
@@ -79,9 +84,27 @@ public abstract class FunEvent {
 		public int getTeam() {
 			return this.team;
 		}
+
+		public void saveEqBeforeJoin() {
+			if (!beforeJoinEqSaved) {
+				beforeJoinEq = Arrays.stream(player.getInventory().getContents())
+						.map(item -> item != null ? item.clone() : null)
+						.toArray(ItemStack[]::new);
+				beforeJoinEqSaved = true;
+			}
+		}
+
+		public void restoreEqBeforeJoin() {
+			if (beforeJoinEqSaved) {
+				beforeJoinEqSaved = false;
+				player.getInventory().clear();
+				player.getInventory().setContents(beforeJoinEq);
+				beforeJoinEq = null;
+			}
+		}
 	}
 
-	public EvPlayer getEvPlayer(Player player) {
+	protected EvPlayer getEvPlayer(Player player) {
 		return playersVariables.computeIfAbsent(player, EvPlayer::new);
 	}
 
@@ -162,12 +185,16 @@ public abstract class FunEvent {
 		return status;
 	}
 
-	public void finishEvent() {
-		for (Player player : players) {
-			player.teleport(FunEventsManager.spawnLocation);
-			player.saveData();
-		}
-		setStatus(Status.FREE);
+	public boolean finishEvent() {
+		if (status != Status.FREE) {
+			for (Player player : players) {
+				getEvPlayer(player).restoreEqBeforeJoin();
+				player.teleport(FunEventsManager.spawnLocation);
+				player.saveData();
+			}
+			setStatus(Status.FREE);
+			return true;
+		} else return false;
 	}
 
 	public void msgAll(String msg) {
@@ -184,6 +211,18 @@ public abstract class FunEvent {
 				player.teleport(location);
 			}
 		}
+	}
+
+	public void saveEqBeforeJoinForAll() {
+		for (Player player : players) {
+			if (player.isOnline()) {
+				getEvPlayer(player).saveEqBeforeJoin();
+			}
+		}
+	}
+
+	public void clearPlayerInventory(Player player) {
+		player.getInventory().clear();
 	}
 
 	//******************************************************************************************************************
@@ -203,7 +242,7 @@ public abstract class FunEvent {
 
 				if (damagerTeam != 0 && damagerTeam == victimTeam) {
 					event.setCancelled(true);
-					damager.sendMessage("Nie możesz atakować członków swojej drużyny!");
+					damager.sendMessage("<grey>Nie możesz atakować członków swojej drużyny!");
 				}
 			}
 		}
