@@ -72,7 +72,7 @@ public class Command_creative implements CommandExecutor {
 		return true;
 	}
 
-	private int toggleCreative(Player player) {
+	public static int toggleCreative(Player player) {
 		if (!player.isOnline()) return -1;
 		PlayerData pd = PlayerData.get(player);
 		if (pd.creativeMode) {//disable creative mode
