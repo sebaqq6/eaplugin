@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import pl.eadventure.plugin.API.GlowAPI;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -80,7 +81,7 @@ public class wgAPI {
 						Location loc2 = new Location(world, 0.5 + tr.point.getX(), 0.5 + minY, 0.5 + tr.point.getZ());
 						Location loc3 = new Location(world, 0.5 + tr.point.getX(), 0.5 + maxY, 0.5 + tr.point.getZ());
 						//world.strikeLightning(loc1);
-						PlayerUtils.glowBlock(p.getWorld().getBlockAt(loc1), p, ChatColor.RED, 300L);
+						GlowAPI.glowBlock(p.getWorld().getBlockAt(loc1), p, ChatColor.RED, 300L);
 						//PlayerUtils.glowBlock(p.getWorld().getBlockAt(loc2), p, ChatColor.RED, 300L);
 						//PlayerUtils.glowBlock(p.getWorld().getBlockAt(loc3), p, ChatColor.RED, 300L);
 						//handlePinkParticle(p, new Location(p.getWorld(), 0.5+tr.point.getX(), 0.5+playerY, 0.5+tr.point.getZ()));

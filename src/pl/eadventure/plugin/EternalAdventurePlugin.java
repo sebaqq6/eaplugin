@@ -23,6 +23,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.ComplexTurretValidation;
+import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.API.Placeholders;
 import pl.eadventure.plugin.API.ProtocolLibAPI;
 import pl.eadventure.plugin.Commands.*;
@@ -52,7 +53,6 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 	private static Placeholders placeholders;
 	private static LuckPerms luckPerms;
 	private static ProtocolManager protocolManager;
-	private static GlowingBlocks glowingBlocksAPI;
 	private static MobArena mobarena;
 	private static playerPrivateChatEvent privateChatEvent;
 	private static ProtocolLibAPI plAPI;
@@ -77,12 +77,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		print.setDebug(config.getBoolean("debug"));
 		LeavesDecay.active(config.getBoolean("leavesDecaySystem"));
 		//Uruchomienie API Glowning
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				glowingBlocksAPI = new GlowingBlocks(instance);
-			}
-		}.runTaskLater(this, 40L);
+		new GlowAPI(this);
 		// Wpięcie do VaultApi
 		if (!setupEconomy()) {
 			print.error("Nie wykryto pluginu ekonomii dla VaultAPI!");
@@ -292,7 +287,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		MagicGUI.tryToUnload();
 		HomesInterface.tryUnload();
 		ServerLogManager.disable();
-		//glowingBlocksAPI.disable();
+		GlowAPI.getInstance().unload();
 		print.info("[EternalAdventurePlugin] Plugin został wyłączony!");
 	}
 
@@ -302,10 +297,6 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 
 	public static FileConfiguration getMainConfig() {
 		return config;
-	}
-
-	public static GlowingBlocks getGlowningBlockAPI() {
-		return glowingBlocksAPI;
 	}
 
 	private boolean setupEconomy() {

@@ -177,25 +177,6 @@ public class PlayerUtils {
 		return false;
 	}
 
-	public static void glowBlock(Block block, Player receiver, ChatColor color, long timeTick) {
-		GlowingBlocks gb = EternalAdventurePlugin.getGlowningBlockAPI();
-		try {
-			gb.setGlowing(block, receiver, color);
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					try {
-						gb.unsetGlowing(block, receiver);
-					} catch (ReflectiveOperationException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			}.runTaskLater(EternalAdventurePlugin.getInstance(), timeTick);
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static boolean isVanished(Player player) {
 		for (MetadataValue meta : player.getMetadata("vanished")) {
 			if (meta.asBoolean()) return true;

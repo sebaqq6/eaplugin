@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
@@ -67,7 +68,7 @@ public class LeavesDecay {
 						int dy = neighborLocation.getBlockY() - blockY + MAX_DISTANCE; // Obliczenie współrzędnej y w tablicy odwiedzonych
 						int dz = neighborLocation.getBlockZ() - blockZ + MAX_DISTANCE; // Obliczenie współrzędnej z w tablicy odwiedzonych
 						if (debugPlayer != null) {
-							PlayerUtils.glowBlock(currentBlock, debugPlayer, ChatColor.GREEN, 20L * 2L);
+							GlowAPI.glowBlock(currentBlock, debugPlayer, ChatColor.GREEN, 20L * 2L);
 						}
 						// Dodanie do kolejki również sąsiednich bloków będących blokami drzewa
 						if (dx >= 0 && dx < visited.length && dy >= 0 && dy < visited[0].length && dz >= 0 && dz < visited[0][0].length) {
@@ -75,7 +76,7 @@ public class LeavesDecay {
 								queue.offer(neighborBlock); // Dodanie sąsiada do kolejki
 								visited[dx][dy][dz] = true; // Oznaczenie sąsiada jako odwiedzony
 								if (debugPlayer != null) {
-									PlayerUtils.glowBlock(neighborBlock, debugPlayer, ChatColor.RED, 20L * 4L);
+									GlowAPI.glowBlock(neighborBlock, debugPlayer, ChatColor.RED, 20L * 4L);
 								}
 								//Utils.benchmarkEnd(benchmark, "isLeavesConnectedToWood(true)");
 								return true;
