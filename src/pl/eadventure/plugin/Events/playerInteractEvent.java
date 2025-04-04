@@ -34,7 +34,7 @@ public class playerInteractEvent implements Listener {
 						return;
 					}
 
-					lastDecayDebugUse = currentTime;
+					//lastDecayDebugUse = currentTime;
 
 					new BukkitRunnable() {
 						@Override
