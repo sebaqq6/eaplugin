@@ -77,7 +77,12 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		print.setDebug(config.getBoolean("debug"));
 		LeavesDecay.active(config.getBoolean("leavesDecaySystem"));
 		//Uruchomienie API Glowning
-		//glowingBlocksAPI = new GlowingBlocks(this);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				glowingBlocksAPI = new GlowingBlocks(instance);
+			}
+		}.runTaskLater(this, 40L);
 		// Wpięcie do VaultApi
 		if (!setupEconomy()) {
 			print.error("Nie wykryto pluginu ekonomii dla VaultAPI!");

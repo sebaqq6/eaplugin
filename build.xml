@@ -4,7 +4,10 @@
         <jar jarfile="/home/sebastian/Pulpit/SerwerMinecraft/plugins/${ant.project.name}.jar"
              basedir="./target/classes/" includes="**/*">
             <zipfileset
-                    src="/home/sebastian/.m2/repository/io/github/skytasul/glowingentities/1.3.2/glowingentities-1.3.2.jar"
+                    src="/home/sebastian/.m2/repository/fr/skytasul/glowingentities/1.4.3/glowingentities-1.4.3.jar"
+                    includes="**/*"/>
+            <zipfileset
+                    src="/home/sebastian/.m2/repository/fr/skytasul/reflection-remapper/1.0.0/reflection-remapper-1.0.0.jar"
                     includes="**/*"/>
         </jar>
     </target>
@@ -12,7 +15,10 @@
         <!-- Step 1: Create the JAR file locally -->
         <jar jarfile="./target/${ant.project.name}.jar" basedir="./target/classes/" includes="**/*">
             <zipfileset
-                    src="/home/sebastian/.m2/repository/io/github/skytasul/glowingentities/1.3.2/glowingentities-1.3.2.jar"
+                    src="/home/sebastian/.m2/repository/fr/skytasul/glowingentities/1.4.3/glowingentities-1.4.3.jar"
+                    includes="**/*"/>
+            <zipfileset
+                    src="/home/sebastian/.m2/repository/fr/skytasul/reflection-remapper/1.0.0/reflection-remapper-1.0.0.jar"
                     includes="**/*"/>
         </jar>
 

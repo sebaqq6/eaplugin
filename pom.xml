@@ -39,12 +39,18 @@
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
+                                <filter>
+                                    <artifact>fr.skytasul:reflection-remapper</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
+
 
         </plugins>
         <resources>
@@ -146,7 +152,7 @@
         <dependency>
             <groupId>fr.skytasul</groupId>
             <artifactId>glowingentities</artifactId>
-            <version>1.4</version>
+            <version>1.4.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
