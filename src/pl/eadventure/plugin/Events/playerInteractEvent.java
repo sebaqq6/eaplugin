@@ -15,6 +15,8 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.wgAPI;
 
 public class playerInteractEvent implements Listener {
+	private long lastDecayDebugUse = 0;
+
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
@@ -24,6 +26,16 @@ public class playerInteractEvent implements Listener {
 		if (pd.decayDebug) {
 			if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND) {
 				if (clickedBlock != null) {
+					long currentTime = System.currentTimeMillis();
+
+					if (currentTime - lastDecayDebugUse < 5000) {
+						long secondsLeft = (5000 - (currentTime - lastDecayDebugUse)) / 1000;
+						player.sendMessage(Utils.color("&cFunkcja dostępna ponownie za " + secondsLeft + "s."));
+						return;
+					}
+
+					lastDecayDebugUse = currentTime;
+
 					new BukkitRunnable() {
 						@Override
 						public void run() {
@@ -43,10 +55,10 @@ public class playerInteractEvent implements Listener {
 							}
 						}
 					}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
-
 				}
 			}
 		}
+
 		// Disable conversation hotkey
 		/*PlayerConversation pc = InteractionsAPI.getPlayerConversation(player);
 		if (pc != null) {

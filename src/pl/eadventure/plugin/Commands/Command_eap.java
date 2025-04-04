@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
 import pl.eadventure.plugin.Modules.*;
@@ -140,7 +141,6 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
-				RollTool.test();
 				//String message = String.format("&8&l[&4&lALERT&8&l]");
 				//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 				/*if (sender instanceof Player player) {
