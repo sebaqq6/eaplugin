@@ -59,8 +59,8 @@ public class FunEventsManager {
 
 	public void registerEvents() {
 		events.clear();
-		registerEvent("wg", new WarGangs("Wojna Gangów", 2, 20));
-		registerEvent("test", new TestEvent("Event Testowy", 1, 1));
+		registerEvent("wg", new WarGangs("Wojna Gangów", 2, 20, true));
+		registerEvent("test", new TestEvent("Event Testowy", 1, 1, false));
 	}
 
 	public boolean startRecord(String eventName, int recordsCountDown) {//rozpoczynanie zapisów
@@ -307,6 +307,12 @@ public class FunEventsManager {
 			String command = args[0];
 			if (funEventManager.isRecords()) {
 				if (command.equalsIgnoreCase("/123")) {
+					if (funEventManager.actualFunEvent.isOwnSet()) {
+						if (!inventoryHasOnlySet(player)) {
+							e.setCancelled(true);
+							return;
+						}
+					}
 					if (funEventManager.registerPlayer(player)) {
 						Component message = Utils.mm(String.format("" +
 								"<green><bold>Zapisałeś/aś</bold> się na: <blue><bold>%s</bold><green>. Wpisz ponownie <#FF0000>/123</#FF0000> aby <bold>zrezygnować</bold>. ", funEventManager.actualFunEvent.getEventName()));

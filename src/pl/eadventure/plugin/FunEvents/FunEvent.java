@@ -28,11 +28,31 @@ public abstract class FunEvent {
 	private String eventName;
 	private Set<Player> players = new HashSet<>();//Lista graczy uczestniczących na evencie
 	private HashMap<Player, EvPlayer> playersVariables = new HashMap<>();
+	private HashMap<Player, ItemStack[]> ownSets = new HashMap<>();
 	private int status;
 	private int minPlayers;
 	private int maxPlayers;
 	private Listener listener;
+	private boolean ownSet;
 	protected static World world_utility = Bukkit.getWorld("world_utility");
+
+	//STATUS
+	public interface Status {
+		int FREE = 0;
+		int RECORDS = 1;
+		int IN_PROGRESS = 2;
+	}
+
+	public FunEvent(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
+		this.eventName = eventName;
+		this.status = Status.FREE;
+		this.minPlayers = minPlayers;
+		this.maxPlayers = maxPlayers;
+		this.ownSet = ownSet;
+		this.listener = new Listeners();
+		Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+		Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> oneSecondTimer(), 20L, 20L);
+	}
 
 	//FePlayer
 	protected class EvPlayer {
@@ -116,22 +136,6 @@ public abstract class FunEvent {
 		playersVariables.clear();
 	}
 
-	//STATUS
-	public interface Status {
-		int FREE = 0;
-		int RECORDS = 1;
-		int IN_PROGRESS = 2;
-	}
-
-	public FunEvent(String eventName, int minPlayers, int maxPlayers) {
-		this.eventName = eventName;
-		this.status = Status.FREE;
-		this.minPlayers = minPlayers;
-		this.maxPlayers = maxPlayers;
-		this.listener = new Listeners();
-		Bukkit.getPluginManager().registerEvents(listener, getPlugin());
-		Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> oneSecondTimer(), 20L, 20L);
-	}
 
 	public Plugin getPlugin() {
 		return EternalAdventurePlugin.getInstance();
@@ -142,6 +146,10 @@ public abstract class FunEvent {
 	}
 
 	public boolean addPlayer(Player player) {
+		ItemStack[] items = Arrays.stream(player.getInventory().getContents())
+				.map(item -> item != null ? item.clone() : null)
+				.toArray(ItemStack[]::new);
+		ownSets.put(player, items);
 		return players.add(player);
 	}
 
@@ -167,6 +175,19 @@ public abstract class FunEvent {
 
 	public int getMaxPlayers() {
 		return maxPlayers;
+	}
+
+	public boolean isOwnSet() {
+		return ownSet;
+	}
+
+	public void setOwnSet(Player player) {
+		ItemStack[] items = ownSets.getOrDefault(player, null);
+		if (items != null) {
+			player.getInventory().setContents(items);
+		} else {
+			print.error("Nie udało się ustawić własnego seta (FunEvent->setOwnSet) dla gracza: " + player.getName());
+		}
 	}
 
 	public abstract void start();

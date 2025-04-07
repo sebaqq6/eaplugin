@@ -11,8 +11,8 @@ public class WarGangs extends FunEvent {
 	Location teamRedSpawn;
 	Location teamBlueSpawn;
 
-	public WarGangs(String eventName, int minPlayers, int maxPlayers) {
-		super(eventName, minPlayers, maxPlayers);
+	public WarGangs(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
+		super(eventName, minPlayers, maxPlayers, ownSet);
 		teamRedSpawn = new Location(world_utility, 250, 111, 477);
 		teamBlueSpawn = new Location(world_utility, 250, 112, 366);
 	}

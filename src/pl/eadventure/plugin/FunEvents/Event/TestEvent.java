@@ -16,19 +16,26 @@ import java.util.HashMap;
 
 public class TestEvent extends FunEvent {
 
-	public TestEvent(String eventName, int minPlayers, int maxPlayers) {
-		super(eventName, minPlayers, maxPlayers);
+	public TestEvent(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
+		super(eventName, minPlayers, maxPlayers, ownSet);
 
 	}
 
 	Location eventLocation = new Location(Bukkit.getWorld("world_utility"), -132, 72, -136);
 
+	/*Przed start wykonywane jest:
+	actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);//ustawienie statusu na IN PROGRESS
+	actualFunEvent.clearPlayersVariables();//czyszczenie zmiennych dla graczy na evencie
+	actualFunEvent.saveEqBeforeJoinForAll();//zapisywanie EQ przed dołączeniem (czyli póżniej niż setOwnSet - te jest zapisywane OSOBNO)
+	actualFunEvent.start();//no i start
+	 */
 	@Override
 	public void start() {
 		tpAll(eventLocation);
 		for (Player player : getPlayers()) {
-			getEvPlayer(player).setTeam(1);
-			clearPlayerInventory(player);
+			getEvPlayer(player).setTeam(1);//ustawia team
+			clearPlayerInventory(player);//czyści wszystkim graczom eq
+			setOwnSet(player);//ustawia set który gracz miał podczas zapisów (inventoryHasOnlySet)
 		}
 	}
 
