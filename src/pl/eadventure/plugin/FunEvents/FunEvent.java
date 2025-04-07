@@ -2,7 +2,9 @@ package pl.eadventure.plugin.FunEvents;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +13,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.Utils.Utils;
@@ -29,6 +32,7 @@ public abstract class FunEvent {
 	private int minPlayers;
 	private int maxPlayers;
 	private Listener listener;
+	protected static World world_utility = Bukkit.getWorld("world_utility");
 
 	//FePlayer
 	protected class EvPlayer {
@@ -126,6 +130,7 @@ public abstract class FunEvent {
 		this.maxPlayers = maxPlayers;
 		this.listener = new Listeners();
 		Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+		Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> oneSecondTimer(), 20L, 20L);
 	}
 
 	public Plugin getPlugin() {
@@ -223,6 +228,28 @@ public abstract class FunEvent {
 
 	public void clearPlayerInventory(Player player) {
 		player.getInventory().clear();
+	}
+
+	private void updateGlowTeam() {
+		for (Player player : getPlayers()) {
+			EvPlayer ep = getEvPlayer(player);
+			for (Player otherPlayer : getPlayers()) {
+				EvPlayer eop = getEvPlayer(otherPlayer);
+				if (ep.getTeam() != 0 & ep.getTeam() == eop.getTeam()) {
+					GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), ChatColor.BLACK, 0);
+				}//WIP
+			}
+		}
+	}
+
+	//******************************************************************************************************************
+	//Timers
+	//******************************************************************************************************************
+	private void oneSecondTimer() {//ASYNC
+		for (Player player : getPlayers()) {
+			EvPlayer ep = getEvPlayer(player);
+
+		}
 	}
 
 	//******************************************************************************************************************
