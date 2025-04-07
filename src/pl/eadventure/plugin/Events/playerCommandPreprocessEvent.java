@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.PlayerData;
@@ -103,40 +104,7 @@ public class playerCommandPreprocessEvent implements Listener {
 
 				if (mainArena.canJoin(player)) {//can join to arena
 					//check valid inventory
-					ItemStack[] playerInventory = player.getInventory().getContents();
-					int armors = 0;
-					int mainhands = 0;
-					int offhands = 0;
-					int otheritems = 0;
-					for (ItemStack item : playerInventory) {
-						if (item == null) continue;
-						if (mobArenaTicket.isSimilar(item)) continue;
-						Material type = item.getType();
-						if (type == Material.ARROW || type == Material.SPECTRAL_ARROW || type == Material.TIPPED_ARROW)
-							continue;
-						GearScoreCalculator gsc = new GearScoreCalculator(null);
-						String itemType = gsc.getItemType(item);
-						if (gsc.getItemType(item) == null) {
-							otheritems++;
-							continue;
-						}
-						//player.sendMessage(item.getItemMeta().getDisplayName() + ":" + gsc.getItemType(item));
-						if (itemType.equalsIgnoreCase("armor")) {
-							armors++;
-						} else if (itemType.equalsIgnoreCase("mainhand")) {
-							mainhands++;
-						} else if (itemType.equalsIgnoreCase("offhand")) {
-							offhands++;
-						} else if (itemType.equalsIgnoreCase("default")) {
-							otheritems++;
-						}
-					}
-					if (armors > 4 || mainhands > 1 || offhands > 1 || otheritems > 0) {
-						player.sendMessage(Utils.mm("<red><bold>Twoje wyposażenie przekracza limity, odłóż zbędny sprzęt:"));
-						player.sendMessage(Utils.mm(String.format("<bold><gray>Pancerz: <%s>%d/4", armors > 4 ? "#FF0000" : "#00FF00", armors)));
-						player.sendMessage(Utils.mm(String.format("<bold><gray>Broń główna: <%s>%d/1", mainhands > 1 ? "#FF0000" : "#00FF00", mainhands)));
-						player.sendMessage(Utils.mm(String.format("<bold><gray>Leworęczny przedmiot: <%s>%d/1", offhands > 1 ? "#FF0000" : "#00FF00", offhands)));
-						player.sendMessage(Utils.mm(String.format("<bold><gray>Pozostałe przedmioty: <%s>%d/0", otheritems > 0 ? "#FF0000" : "#00FF00", otheritems)));
+					if (!FunEventsManager.inventoryHasOnlySet(player)) {
 						e.setCancelled(true);
 					} else {
 						player.getInventory().removeItemAnySlot(mobArenaTicket);

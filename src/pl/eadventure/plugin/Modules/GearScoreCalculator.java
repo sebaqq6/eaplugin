@@ -590,7 +590,7 @@ public class GearScoreCalculator {
 			}
 			if (!customDetect) {//stock items
 				String itemId = itemStack.getType().toString();
-				//print.ok("detect: " + getType);
+				//print.ok("detect: " + itemId);
 				if (typeItems.containsKey(itemId)) {
 					if (!itemFlags.contains(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
 							&& !itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)

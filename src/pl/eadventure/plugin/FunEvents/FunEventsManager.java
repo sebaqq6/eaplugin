@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -15,10 +16,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.FunEvents.Event.WarGangs;
+import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
@@ -36,7 +39,7 @@ public class FunEventsManager {
 	private FunEvent actualFunEvent;//event aktualnie ogarniany przez menagera
 	private FunEventManagerListeners listeners;
 	public static Location spawnLocation = new Location(Bukkit.getWorld("world"), 31, 169, -23);
-	public static Location worldEvents = new Location(Bukkit.getWorld("world_utility"), -1, 65, 0);
+	public static Location worldEvents = new Location(Bukkit.getWorld("world_utility"), 0, 59, 0);
 
 	public FunEventsManager(Plugin plugin) {
 		this.plugin = plugin;
@@ -161,6 +164,53 @@ public class FunEventsManager {
 		}
 	}
 
+	public static boolean inventoryHasOnlySet(Player player) {
+		final int MAX_ARMORS = 4;
+		final int MAX_MAINHAND = 2;
+		final int MAX_OFFHAND = 1;
+		final int MAX_OTHERITEMS = 0;
+		//check valid inventory
+		ItemStack[] playerInventory = player.getInventory().getContents();
+		ItemStack mobArenaTicket = gVar.customItems.get("mobArenaTicket");
+		int armors = 0;
+		int mainhands = 0;
+		int offhands = 0;
+		int otheritems = 0;
+		for (ItemStack item : playerInventory) {
+			if (item == null) continue;
+			if (mobArenaTicket.isSimilar(item)) continue;
+			Material type = item.getType();
+			if (type == Material.ARROW || type == Material.SPECTRAL_ARROW || type == Material.TIPPED_ARROW)
+				continue;
+			GearScoreCalculator gsc = new GearScoreCalculator(null);
+			String itemType = gsc.getItemType(item);
+			if (gsc.getItemType(item) == null) {
+				otheritems++;
+				continue;
+			}
+			//player.sendMessage(item.getItemMeta().getDisplayName() + ":" + gsc.getItemType(item));
+			if (itemType.equalsIgnoreCase("armor")) {
+				armors++;
+			} else if (itemType.equalsIgnoreCase("mainhand")) {
+				mainhands++;
+			} else if (itemType.equalsIgnoreCase("offhand")) {
+				//offhands++;
+				mainhands++;
+			} else if (itemType.equalsIgnoreCase("default")) {
+				otheritems++;
+			}
+		}
+		if (armors > MAX_ARMORS || mainhands > MAX_MAINHAND || offhands > MAX_OFFHAND || otheritems > MAX_OTHERITEMS) {
+			player.sendMessage(Utils.mm("<red><bold>Twoje wyposażenie przekracza limity, odłóż zbędny sprzęt:"));
+			player.sendMessage(Utils.mm(String.format("<bold><gray>Pancerz: <%s>%d/%d", armors > MAX_ARMORS ? "#FF0000" : "#00FF00", armors, MAX_ARMORS)));
+			player.sendMessage(Utils.mm(String.format("<bold><gray>Broń: <%s>%d/%d", mainhands > MAX_MAINHAND ? "#FF0000" : "#00FF00", mainhands, MAX_MAINHAND)));
+			//player.sendMessage(Utils.mm(String.format("<bold><gray>Leworęczny przedmiot: <%s>%d/%d", offhands > MAX_OFFHAND ? "#FF0000" : "#00FF00", offhands, MAX_OFFHAND)));
+			player.sendMessage(Utils.mm(String.format("<bold><gray>Pozostałe przedmioty: <%s>%d/%d", otheritems > MAX_OTHERITEMS ? "#FF0000" : "#00FF00", otheritems, MAX_OTHERITEMS)));
+			return false;
+		}
+		return true;
+	}
+
 	//----------------------------------STATIC SECTION------------------------------------------------------------------
 	public static FunEvent isPlayerSavedOnEvent(Player player) {
 		for (Map.Entry<String, FunEvent> eventMap : events.entrySet()) {
@@ -238,7 +288,7 @@ public class FunEventsManager {
 				Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> funEvent.playerRespawn(e), 20L);
 			} else {
 				if (worldEvents.getWorld().equals(player.getLocation().getWorld())) {
-					if (worldEvents.distance(player.getLocation()) > 10) {
+					if (worldEvents.distance(e.getRespawnLocation()) <= 1) {
 						Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> player.teleport(spawnLocation), 20L);
 						print.error("Gracz " + player.getName() + " zrespawnował się na spawnie  " + worldEvents.getWorld().getName() + ". Teleportuje go na główny spawn w world.");
 					}
