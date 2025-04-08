@@ -17,12 +17,11 @@ import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Command_warn implements TabExecutor {
+	static HashMap<String, Long> warnCooldown = new HashMap<>();
+
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		new BukkitRunnable() {//Async
@@ -52,6 +51,14 @@ public class Command_warn implements TabExecutor {
 					sender.sendMessage(Utils.color("&7Nie możesz dać ostrzeżenia, gdyż ten gracz jest zbanowany."));
 					return;
 				}
+				//cooldown 10s
+				long lastWarn = warnCooldown.getOrDefault(targetName, 0L);
+				long lastWarnSecondAgo = Utils.getUnixTimestamp() - lastWarn;
+				if (lastWarnSecondAgo <= 10) {
+					sender.sendMessage(Utils.color("&7Ten gracz otrzymał chwilę temu ostrzeżenie. Odczekaj " + (10 - lastWarnSecondAgo) + " sekund aby nadać kolejne."));
+					return;
+				}
+
 				if (args.length == 1) {//time args[1]
 					Utils.commandUsageMessage(sender, String.format("/%s %s [powód]", label, targetName));
 					return;
@@ -121,11 +128,13 @@ public class Command_warn implements TabExecutor {
 					sender.sendMessage(Utils.color(String.format("&2%s &7został/a &2pomyślnie &7ostrzeżony.", targetName)));
 					//add warn
 					wd.add(sender.getName(), reason, expireTimestamp);
+					//add cooldown
+					warnCooldown.put(targetName, Utils.getUnixTimestamp());
 					//message to player
 					if (targetPlayer != null) {
 						targetPlayer.sendMessage(Utils.color("&c&lOtrzymałeś/aś ostrzeżenie."));
 						targetPlayer.sendMessage(Utils.color(String.format("&4Powód&8: &7%s", reason)));
-						targetPlayer.sendMessage(Utils.color(String.format("&4Masz teraz &2%d/%d &4ostrzeżeń.", wd.size(), PunishmentSystem.WarnData.maxWarns)));
+						targetPlayer.sendMessage(Utils.color(String.format("&4Masz teraz &2%d/%d &4ostrzeżeń. Sprawdź &7&l/warns", wd.size(), PunishmentSystem.WarnData.maxWarns)));
 					}
 					//log
 					int[] time = Utils.convertSecondsToTimeWithDays(60 * timeMinutes);
