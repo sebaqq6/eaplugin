@@ -42,7 +42,7 @@ public class TestEvent extends FunEvent {
 
 	@Override
 	public boolean finishEvent() {
-		
+		//przed zakończeniem eventu
 		return super.finishEvent();
 	}
 
