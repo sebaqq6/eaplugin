@@ -13,6 +13,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
@@ -213,12 +214,28 @@ public abstract class FunEvent {
 
 	public boolean finishEvent() {
 		if (status != Status.FREE) {
+			int playersDead = 0;
 			for (Player player : players) {
-				getEvPlayer(player).restoreEqBeforeJoin();
-				player.teleport(FunEventsManager.spawnLocation);
-				player.saveData();
+				if (player.isDead()) {
+					playersDead++;
+				}
 			}
-			setStatus(Status.FREE);
+			if (playersDead == 0) {
+				for (Player player : players) {
+					if (player.isDead()) {
+						print.error("Dead? " + player.getName());
+					}
+					getEvPlayer(player).restoreEqBeforeJoin();
+					player.teleport(FunEventsManager.spawnLocation);
+					player.saveData();
+				}
+				setStatus(Status.FREE);
+				print.ok("Event " + eventName + " pomyślnie zakończony!");
+			} else {
+				print.error("Nie udało się zakończyć eventu, gdyż " + playersDead + " graczy nie żyje. Ponawiam próbę...");
+				Bukkit.getScheduler().runTaskLater(getPlugin(), r -> finishEvent(), 30L);
+			}
+
 			return true;
 		} else return false;
 	}
@@ -251,7 +268,7 @@ public abstract class FunEvent {
 		player.getInventory().clear();
 	}
 
-	private void updateGlowTeam() {
+	protected void updateGlowTeam() {
 		for (Player player : getPlayers()) {
 			EvPlayer ep = getEvPlayer(player);
 			for (Player otherPlayer : getPlayers()) {

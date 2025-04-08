@@ -21,7 +21,7 @@ public class TestEvent extends FunEvent {
 
 	}
 
-	Location eventLocation = new Location(Bukkit.getWorld("world_utility"), -132, 72, -136);
+	Location eventLocation = new Location(Bukkit.getWorld("world_utility"), 250, 153, 420);
 
 	/*Przed start wykonywane jest:
 	actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);//ustawienie statusu na IN PROGRESS
@@ -36,7 +36,14 @@ public class TestEvent extends FunEvent {
 			getEvPlayer(player).setTeam(1);//ustawia team
 			clearPlayerInventory(player);//czyści wszystkim graczom eq
 			setOwnSet(player);//ustawia set który gracz miał podczas zapisów (inventoryHasOnlySet)
+			EvPlayer ep = getEvPlayer(player);//get player variables
 		}
+	}
+
+	@Override
+	public boolean finishEvent() {
+		
+		return super.finishEvent();
 	}
 
 	@Override
@@ -45,7 +52,7 @@ public class TestEvent extends FunEvent {
 	}
 
 	@Override
-	public void playerDeath(PlayerDeathEvent e) {//dont use finishEvent(); here
+	public void playerDeath(PlayerDeathEvent e) {//try dont use finishEvent(); here, but its work
 		print.error("playerDeath");
 		finishEvent();
 	}

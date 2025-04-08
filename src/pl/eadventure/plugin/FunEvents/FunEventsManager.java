@@ -59,7 +59,7 @@ public class FunEventsManager {
 
 	public void registerEvents() {
 		events.clear();
-		registerEvent("wg", new WarGangs("Wojna Gangów", 2, 20, true));
+		registerEvent("wg", new WarGangs("Wojna Gangów", 1, 20, true));
 		registerEvent("test", new TestEvent("Event Testowy", 1, 1, false));
 	}
 
@@ -255,7 +255,7 @@ public class FunEventsManager {
 			Player player = e.getPlayer();
 			FunEvent funEvent = isPlayerOnEvent(player);
 			if (funEvent != null) {//in progress
-				funEvent.getEvPlayer(player).restoreEqBeforeJoin();
+				funEvent.getEvPlayer(player).restoreEqBeforeJoin();//restore eq before join to the event
 				funEvent.removePlayer(player);
 				player.teleport(spawnLocation);
 				funEvent.playerQuit(player);
@@ -305,6 +305,13 @@ public class FunEventsManager {
 			String rawData = e.getMessage();
 			String[] args = rawData.split(" ");
 			String command = args[0];
+			//block commands on event
+			if (isPlayerOnEvent(player) != null && !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrackstop")) {
+				player.sendMessage(Utils.mm("<#FF0000>Nie możesz używać tutaj komend."));
+				e.setCancelled(true);
+				return;
+			}
+			//records
 			if (funEventManager.isRecords()) {
 				if (command.equalsIgnoreCase("/123")) {
 					if (funEventManager.actualFunEvent.isOwnSet()) {
