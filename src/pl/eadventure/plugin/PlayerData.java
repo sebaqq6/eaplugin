@@ -43,6 +43,7 @@ public class PlayerData {
 	public String gsRaw = "0";
 	public Timestamp lastSpec = null;
 	public RollTool rollTool = null;
+	public boolean freeze = false;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
