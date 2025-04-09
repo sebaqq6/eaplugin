@@ -9,17 +9,14 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.slf4j.helpers.Util;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 
 public class WarGangs extends FunEvent {
 	Location teamRedSpawn;
 	Location teamBlueSpawn;
-	final int TEAM_RED = 1;
-	final int TEAM_BLUE = 2;
+
 	final int MAX_TIME_SECONDS = 60 * 3;
 	int fragsTeamRed;
 	int fragsTeamBlue;
@@ -31,7 +28,7 @@ public class WarGangs extends FunEvent {
 		super(eventName, minPlayers, maxPlayers, ownSet);
 		teamRedSpawn = new Location(world_utility, 250, 111, 477);
 		teamBlueSpawn = new Location(world_utility, 250, 112, 366);
-		bossBar = Bukkit.createBossBar(eventName, BarColor.BLUE, BarStyle.SOLID);
+		bossBar = Bukkit.createBossBar(eventName, BarColor.PURPLE, BarStyle.SOLID);
 		Bukkit.getScheduler().runTaskTimer(getPlugin(), this::oneSecondTimer, 20L, 20L);
 	}
 
@@ -84,8 +81,8 @@ public class WarGangs extends FunEvent {
 		double progressValue = (double) endTimeSeconds / (double) MAX_TIME_SECONDS;
 		bossBar.setProgress(progressValue);
 		int[] time = Utils.convertSecondsToTime(endTimeSeconds);
-		String barTitle = String.format("%d - %d [%02d:%02d]", fragsTeamRed, fragsTeamBlue, time[1], time[2]);
-		bossBar.setTitle(barTitle);
+		String barTitle = String.format("&c&l%d &f- &9&l%d &7[&5%02d:%02d&7]", fragsTeamRed, fragsTeamBlue, time[1], time[2]);
+		bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', barTitle));
 	}
 
 	@Override

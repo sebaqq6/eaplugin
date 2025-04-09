@@ -59,7 +59,7 @@ public class FunEventsManager {
 
 	public void registerEvents() {
 		events.clear();
-		registerEvent("wg", new WarGangs("Wojna Gangów", 1, 20, true));
+		registerEvent("wg", new WarGangs("Starcie Eternal", 1, 20, true));
 		registerEvent("test", new TestEvent("Event Testowy", 1, 1, false));
 	}
 

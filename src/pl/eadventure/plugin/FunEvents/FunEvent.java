@@ -29,6 +29,8 @@ public abstract class FunEvent {
 	private Set<Player> players = new HashSet<>();//Lista graczy uczestniczących na evencie
 	private HashMap<Player, EvPlayer> playersVariables = new HashMap<>();
 	private HashMap<Player, ItemStack[]> ownSets = new HashMap<>();
+	protected final int TEAM_RED = 1;
+	protected final int TEAM_BLUE = 2;
 	private int status;
 	private int minPlayers;
 	private int maxPlayers;
@@ -279,14 +281,21 @@ public abstract class FunEvent {
 		player.getInventory().clear();
 	}
 
+	@SuppressWarnings("deprecation")
 	protected void updateGlowTeam() {
 		for (Player player : getPlayers()) {
 			EvPlayer ep = getEvPlayer(player);
 			for (Player otherPlayer : getPlayers()) {
 				EvPlayer eop = getEvPlayer(otherPlayer);
 				if (ep.getTeam() != 0 & ep.getTeam() == eop.getTeam()) {
-					GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), ChatColor.GREEN, 0);
-				}//WIP
+					ChatColor color = ChatColor.WHITE;
+					if (ep.getTeam() == TEAM_RED) {
+						color = ChatColor.RED;
+					} else if (ep.getTeam() == TEAM_BLUE) {
+						color = ChatColor.BLUE;
+					}
+					GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+				}
 			}
 		}
 	}
