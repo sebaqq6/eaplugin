@@ -20,10 +20,9 @@ import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.awt.*;
+import java.awt.List;
+import java.util.*;
 
 public abstract class FunEvent {
 	private String eventName;
@@ -182,6 +181,17 @@ public abstract class FunEvent {
 		return ownSet;
 	}
 
+	public ArrayList<Player> getPlayersFromTeam(int t) {
+		ArrayList<Player> playersTeam = new ArrayList<>();
+		for (Player player : getPlayers()) {
+			EvPlayer ep = getEvPlayer(player);
+			if (ep.getTeam() == t) {
+				playersTeam.add(player);
+			}
+		}
+		return playersTeam;
+	}
+
 	public void setOwnSet(Player player) {
 		ItemStack[] items = ownSets.getOrDefault(player, null);
 		if (items != null) {
@@ -241,6 +251,7 @@ public abstract class FunEvent {
 	}
 
 	public void msgAll(String msg) {
+		print.debug("[msgAll-Event] " + msg);
 		for (Player player : players) {
 			if (player.isOnline()) {
 				player.sendMessage(Utils.mm(msg));
@@ -274,7 +285,7 @@ public abstract class FunEvent {
 			for (Player otherPlayer : getPlayers()) {
 				EvPlayer eop = getEvPlayer(otherPlayer);
 				if (ep.getTeam() != 0 & ep.getTeam() == eop.getTeam()) {
-					GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), ChatColor.BLACK, 0);
+					GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), ChatColor.GREEN, 0);
 				}//WIP
 			}
 		}

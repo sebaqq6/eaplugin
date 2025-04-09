@@ -313,6 +313,12 @@ public class Placeholders extends PlaceholderExpansion {
 				}
 			} else return null;
 		}
+		//glow color placeholder
+		else if (params.equalsIgnoreCase("glowcolor")) {
+			if (player != null) {
+				return GlowAPI.getGlowColor(player);
+			} else return null;
+		}
 		return null; //
 	}
 }

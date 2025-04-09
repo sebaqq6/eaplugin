@@ -9,7 +9,10 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.slf4j.helpers.Util;
+import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.FunEvents.FunEvent;
+import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 public class WarGangs extends FunEvent {
@@ -17,15 +20,19 @@ public class WarGangs extends FunEvent {
 	Location teamBlueSpawn;
 	final int TEAM_RED = 1;
 	final int TEAM_BLUE = 2;
+	final int MAX_TIME_SECONDS = 60 * 3;
 	int fragsTeamRed;
 	int fragsTeamBlue;
 	BossBar bossBar;
+	int bossBarStep;
+	int endTimeSeconds;
 
 	public WarGangs(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
 		teamRedSpawn = new Location(world_utility, 250, 111, 477);
 		teamBlueSpawn = new Location(world_utility, 250, 112, 366);
 		bossBar = Bukkit.createBossBar(eventName, BarColor.BLUE, BarStyle.SOLID);
+		Bukkit.getScheduler().runTaskTimer(getPlugin(), this::oneSecondTimer, 20L, 20L);
 	}
 
 	@Override
@@ -58,10 +65,43 @@ public class WarGangs extends FunEvent {
 		}
 		bossBar.setVisible(true);
 		updateGlowTeam();//show glows for friendly players
+		endTimeSeconds = MAX_TIME_SECONDS;
+		bossBarStep = 0;
+	}
+
+	public void oneSecondTimer() {
+		if (getStatus() == Status.IN_PROGRESS) {
+			endTimeSeconds--;
+			if (endTimeSeconds > 0) {
+				bossBarUpdate();
+			} else if (endTimeSeconds == 0) {
+				finishEvent();
+			}
+		}
+	}
+
+	public void bossBarUpdate() {
+		double progressValue = (double) endTimeSeconds / (double) MAX_TIME_SECONDS;
+		bossBar.setProgress(progressValue);
+		int[] time = Utils.convertSecondsToTime(endTimeSeconds);
+		String barTitle = String.format("%d - %d [%02d:%02d]", fragsTeamRed, fragsTeamBlue, time[1], time[2]);
+		bossBar.setTitle(barTitle);
 	}
 
 	@Override
 	public boolean finishEvent() {
+		if (fragsTeamRed > fragsTeamBlue) {//team red win?
+			msgAll("Drużyna czerwona wygrała.");
+		} else if (fragsTeamBlue > fragsTeamRed) { //blue win?
+			msgAll("Drużyna niebieska wygrała.");
+		} else {//draw
+			msgAll("Remis.");
+		}
+		for (Player player : getPlayers()) {
+			for (Player otherPlayer : getPlayers()) {
+				GlowAPI.unGlowPlayer(player, otherPlayer);
+			}
+		}
 		bossBar.setVisible(false);
 		bossBar.removeAll();
 		return super.finishEvent();
@@ -69,7 +109,9 @@ public class WarGangs extends FunEvent {
 
 	@Override
 	public void playerQuit(Player player) {
-
+		if (getPlayersFromTeam(TEAM_RED).isEmpty() || getPlayersFromTeam(TEAM_BLUE).isEmpty()) {
+			finishEvent();
+		}
 	}
 
 	@Override
