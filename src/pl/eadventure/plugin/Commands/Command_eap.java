@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
@@ -141,6 +142,19 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
+				sender.sendMessage("test glow");
+				Player player = (Player) sender;
+				for (Player receiver : Bukkit.getOnlinePlayers()) {
+					GlowAPI.glowPlayer(player, receiver, ChatColor.BLUE, 60);
+				}
+
+				Entity entity = player.getTargetEntity(10);
+				if (entity != null) {
+					if (entity instanceof Player player1) {
+						GlowAPI.glowPlayer(player1, player, ChatColor.YELLOW, 60);
+					}
+				}
+
 				//String message = String.format("&8&l[&4&lALERT&8&l]");
 				//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 				/*if (sender instanceof Player player) {
