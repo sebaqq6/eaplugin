@@ -1,6 +1,8 @@
 package pl.eadventure.plugin.FunEvents;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,6 +16,9 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
@@ -22,6 +27,7 @@ import pl.eadventure.plugin.Utils.print;
 
 import java.awt.*;
 import java.awt.List;
+import java.time.Duration;
 import java.util.*;
 
 public abstract class FunEvent {
@@ -234,9 +240,6 @@ public abstract class FunEvent {
 			}
 			if (playersDead == 0) {
 				for (Player player : players) {
-					if (player.isDead()) {
-						print.error("Dead? " + player.getName());
-					}
 					getEvPlayer(player).restoreEqBeforeJoin();
 					player.teleport(FunEventsManager.spawnLocation);
 					player.saveData();
@@ -253,12 +256,25 @@ public abstract class FunEvent {
 	}
 
 	public void msgAll(String msg) {
-		print.debug("[msgAll-Event] " + msg);
+		print.debug("[msgAll-" + eventName + "] " + msg);
 		for (Player player : players) {
 			if (player.isOnline()) {
 				player.sendMessage(Utils.mm(msg));
 			}
 		}
+	}
+
+	public void titleAll(String strTitle, String strSubtitle) {
+		print.debug("[titleAll-" + eventName + "] " + strTitle + " (" + strSubtitle + ")");
+		for (Player player : players) {
+			if (player.isOnline()) {
+				title(player, strTitle, strSubtitle);
+			}
+		}
+	}
+
+	public void title(Player p, String strTitle, String strSubtitle) {
+		p.showTitle(Title.title(Utils.mm(strTitle), Component.text(strSubtitle)));
 	}
 
 	public void tpAll(Location location) {
@@ -327,7 +343,7 @@ public abstract class FunEvent {
 
 				if (damagerTeam != 0 && damagerTeam == victimTeam) {
 					event.setCancelled(true);
-					damager.sendMessage("<grey>Nie możesz atakować członków swojej drużyny!");
+					damager.sendMessage(Utils.mm("<grey>Nie możesz atakować członków swojej drużyny!"));
 				}
 			}
 		}

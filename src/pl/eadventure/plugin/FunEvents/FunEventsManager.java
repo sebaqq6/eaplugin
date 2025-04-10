@@ -8,20 +8,22 @@ import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.FunEvents.Event.WarGangs;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
@@ -142,7 +144,7 @@ public class FunEventsManager {
 				switch (barTitleStep) {
 					case 0, 1 -> title = String.format("&5&lZapisy na &6%s &d- &a/123", actualFunEvent.getEventName());
 					case 2, 3 ->
-							title = String.format("&aZapisało się już &6&l%d &aosób!", actualFunEvent.getPlayersCount());
+							title = String.format("&aZapisało się &6&l%d/%d &aosób!", actualFunEvent.getPlayersCount(), actualFunEvent.getMaxPlayers());
 				}
 				//String.format("&d&lZapisy na &6%s &d- &a/event", actualFunEvent.getEventName());
 				bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', title));
@@ -297,7 +299,54 @@ public class FunEventsManager {
 			}
 		}
 
-		//==============================COMMAND===========
+		//==============================DROP ITEM===========
+		@EventHandler
+		public void onPlayerDrop(PlayerDropItemEvent e) {
+			Player player = e.getPlayer();
+			FunEvent funEvent = isPlayerSavedOnEvent(player);
+			if (funEvent != null && funEvent.isOwnSet()) {
+				player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+				e.setCancelled(true);
+			}
+		}
+
+		//==============================INVENTORY OPEN===========
+		@EventHandler
+		public void onPlayerInventoryOpen(InventoryOpenEvent e) {
+			if (e.getPlayer() instanceof Player player) {
+				FunEvent funEvent = isPlayerSavedOnEvent(player);
+				if (funEvent != null && funEvent.isOwnSet()) {
+					player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+					e.setCancelled(true);
+				}
+			}
+		}
+
+		//=============================PICKUP ITEM===========
+		@EventHandler
+		public void onPlayerPickupItem(EntityPickupItemEvent e) {
+			if (e.getEntity() instanceof Player player) {
+				FunEvent funEvent = isPlayerSavedOnEvent(player);
+				if (funEvent != null && funEvent.isOwnSet()) {
+					e.setCancelled(true);
+				}
+			}
+		}
+
+		//=============================INTERACT ENTITY==========
+		@EventHandler
+		public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+			Player player = e.getPlayer();
+			FunEvent funEvent = isPlayerSavedOnEvent(player);
+			if (e.getRightClicked() instanceof ItemFrame || e.getRightClicked() instanceof LivingEntity) {
+				if (funEvent != null && funEvent.isOwnSet()) {
+					player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+					e.setCancelled(true);
+				}
+			}
+		}
+
+		//=============================COMMAND===========
 		@EventHandler
 		public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
 			FunEventsManager funEventManager = gVar.funEventsManager;
@@ -306,7 +355,9 @@ public class FunEventsManager {
 			String[] args = rawData.split(" ");
 			String command = args[0];
 			//block commands on event
-			if (isPlayerOnEvent(player) != null && !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrackstop")) {
+			if (isPlayerOnEvent(player) != null
+					&& !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrack")
+					&& !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrackstop") && !player.isOp()) {
 				player.sendMessage(Utils.mm("<#FF0000>Nie możesz używać tutaj komend."));
 				e.setCancelled(true);
 				return;

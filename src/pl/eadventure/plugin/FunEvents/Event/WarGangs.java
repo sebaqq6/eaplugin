@@ -52,16 +52,18 @@ public class WarGangs extends FunEvent {
 			//teleport player to the team spawn
 			if (teamSelector == TEAM_RED) {
 				player.teleport(teamRedSpawn);
+				title(player, "<#FF0000>Drużyna czerwona", "Należysz do drużyny czerwonej.");
 			} else if (teamSelector == TEAM_BLUE) {
 				player.teleport(teamBlueSpawn);
+				title(player, "<#0000FF>Drużyna niebieska", "Należysz do drużyny niebieskiej.");
 			}
-			teamSelector++;
+			//teamSelector++;
 			if (teamSelector >= 3) {
 				teamSelector = TEAM_RED;
 			}
 		}
 		bossBar.setVisible(true);
-		updateGlowTeam();//show glows for friendly players
+		Bukkit.getScheduler().runTaskLater(getPlugin(), this::updateGlowTeam, 20L * 5);
 		endTimeSeconds = MAX_TIME_SECONDS;
 		bossBarStep = 0;
 	}
@@ -71,6 +73,7 @@ public class WarGangs extends FunEvent {
 			endTimeSeconds--;
 			if (endTimeSeconds > 0) {
 				bossBarUpdate();
+				//updateGlowTeam();
 			} else if (endTimeSeconds == 0) {
 				finishEvent();
 			}
@@ -81,7 +84,7 @@ public class WarGangs extends FunEvent {
 		double progressValue = (double) endTimeSeconds / (double) MAX_TIME_SECONDS;
 		bossBar.setProgress(progressValue);
 		int[] time = Utils.convertSecondsToTime(endTimeSeconds);
-		String barTitle = String.format("&c&l%d &f- &9&l%d &7[&5%02d:%02d&7]", fragsTeamRed, fragsTeamBlue, time[1], time[2]);
+		String barTitle = String.format("&c&l%d &f- &9&l%d &7&l[&5&l%02d:%02d&7&l]", fragsTeamRed, fragsTeamBlue, time[1], time[2]);
 		bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', barTitle));
 	}
 
@@ -114,6 +117,8 @@ public class WarGangs extends FunEvent {
 	@Override
 	public void playerDeath(PlayerDeathEvent e) {
 		Player player = e.getPlayer();
+		e.setKeepInventory(true);
+		e.getDrops().clear();
 		if (getEvPlayer(player).getTeam() == TEAM_RED) {
 			fragsTeamBlue++;
 		} else if (getEvPlayer(player).getTeam() == TEAM_BLUE) {
