@@ -115,8 +115,8 @@ public class GlowAPI {
 			if (player.equals(receiver)) {
 				return;
 			}
-			GlowAPI.getInstance().glowColor.put(player, color);
 			ge.setGlowing(player, receiver, color);
+			GlowAPI.getInstance().glowColor.put(player, color);
 			if (timeTick > 0) {
 				new BukkitRunnable() {
 					@Override
