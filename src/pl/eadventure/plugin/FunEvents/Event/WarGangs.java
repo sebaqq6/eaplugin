@@ -3,6 +3,7 @@ package pl.eadventure.plugin.FunEvents.Event;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.SoundCategory;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -11,6 +12,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.FunEvents.FunEvent;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 
 public class WarGangs extends FunEvent {
@@ -57,7 +59,7 @@ public class WarGangs extends FunEvent {
 				player.teleport(teamBlueSpawn);
 				title(player, "<#0000FF>Drużyna niebieska", "Należysz do drużyny niebieskiej.");
 			}
-			//teamSelector++;
+			teamSelector++;
 			if (teamSelector >= 3) {
 				teamSelector = TEAM_RED;
 			}
@@ -90,21 +92,47 @@ public class WarGangs extends FunEvent {
 
 	@Override
 	public boolean finishEvent() {
+		int winTeam = 0;
 		if (fragsTeamRed > fragsTeamBlue) {//team red win?
-			msgAll("Drużyna czerwona wygrała.");
+			msgAll(String.format("<bold><grey>[<dark_purple>%s<grey>]</bold><grey> Wygrała drużyna <red><bold>czerwonych</bold><grey>, wynik: <bold><red>%d <grey>- <blue>%d", getEventName(), fragsTeamRed, fragsTeamBlue));
+			winTeam = TEAM_RED;
 		} else if (fragsTeamBlue > fragsTeamRed) { //blue win?
-			msgAll("Drużyna niebieska wygrała.");
+			winTeam = TEAM_BLUE;
+			msgAll(String.format("<bold><grey>[<dark_purple>%s<grey>]</bold><grey> Wygrała drużyna <blue><bold>niebieskich</bold><grey>, wynik: <bold><red>%d <grey>- <blue>%d", getEventName(), fragsTeamRed, fragsTeamBlue));
 		} else {//draw
-			msgAll("Remis.");
+			msgAll(String.format("<bold><grey>[<dark_purple>%s<grey>]</bold><grey> Starcie zakończyło się <gradient:red:blue><bold>remisem</bold></gradient><grey>, wynik: <bold><red>%d <grey>- <blue>%d", getEventName(), fragsTeamRed, fragsTeamBlue));
 		}
 		for (Player player : getPlayers()) {
+			if (getEvPlayer(player).getTeam() == winTeam) {//win
+				winPlayers.add(player);
+				title(player, "<#00FF00>Zwycięstwo!", " ");
+				player.playSound(player.getLocation(), "minecraft:ui.toast.challenge_complete",
+						SoundCategory.MASTER, 1.0f, 1.0f);
+			} else if (winTeam == 0) {//draw
+				title(player, "<gradient:red:green>Remis!</gradient>", " ");
+				player.playSound(player.getLocation(), "my_sounds:sounds.boss.clear",
+						SoundCategory.MASTER, 1.0f, 1.0f);
+			} else {//lose
+				title(player, "<#00FF00>Porażka!", " ");
+				player.playSound(player.getLocation(), "my_sounds:sounds.boss.clear",
+						SoundCategory.MASTER, 1.0f, 1.0f);
+			}
+			//back to spawns
+			if (getEvPlayer(player).getTeam() == TEAM_RED) {
+				player.teleport(teamRedSpawn);
+			} else if (getEvPlayer(player).getTeam() == TEAM_BLUE) {
+				player.teleport(teamBlueSpawn);
+			}
+
+			PlayerData.get(player).freeze = true;//FREEZE ALL
 			for (Player otherPlayer : getPlayers()) {
 				GlowAPI.unGlowPlayer(player, otherPlayer);
 			}
 		}
 		bossBar.setVisible(false);
 		bossBar.removeAll();
-		return super.finishEvent();
+		Bukkit.getScheduler().runTaskLater(getPlugin(), super::finishEvent, 20L * 10);
+		return true;
 	}
 
 	@Override

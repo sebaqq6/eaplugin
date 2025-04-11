@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,7 +29,10 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FunEventsManager {
@@ -40,6 +44,7 @@ public class FunEventsManager {
 	private BossBar bossBar;//bossbar
 	private FunEvent actualFunEvent;//event aktualnie ogarniany przez menagera
 	private FunEventManagerListeners listeners;
+	static File fileRewards = new File("plugins/EternalAdventurePlugin/FunEventsRewards.yml");
 	public static Location spawnLocation = new Location(Bukkit.getWorld("world"), 31, 169, -23);
 	public static Location worldEvents = new Location(Bukkit.getWorld("world_utility"), 0, 59, 0);
 
@@ -61,8 +66,8 @@ public class FunEventsManager {
 
 	public void registerEvents() {
 		events.clear();
-		registerEvent("wg", new WarGangs("Starcie Eternal", 1, 20, true));
 		registerEvent("test", new TestEvent("Event Testowy", 1, 1, false));
+		registerEvent("starcieeternal", new WarGangs("Starcie Eternal", 2, 20, true));
 	}
 
 	public boolean startRecord(String eventName, int recordsCountDown) {//rozpoczynanie zapisów
@@ -105,6 +110,27 @@ public class FunEventsManager {
 
 	public void registerEvent(String name, FunEvent event) {
 		events.put(name, event);
+		//load rewards
+		YamlConfiguration yamlRewards = YamlConfiguration.loadConfiguration(fileRewards);
+		List<String> defaultCommands = Arrays.asList(
+				"give %username% diamond 16",
+				"give %username% netherite_ingot 1"
+		);
+		if (!fileRewards.exists()) {
+			yamlRewards.set(name, defaultCommands);
+			Utils.saveConfig(fileRewards, yamlRewards);
+		} else {
+			//wczytanie zawartości
+			List<String> commands = yamlRewards.getStringList(name);
+			if (commands != null && !commands.isEmpty()) {
+				event.rewardCommands.addAll(commands);
+			} else {
+				event.rewardCommands.addAll(defaultCommands);
+				yamlRewards.set(name, defaultCommands);
+				Utils.saveConfig(fileRewards, yamlRewards);
+				print.error("Nie znaleziono komend nagród dla: " + name);
+			}
+		}
 	}//rejestracja eventy
 
 	public FunEvent getActualFunEvent() {
@@ -354,6 +380,12 @@ public class FunEventsManager {
 			String rawData = e.getMessage();
 			String[] args = rawData.split(" ");
 			String command = args[0];
+			//block ah when player is saved on event
+			if (isPlayerSavedOnEvent(player) != null && command.equalsIgnoreCase("/ah")) {
+				player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+				e.setCancelled(true);
+				return;
+			}
 			//block commands on event
 			if (isPlayerOnEvent(player) != null
 					&& !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrack")

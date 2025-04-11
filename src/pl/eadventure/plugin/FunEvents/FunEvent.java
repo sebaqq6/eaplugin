@@ -22,19 +22,23 @@ import org.jetbrains.annotations.UnknownNullability;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.awt.*;
-import java.awt.List;
+import java.io.File;
 import java.time.Duration;
 import java.util.*;
+import java.util.List;
 
 public abstract class FunEvent {
 	private String eventName;
-	private Set<Player> players = new HashSet<>();//Lista graczy uczestniczących na evencie
+	private Set<Player> players = new LinkedHashSet<>();//Lista graczy uczestniczących na evencie
 	private HashMap<Player, EvPlayer> playersVariables = new HashMap<>();
 	private HashMap<Player, ItemStack[]> ownSets = new HashMap<>();
+	protected List<String> rewardCommands = new ArrayList<>();
+	protected List<Player> winPlayers = new ArrayList<>();
 	protected final int TEAM_RED = 1;
 	protected final int TEAM_BLUE = 2;
 	private int status;
@@ -221,6 +225,7 @@ public abstract class FunEvent {
 	public void setStatus(int status) {
 		if (status == Status.FREE) {
 			players.clear();
+			winPlayers.clear();
 			clearPlayersVariables();
 		}
 		this.status = status;
@@ -240,8 +245,23 @@ public abstract class FunEvent {
 			}
 			if (playersDead == 0) {
 				for (Player player : players) {
+					//restore eq
 					getEvPlayer(player).restoreEqBeforeJoin();
+					//tp to spawn
 					player.teleport(FunEventsManager.spawnLocation);
+					//remove freeze
+					PlayerData.get(player).freeze = false;
+					//give rewards
+					if (!rewardCommands.isEmpty()) {
+						if (winPlayers.contains(player)) {
+							for (String rewardCmd : rewardCommands) {
+								String finalRewardCmd = rewardCmd.replace("%username%", player.getName());
+								print.info(String.format("[%s] Nagroda: %s", eventName, finalRewardCmd));
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalRewardCmd);
+							}
+						}
+					}
+					//save data
 					player.saveData();
 				}
 				setStatus(Status.FREE);

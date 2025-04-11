@@ -143,6 +143,7 @@ public class Command_eap implements TabExecutor {
 			case "test": {
 				sender.sendMessage("Testowanie...");
 				sender.sendMessage("test glow");
+				sender.sendMessage(Utils.mm("<bold><grey>[<dark_purple>%s<grey>]</bold><grey> Starcie zakończyło się <gradient:red:blue><bold>remisem</bold></gradient><grey>, wynik: <bold><red>%d <grey>- <blue>%d"));
 				Player player = (Player) sender;
 				for (Player receiver : Bukkit.getOnlinePlayers()) {
 					GlowAPI.glowPlayer(player, receiver, ChatColor.BLUE, 60);
