@@ -152,6 +152,7 @@ public class PunishmentSystem {
 			if (message != null) {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					if (PlayerUtils.hasAnyAdminPermission(p)) {
+						if (PlayerData.get(p).onLiveStream) continue;
 						p.sendMessage(message);
 					}
 				}
