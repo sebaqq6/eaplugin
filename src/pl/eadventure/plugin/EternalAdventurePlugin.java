@@ -22,10 +22,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.API.ComplexTurretValidation;
-import pl.eadventure.plugin.API.GlowAPI;
-import pl.eadventure.plugin.API.Placeholders;
-import pl.eadventure.plugin.API.ProtocolLibAPI;
+import pl.eadventure.plugin.API.*;
 import pl.eadventure.plugin.Commands.*;
 import pl.eadventure.plugin.Events.*;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
@@ -78,6 +75,8 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		LeavesDecay.active(config.getBoolean("leavesDecaySystem"));
 		//Uruchomienie API Glowning
 		new GlowAPI(this);
+		//PvPManager API
+		new PvpManagerAPI(this);
 		// Wpięcie do VaultApi
 		if (!setupEconomy()) {
 			print.error("Nie wykryto pluginu ekonomii dla VaultAPI!");

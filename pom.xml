@@ -98,6 +98,10 @@
             <id>matteodev</id>
             <url>https://www.matteodev.it/spigot/public/maven/</url>
         </repository>
+        <repository>
+            <id>CodeMC</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!--This adds the Spigot API artifact to the build -->
@@ -207,6 +211,12 @@
             <groupId>dev.lone</groupId>
             <artifactId>LoneLibs</artifactId>
             <version>1.0.58</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.NoChance.PvPManager</groupId>
+            <artifactId>pvpmanager</artifactId>
+            <version>3.18.44</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

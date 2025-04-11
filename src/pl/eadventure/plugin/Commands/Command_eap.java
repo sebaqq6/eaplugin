@@ -18,6 +18,7 @@ import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
 import pl.eadventure.plugin.Modules.*;
 import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Test;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
@@ -142,46 +143,9 @@ public class Command_eap implements TabExecutor {
 			}
 			case "test": {
 				sender.sendMessage("Testowanie...");
-				sender.sendMessage("test glow");
-				sender.sendMessage(Utils.mm("<bold><grey>[<dark_purple>%s<grey>]</bold><grey> Starcie zakończyło się <gradient:red:blue><bold>remisem</bold></gradient><grey>, wynik: <bold><red>%d <grey>- <blue>%d"));
-				Player player = (Player) sender;
-				for (Player receiver : Bukkit.getOnlinePlayers()) {
-					GlowAPI.glowPlayer(player, receiver, ChatColor.BLUE, 60);
-				}
-
-				Entity entity = player.getTargetEntity(10);
-				if (entity != null) {
-					if (entity instanceof Player player1) {
-						GlowAPI.glowPlayer(player1, player, ChatColor.YELLOW, 60);
-					}
-				}
-
-				//String message = String.format("&8&l[&4&lALERT&8&l]");
-				//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-				/*if (sender instanceof Player player) {
-					//Entity specTarget = player.getSpectatorTarget();
-					Entity specTarget = Bukkit.getPlayer("JrRequeim");
-					if (specTarget instanceof Player playerTarget) {
-						sender.sendMessage("Target name: " + playerTarget.getName());
-						Location playerLocation = player.getLocation();
-						Location targetLocation = playerTarget.getLocation();
-						//player.setSpectatorTarget(playerTarget);
-						if (playerLocation.getWorld() != targetLocation.getWorld() || targetLocation.distance(playerLocation) > 10) {
-							targetLocation.setY(targetLocation.getY() + 256);
-							player.teleport(targetLocation);
-							//player.setGameMode(GameMode.SPECTATOR);
-							//player.setSpectatorTarget(playerTarget);
-							player.setInvisible(true);
-							Bukkit.getScheduler().runTaskLater(EternalAdventurePlugin.getInstance(), () -> {
-								player.setInvisible(false);
-								player.setGameMode(GameMode.SPECTATOR);
-								player.setSpectatorTarget(playerTarget);
-							}, 20L);
-						}
-					}
-				}*/
-
-				//gVar.eqSaver.debugInventoryHistory(sender);
+				Test.run(sender);
+				sender.sendMessage("Testowanie zakończone...");
+				/**/
 				break;
 			}
 			case "givemoney": {
