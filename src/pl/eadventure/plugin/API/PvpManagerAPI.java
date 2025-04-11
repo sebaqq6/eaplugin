@@ -52,7 +52,9 @@ public class PvpManagerAPI {
 
 	public static void restoreNewbie(Player p) {
 		if (!instance.temporaryTakenNewbie.contains(p)) return;
+		if (getTimeLeftNewbie(p) < 10000) return;
 		PvPlayer pvplayer = PvPlayer.get(p);
+		if (pvplayer.isNewbie()) return;
 		try {
 			Field field = pvplayer.getClass().getDeclaredField("c");
 			field.setAccessible(true);
