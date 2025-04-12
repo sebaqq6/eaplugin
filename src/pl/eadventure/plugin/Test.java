@@ -38,7 +38,8 @@ public class Test {
 
 	public static void testPlayer(Player player) {
 		//glowTest(player);
-		pvpManagerTest(player);
+		//pvpManagerTest(player);
+		messageTest(player);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -47,6 +48,14 @@ public class Test {
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
+	public static void messageTest(Player player) {
+		String message = String.format("&8&l[&4&lALERT&8&l]");
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+		message = String.format("&8&l[&4&lAC&8&l]");
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	static long pvpNewbieRemainTime = -1;
 

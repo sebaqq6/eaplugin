@@ -42,21 +42,33 @@ public class ProtocolLibAPI {
 
 	//==================================================================================================================
 	private void disableVulcanAlert() {
-		final String BLOCKED_TEXT = "{\"text\":\"ALERT\",\"italic\":false,\"color\":\"dark_red\",\"bold\":true}";
+		final List<String> BLOCKED_TEXTS = Arrays.asList(
+				"{\"text\":\"ALERT\",\"italic\":false,\"color\":\"dark_red\",\"bold\":true}",
+				"{\"text\":\"AC\",\"italic\":false,\"color\":\"dark_red\",\"bold\":true}"
+		);
+
 		protocolManager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.SYSTEM_CHAT) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
 				PacketContainer packet = event.getPacket();
 				WrappedChatComponent chatComponent = packet.getChatComponents().read(0);
-				if (chatComponent != null && chatComponent.getJson().contains(BLOCKED_TEXT)) {
-					PlayerData pd = PlayerData.get(event.getPlayer());
-					if (pd.onLiveStream) {
-						event.setCancelled(true);
+
+				if (chatComponent != null) {
+					String json = chatComponent.getJson();
+					for (String blocked : BLOCKED_TEXTS) {
+						if (json.contains(blocked)) {
+							PlayerData pd = PlayerData.get(event.getPlayer());
+							if (pd.onLiveStream) {
+								event.setCancelled(true);
+							}
+							break;
+						}
 					}
 				}
 			}
 		});
 	}
+
 
 	//==================================================================================================================
 	private static HashMap<UUID, Timestamp> lastOnline = new HashMap<>();
