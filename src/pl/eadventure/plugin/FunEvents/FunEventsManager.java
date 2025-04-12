@@ -392,28 +392,6 @@ public class FunEventsManager {
 					&& !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrackstop") && !player.isOp()) {
 				player.sendMessage(Utils.mm("<#FF0000>Nie możesz używać tutaj komend."));
 				e.setCancelled(true);
-				return;
-			}
-			//records
-			if (funEventManager.isRecords()) {
-				if (command.equalsIgnoreCase("/123")) {
-					if (funEventManager.actualFunEvent.isOwnSet()) {
-						if (!inventoryHasOnlySet(player)) {
-							e.setCancelled(true);
-							return;
-						}
-					}
-					if (funEventManager.registerPlayer(player)) {
-						Component message = Utils.mm(String.format("" +
-								"<green><bold>Zapisałeś/aś</bold> się na: <blue><bold>%s</bold><green>. Wpisz ponownie <#FF0000>/123</#FF0000> aby <bold>zrezygnować</bold>. ", funEventManager.actualFunEvent.getEventName()));
-						player.sendMessage(message);
-					} else if (funEventManager.unregisterPlayer(player)) {
-						player.sendMessage(Utils.mm("<#FF0000>Zrezygnowałeś/aś z zabawy: <blue><bold>" + funEventManager.actualFunEvent.getEventName()));
-					} else {
-						player.sendMessage(Utils.mm("<#FF0000>Brak wolnych miejsc, aby uczestniczyć w: <blue><bold>" + funEventManager.actualFunEvent.getEventName()));
-					}
-					e.setCancelled(true);
-				}
 			}
 		}
 	}
