@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 import pl.eadventure.plugin.API.GlowAPI;
+import pl.eadventure.plugin.API.PvpManagerAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.PlayerData;
@@ -251,6 +252,8 @@ public abstract class FunEvent {
 					player.teleport(FunEventsManager.spawnLocation);
 					//remove freeze
 					PlayerData.get(player).freeze = false;
+					//restore newbie
+					PvpManagerAPI.restoreNewbie(player);
 					//give rewards
 					if (!rewardCommands.isEmpty()) {
 						if (winPlayers.contains(player)) {

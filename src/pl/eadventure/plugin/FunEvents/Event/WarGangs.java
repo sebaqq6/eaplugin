@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import pl.eadventure.plugin.API.GlowAPI;
+import pl.eadventure.plugin.API.PvpManagerAPI;
 import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
@@ -43,6 +44,8 @@ public class WarGangs extends FunEvent {
 		int teamSelector = TEAM_RED;
 		for (Player player : getPlayers()) {
 			bossBar.addPlayer(player);
+			//remove newbie
+			PvpManagerAPI.takeNewbie(player);
 			//clear invent
 			clearPlayerInventory(player);
 			//set own set

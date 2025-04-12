@@ -184,7 +184,7 @@ public class FunEventsManager {
 				} else {
 					actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);
 					actualFunEvent.clearPlayersVariables();//clear players variables
-					actualFunEvent.saveEqBeforeJoinForAll();//save player variables
+					actualFunEvent.saveEqBeforeJoinForAll();//save player eq
 					actualFunEvent.start();
 				}
 				stopRecord();
