@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.FunEvents;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,9 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.FunEvents.Event.TestEvent;
-import pl.eadventure.plugin.FunEvents.Event.WarGangs;
+import pl.eadventure.plugin.FunEvents.Event.StarcieEternal;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
-import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
@@ -67,7 +65,7 @@ public class FunEventsManager {
 	public void registerEvents() {
 		events.clear();
 		registerEvent("test", new TestEvent("Event Testowy", 1, 1, false));
-		registerEvent("starcieeternal", new WarGangs("Starcie Eternal", 2, 20, true));
+		registerEvent("starcieeternal", new StarcieEternal("Starcie Eternal", 2, 20, true));
 	}
 
 	public boolean startRecord(String eventName, int recordsCountDown) {//rozpoczynanie zapisów
@@ -174,7 +172,12 @@ public class FunEventsManager {
 				}
 				//String.format("&d&lZapisy na &6%s &d- &a/event", actualFunEvent.getEventName());
 				bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', title));
-				recordsCountDown--;
+
+				if (recordsCountDown > 10 && actualFunEvent.getPlayers().size() >= actualFunEvent.getMaxPlayers()) {
+					recordsCountDown -= 10;
+				} else {
+					recordsCountDown--;
+				}
 				barTitleStep++;
 				if (barTitleStep > 3) barTitleStep = 0;
 			} else {

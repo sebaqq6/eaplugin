@@ -16,18 +16,18 @@ import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 
-public class WarGangs extends FunEvent {
+public class StarcieEternal extends FunEvent {
 	Location teamRedSpawn;
 	Location teamBlueSpawn;
 
-	final int MAX_TIME_SECONDS = 60 * 3;
+	final int MAX_TIME_SECONDS = 60 * 5;
 	int fragsTeamRed;
 	int fragsTeamBlue;
 	BossBar bossBar;
 	int bossBarStep;
 	int endTimeSeconds;
 
-	public WarGangs(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
+	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
 		teamRedSpawn = new Location(world_utility, 250, 111, 477);
 		teamBlueSpawn = new Location(world_utility, 250, 112, 366);
