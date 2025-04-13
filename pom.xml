@@ -190,6 +190,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>me.frep.vulcan</groupId>
+            <artifactId>VulcanAPI</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.nickuc.login</groupId>
             <artifactId>nlogin-api</artifactId>
             <version>10.2</version>

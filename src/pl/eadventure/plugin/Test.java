@@ -2,6 +2,7 @@ package pl.eadventure.plugin;
 
 import me.NoChance.PvPManager.PvPlayer;
 import me.NoChance.PvPManager.Tasks.NewbieTask;
+import me.frep.vulcan.api.VulcanAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -32,7 +33,7 @@ public class Test {
 	}
 
 	public static void test(CommandSender sender) {
-
+		VulcanApiTest();
 	}
 
 
@@ -48,6 +49,13 @@ public class Test {
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
+	public static void VulcanApiTest() {
+		print.info("VulcanApiTest...");
+		print.info("Vulcan version detected: " + VulcanAPI.Factory.getApi().getVulcanVersion());
+		print.info("VulcanApiTest... END");
+	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	public static void messageTest(Player player) {
 		String message = String.format("&8&l[&4&lALERT&8&l]");
