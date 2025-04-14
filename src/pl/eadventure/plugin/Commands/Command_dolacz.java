@@ -12,7 +12,7 @@ import pl.eadventure.plugin.gVar;
 
 import static pl.eadventure.plugin.FunEvents.FunEventsManager.inventoryHasOnlySet;
 
-public class Command_123 implements CommandExecutor {
+public class Command_dolacz implements CommandExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (sender instanceof Player player) {

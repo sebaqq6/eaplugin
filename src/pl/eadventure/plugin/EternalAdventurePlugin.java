@@ -9,7 +9,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.garbagemule.MobArena.MobArena;
 import ct.ajneb97.api.ComplexTurretsAPI;
-import fr.skytasul.glowingentities.GlowingBlocks;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -210,7 +209,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("eqs").setExecutor(new Command_eqs());
 		this.getCommand("itemclear").setExecutor(new Command_itemclear());
 		this.getCommand("roll").setExecutor(new Command_roll());
-		this.getCommand("123").setExecutor(new Command_123());
+		this.getCommand("dolacz").setExecutor(new Command_dolacz());
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
