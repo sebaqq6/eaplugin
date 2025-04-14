@@ -169,6 +169,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new playerInteractEntityEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerChangeWorldEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerMoveEvent(), this);
+		getServer().getPluginManager().registerEvents(new playerCheatDetectEvent(), this);
 
 		//CHANNEL FOR VELCITY
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "velocity:relay");

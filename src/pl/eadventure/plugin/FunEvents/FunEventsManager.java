@@ -170,6 +170,8 @@ public class FunEventsManager {
 					case 2, 3 ->
 							title = String.format("&aZapisało się &6&l%d/%d &aosób!", actualFunEvent.getPlayersCount(), actualFunEvent.getMaxPlayers());
 				}
+				barTitleStep++;
+				if (barTitleStep > 3) barTitleStep = 0;
 				//String.format("&d&lZapisy na &6%s &d- &a/event", actualFunEvent.getEventName());
 				bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', title));
 
@@ -178,8 +180,6 @@ public class FunEventsManager {
 				} else {
 					recordsCountDown--;
 				}
-				barTitleStep++;
-				if (barTitleStep > 3) barTitleStep = 0;
 			} else {
 				if (actualFunEvent.getPlayersCount() < actualFunEvent.getMinPlayers()) {//zbyt mało osób
 					actualFunEvent.msgAll(String.format("<grey>Niestety, na <blue><bold>%s</bold></blue> zapisało się <bold>zbyt mało osób</bold>, aby mogło się odbyć.", actualFunEvent.getEventName()));
