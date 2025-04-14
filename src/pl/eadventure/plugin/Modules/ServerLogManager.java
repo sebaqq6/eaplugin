@@ -107,7 +107,7 @@ public class ServerLogManager extends AbstractFilter {
 				|| m.contains("at net.minecraft.server.MinecraftServer.managedBlock(MinecraftServer.java:1510)")
 				|| m.contains("at net.minecraft.server.MinecraftServer.waitUntilNextTick(MinecraftServer.java:1517)")
 				|| m.contains("at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:1362)")
-				|| */m.contains("at PocketGames-3.25.0.jar/com.live.bemmamin.pocketgames.UpdateChecker.isLatestVersion")) {
+				|| */m.contains("Plugin PocketGames v3.25.0 generated an exception while executing task")) {
 			return Result.DENY;
 		}
 		//String sender = event.getLoggerName();
