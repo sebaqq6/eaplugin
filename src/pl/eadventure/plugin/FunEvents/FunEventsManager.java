@@ -65,7 +65,7 @@ public class FunEventsManager {
 	public void registerEvents() {
 		events.clear();
 		registerEvent("test", new TestEvent("Event Testowy", 1, 1, false));
-		registerEvent("starcieeternal", new StarcieEternal("Starcie Eternal", 2, 20, true));
+		registerEvent("starcieeternal", new StarcieEternal("Starcie Eternal", 2, 30, true));
 	}
 
 	public boolean startRecord(String eventName, int recordsCountDown) {//rozpoczynanie zapisów
@@ -164,14 +164,14 @@ public class FunEventsManager {
 			if (recordsCountDown > 0) {
 				double progressValue = (double) recordsCountDown / (double) recordsCountDownMax;
 				bossBar.setProgress(progressValue);
-				String title = "_";
-				switch (barTitleStep) {
+				String title = String.format("&c \uD83D\uDDE1 &5&l%s &f&l- &a&l/dolacz &8&l(&7&l%d&8&l/&7&l%d&8&l)", actualFunEvent.getEventName(), actualFunEvent.getPlayersCount(), actualFunEvent.getMaxPlayers());
+				/*switch (barTitleStep) {
 					case 0, 1 -> title = String.format("&5&lZapisy na &6%s &d- &a/123", actualFunEvent.getEventName());
 					case 2, 3 ->
 							title = String.format("&aZapisało się &6&l%d/%d &aosób!", actualFunEvent.getPlayersCount(), actualFunEvent.getMaxPlayers());
 				}
 				barTitleStep++;
-				if (barTitleStep > 3) barTitleStep = 0;
+				if (barTitleStep > 3) barTitleStep = 0;*/
 				//String.format("&d&lZapisy na &6%s &d- &a/event", actualFunEvent.getEventName());
 				bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', title));
 
@@ -334,7 +334,7 @@ public class FunEventsManager {
 			Player player = e.getPlayer();
 			FunEvent funEvent = isPlayerSavedOnEvent(player);
 			if (funEvent != null && funEvent.isOwnSet()) {
-				player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+				player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
 				e.setCancelled(true);
 			}
 		}
@@ -345,7 +345,7 @@ public class FunEventsManager {
 			if (e.getPlayer() instanceof Player player) {
 				FunEvent funEvent = isPlayerSavedOnEvent(player);
 				if (funEvent != null && funEvent.isOwnSet()) {
-					player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+					player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
 					e.setCancelled(true);
 				}
 			}
@@ -369,7 +369,7 @@ public class FunEventsManager {
 			FunEvent funEvent = isPlayerSavedOnEvent(player);
 			if (e.getRightClicked() instanceof ItemFrame || e.getRightClicked() instanceof LivingEntity) {
 				if (funEvent != null && funEvent.isOwnSet()) {
-					player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+					player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
 					e.setCancelled(true);
 				}
 			}
@@ -385,17 +385,17 @@ public class FunEventsManager {
 			String command = args[0];
 			//block ah when player is saved on event
 			if (isPlayerSavedOnEvent(player) != null && command.equalsIgnoreCase("/ah")) {
-				player.sendMessage(Utils.mm("<#FF0000>Jesteś zapisany na event - czynność niedozwolona."));
+				player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
 				e.setCancelled(true);
 				return;
 			}
 			//block commands on event
-			if (isPlayerOnEvent(player) != null
+			/*if (isPlayerOnEvent(player) != null
 					&& !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrack")
 					&& !command.equalsIgnoreCase("/playerhiddencmdspawnsoundtrackstop") && !player.isOp()) {
-				player.sendMessage(Utils.mm("<#FF0000>Nie możesz używać tutaj komend."));
+				player.sendMessage(Utils.mm("<grey>Nie możesz używać tutaj komend."));
 				e.setCancelled(true);
-			}
+			}*/
 		}
 	}
 }

@@ -68,7 +68,7 @@ public class StarcieEternal extends FunEvent {
 			}
 		}
 		bossBar.setVisible(true);
-		Bukkit.getScheduler().runTaskLater(getPlugin(), this::updateGlowTeam, 20L * 5);
+		//Bukkit.getScheduler().runTaskLater(getPlugin(), () -> updateGlowTeam(GlowTeamType.AllForAll), 20L * 5);
 		endTimeSeconds = MAX_TIME_SECONDS;
 		bossBarStep = 0;
 	}
@@ -78,7 +78,7 @@ public class StarcieEternal extends FunEvent {
 			endTimeSeconds--;
 			if (endTimeSeconds > 0) {
 				bossBarUpdate();
-				//updateGlowTeam();
+				updateGlowTeam(GlowTeamType.AllForAll);
 			} else if (endTimeSeconds == 0) {
 				finishEvent();
 			}
@@ -108,15 +108,15 @@ public class StarcieEternal extends FunEvent {
 		for (Player player : getPlayers()) {
 			if (getEvPlayer(player).getTeam() == winTeam) {//win
 				winPlayers.add(player);
-				title(player, "<#00FF00>Zwycięstwo!", " ");
+				title(player, "<#00FF00><bold>Zwycięstwo!</bold>", " ");
 				player.playSound(player.getLocation(), "minecraft:ui.toast.challenge_complete",
 						SoundCategory.MASTER, 1.0f, 1.0f);
 			} else if (winTeam == 0) {//draw
-				title(player, "<gradient:red:green>Remis!</gradient>", " ");
+				title(player, "<gradient:red:green><bold>Remis!</bold></gradient>", " ");
 				player.playSound(player.getLocation(), "my_sounds:sounds.boss.clear",
 						SoundCategory.MASTER, 1.0f, 1.0f);
 			} else {//lose
-				title(player, "<#00FF00>Porażka!", " ");
+				title(player, "<#FF0000><bold>Porażka!</bold>", " ");
 				player.playSound(player.getLocation(), "my_sounds:sounds.boss.clear",
 						SoundCategory.MASTER, 1.0f, 1.0f);
 			}

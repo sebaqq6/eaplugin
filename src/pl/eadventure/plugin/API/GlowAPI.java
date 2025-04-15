@@ -115,6 +115,7 @@ public class GlowAPI {
 			if (player.equals(receiver)) {
 				return;
 			}
+			ge.unsetGlowing(player, receiver);//fix bug with?
 			ge.setGlowing(player, receiver, color);
 			GlowAPI.getInstance().glowColor.put(player, color);
 			if (timeTick > 0) {

@@ -320,20 +320,38 @@ public abstract class FunEvent {
 		player.getInventory().clear();
 	}
 
+
+	public interface GlowTeamType {
+		int OnlyOwn = 0;
+		int AllForAll = 1;
+	}
+
 	@SuppressWarnings("deprecation")
-	protected void updateGlowTeam() {
+	protected void updateGlowTeam(int type) {
 		for (Player player : getPlayers()) {
 			EvPlayer ep = getEvPlayer(player);
 			for (Player otherPlayer : getPlayers()) {
 				EvPlayer eop = getEvPlayer(otherPlayer);
-				if (ep.getTeam() != 0 & ep.getTeam() == eop.getTeam()) {
-					ChatColor color = ChatColor.WHITE;
-					if (ep.getTeam() == TEAM_RED) {
-						color = ChatColor.RED;
-					} else if (ep.getTeam() == TEAM_BLUE) {
-						color = ChatColor.BLUE;
+				if (type == GlowTeamType.OnlyOwn) {//Show only own team
+					if (ep.getTeam() != 0 & ep.getTeam() == eop.getTeam()) {
+						ChatColor color = ChatColor.WHITE;
+						if (ep.getTeam() == TEAM_RED) {
+							color = ChatColor.RED;
+						} else if (ep.getTeam() == TEAM_BLUE) {
+							color = ChatColor.BLUE;
+						}
+						GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
 					}
-					GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+				} else if (type == GlowTeamType.AllForAll) {//Show glow for all
+					if (ep.getTeam() != 0) {
+						ChatColor color = ChatColor.WHITE;
+						if (ep.getTeam() == TEAM_RED) {
+							color = ChatColor.RED;
+						} else if (ep.getTeam() == TEAM_BLUE) {
+							color = ChatColor.BLUE;
+						}
+						GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+					}
 				}
 			}
 		}
