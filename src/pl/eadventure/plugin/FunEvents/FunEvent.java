@@ -2,7 +2,6 @@ package pl.eadventure.plugin.FunEvents;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,21 +14,13 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.API.PvpManagerAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
-import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
-import java.awt.*;
-import java.io.File;
-import java.time.Duration;
 import java.util.*;
 import java.util.List;
 
@@ -38,7 +29,8 @@ public abstract class FunEvent {
 	private Set<Player> players = new LinkedHashSet<>();//Lista graczy uczestniczących na evencie
 	private HashMap<Player, EvPlayer> playersVariables = new HashMap<>();
 	private HashMap<Player, ItemStack[]> ownSets = new HashMap<>();
-	protected List<String> rewardCommands = new ArrayList<>();
+	protected List<String> rewardCommandsWin = new ArrayList<>();
+	protected List<String> rewardCommandsLose = new ArrayList<>();
 	protected List<Player> winPlayers = new ArrayList<>();
 	protected final int TEAM_RED = 1;
 	protected final int TEAM_BLUE = 2;
@@ -255,11 +247,17 @@ public abstract class FunEvent {
 					//restore newbie
 					PvpManagerAPI.restoreNewbie(player);
 					//give rewards
-					if (!rewardCommands.isEmpty()) {
-						if (winPlayers.contains(player)) {
-							for (String rewardCmd : rewardCommands) {
+					if (!rewardCommandsWin.isEmpty()) {
+						if (winPlayers.contains(player)) {//execute command for win
+							for (String rewardCmd : rewardCommandsWin) {
 								String finalRewardCmd = rewardCmd.replace("%username%", player.getName());
-								print.info(String.format("[%s] Nagroda: %s", eventName, finalRewardCmd));
+								print.info(String.format("[%s] Nagroda wygrana: %s", eventName, finalRewardCmd));
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalRewardCmd);
+							}
+						} else {//execute command for lose
+							for (String rewardCmd : rewardCommandsLose) {
+								String finalRewardCmd = rewardCmd.replace("%username%", player.getName());
+								print.info(String.format("[%s] Nagroda przegrana: %s", eventName, finalRewardCmd));
 								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalRewardCmd);
 							}
 						}

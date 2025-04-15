@@ -75,8 +75,8 @@ public class StarcieEternal extends FunEvent {
 
 	public void oneSecondTimer() {
 		if (getStatus() == Status.IN_PROGRESS) {
-			endTimeSeconds--;
 			if (endTimeSeconds > 0) {
+				endTimeSeconds--;
 				bossBarUpdate();
 				updateGlowTeam(GlowTeamType.AllForAll);
 			} else if (endTimeSeconds == 0) {
@@ -135,6 +135,7 @@ public class StarcieEternal extends FunEvent {
 		bossBar.setVisible(false);
 		bossBar.removeAll();
 		Bukkit.getScheduler().runTaskLater(getPlugin(), super::finishEvent, 20L * 10);
+		endTimeSeconds = -1;//fix for forcefinish
 		return true;
 	}
 

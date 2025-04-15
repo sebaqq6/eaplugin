@@ -115,18 +115,30 @@ public class FunEventsManager {
 				"give %username% netherite_ingot 1"
 		);
 		if (!fileRewards.exists()) {
-			yamlRewards.set(name, defaultCommands);
+			yamlRewards.set(name + ".win", defaultCommands);
+			yamlRewards.set(name + ".lose", defaultCommands);
 			Utils.saveConfig(fileRewards, yamlRewards);
 		} else {
-			//wczytanie zawartości
-			List<String> commands = yamlRewards.getStringList(name);
-			if (commands != null && !commands.isEmpty()) {
-				event.rewardCommands.addAll(commands);
+			//wczytanie nagród
+			//win
+			List<String> commandsWin = yamlRewards.getStringList(name + ".win");
+			if (commandsWin != null && !commandsWin.isEmpty()) {
+				event.rewardCommandsWin.addAll(commandsWin);
 			} else {
-				event.rewardCommands.addAll(defaultCommands);
-				yamlRewards.set(name, defaultCommands);
+				event.rewardCommandsWin.addAll(defaultCommands);
+				yamlRewards.set(name + ".win", defaultCommands);
 				Utils.saveConfig(fileRewards, yamlRewards);
-				print.error("Nie znaleziono komend nagród dla: " + name);
+				print.error("Nie znaleziono komend nagród wygranych dla: " + name);
+			}
+			//lose
+			List<String> commandsLose = yamlRewards.getStringList(name + ".lose");
+			if (commandsLose != null && !commandsLose.isEmpty()) {
+				event.rewardCommandsLose.addAll(commandsLose);
+			} else {
+				event.rewardCommandsLose.addAll(defaultCommands);
+				yamlRewards.set(name + ".lose", defaultCommands);
+				Utils.saveConfig(fileRewards, yamlRewards);
+				print.error("Nie znaleziono komend nagród przegranych dla: " + name);
 			}
 		}
 	}//rejestracja eventy

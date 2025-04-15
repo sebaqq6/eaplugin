@@ -137,8 +137,8 @@ public class GlowAPI {
 			if (player.equals(receiver)) {
 				return;
 			}
-			ge.unsetGlowing(player, receiver);
 			GlowAPI.getInstance().glowColor.remove(player);
+			ge.unsetGlowing(player, receiver);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
