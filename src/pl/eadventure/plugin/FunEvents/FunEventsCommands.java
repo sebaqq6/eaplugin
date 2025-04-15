@@ -33,7 +33,7 @@ public class FunEventsCommands {
 					return;
 				}
 				String eventName = args[1];
-				if (fem.startRecord(eventName, 10)) {
+				if (fem.startRecord(eventName, 60 * 5)) {
 					sender.sendMessage(Utils.mm("<#00FF00>Otworzyłeś/aś zapisy na: <grey><bold>" + fem.getEvent(eventName).getEventName()));
 				} else {
 					sender.sendMessage(Utils.mm("<#FF0000>Błąd: Albo już trwają zapisy, albo zabawa już trwa."));
