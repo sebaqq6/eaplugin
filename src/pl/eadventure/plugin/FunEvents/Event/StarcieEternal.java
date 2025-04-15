@@ -1,9 +1,9 @@
 package pl.eadventure.plugin.FunEvents.Event;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -16,6 +16,9 @@ import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StarcieEternal extends FunEvent {
 	Location teamRedSpawn;
 	Location teamBlueSpawn;
@@ -26,6 +29,7 @@ public class StarcieEternal extends FunEvent {
 	BossBar bossBar;
 	int bossBarStep;
 	int endTimeSeconds;
+	List<Location> blueGateCoords = new ArrayList<>();
 
 	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
@@ -137,6 +141,52 @@ public class StarcieEternal extends FunEvent {
 		Bukkit.getScheduler().runTaskLater(getPlugin(), super::finishEvent, 20L * 10);
 		endTimeSeconds = -1;//fix for forcefinish
 		return true;
+	}
+
+	public void setOpenBlueGate(boolean isOpen) {
+		//Initgate
+		if (blueGateCoords.isEmpty()) {
+			for (int x = 247; x <= 253; x++) {
+				for (int y = 112; y <= 115; y++) {
+					blueGateCoords.add(new Location(world_utility, x, y, 473));
+				}
+			}
+		}
+		blueGateCoords.add(new Location(world_utility, 248, 116, 473));
+		blueGateCoords.add(new Location(world_utility, 249, 116, 473));
+		blueGateCoords.add(new Location(world_utility, 250, 116, 473));
+		blueGateCoords.add(new Location(world_utility, 251, 116, 473));
+		blueGateCoords.add(new Location(world_utility, 252, 116, 473));
+		blueGateCoords.add(new Location(world_utility, 249, 117, 473));
+		blueGateCoords.add(new Location(world_utility, 251, 117, 473));
+		//Manage
+		BlockData blockData = Material.IRON_BARS.createBlockData();
+		if (blockData instanceof MultipleFacing ironBars) {
+			ironBars.setFace(BlockFace.EAST, true);
+			ironBars.setFace(BlockFace.WEST, true);
+			if (isOpen) {
+				for (Location location : blueGateCoords) {
+					world_utility.setBlockData(location, Material.AIR.createBlockData());
+					world_utility.spawnParticle(
+							Particle.BLOCK,
+							location.clone().add(0.5, 0.5, 0.5), // środek bloku
+							10, // ilość cząsteczek
+							0.2, 0.2, 0.2, // rozrzut
+							Material.IRON_BARS.createBlockData());
+					world_utility.playSound(
+							location,
+							Sound.BLOCK_IRON_DOOR_CLOSE,
+							1.0f,
+							1.0f
+					);
+				}
+			} else {
+				for (Location location : blueGateCoords) {
+					world_utility.setBlockData(location, ironBars);
+				}
+			}
+		}
+
 	}
 
 	@Override

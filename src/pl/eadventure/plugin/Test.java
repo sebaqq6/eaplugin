@@ -11,8 +11,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.API.PvpManagerAPI;
+import pl.eadventure.plugin.FunEvents.Event.StarcieEternal;
+import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.Utils.print;
 
 import java.lang.reflect.Field;
@@ -41,6 +44,7 @@ public class Test {
 		//glowTest(player);
 		//pvpManagerTest(player);
 		messageTest(player);
+		gateTest();
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -49,6 +53,20 @@ public class Test {
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
+	public static void gateTest() {
+		FunEvent funEvent = gVar.funEventsManager.getEvent("starcieeternal");
+		if (funEvent instanceof StarcieEternal starcieEternal) {
+			starcieEternal.setOpenBlueGate(true);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					starcieEternal.setOpenBlueGate(false);
+				}
+			}.runTaskLater(plugin, 20 * 5);
+		}
+	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	public static void VulcanApiTest() {
 		print.info("VulcanApiTest...");
