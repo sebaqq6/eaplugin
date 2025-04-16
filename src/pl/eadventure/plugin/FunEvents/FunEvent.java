@@ -373,17 +373,17 @@ public abstract class FunEvent {
 		if (this.countDown != -1) return;
 		if (seconds < 1) return;
 		this.countDown = seconds;
-		titleAll("<#FF0000><bold>" + this.countDown + "</bold>", " ");
+		titleAll("<#FF0000><bold>" + this.countDown + "</bold>", " ");//odliczanie
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				if (countDown > 0) {
-					titleAll("<#FF0000><bold>" + countDown + "</bold>", " ");
+					titleAll("<#FF0000><bold>" + countDown + "</bold>", " ");//odliczanie
 					countDown--;
 				} else {
 					cancel();
 					countDown = -1;
-					titleAll("<#00FF00><bold>START!</bold>", " ");
+					titleAll("<#00FF00><bold>START!</bold>", " ");//START!
 					callback.onCountDownEnd();
 				}
 			}
