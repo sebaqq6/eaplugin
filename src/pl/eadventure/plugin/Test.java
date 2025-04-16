@@ -58,10 +58,12 @@ public class Test {
 		FunEvent funEvent = gVar.funEventsManager.getEvent("starcieeternal");
 		if (funEvent instanceof StarcieEternal starcieEternal) {
 			starcieEternal.setOpenBlueGate(true);
+			starcieEternal.setOpenRedGate(true);
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					starcieEternal.setOpenBlueGate(false);
+					starcieEternal.setOpenRedGate(false);
 				}
 			}.runTaskLater(plugin, 20 * 5);
 		}

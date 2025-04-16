@@ -30,6 +30,7 @@ public class StarcieEternal extends FunEvent {
 	int bossBarStep;
 	int endTimeSeconds;
 	List<Location> blueGateCoords = new ArrayList<>();
+	List<Location> redGateCoords = new ArrayList<>();
 
 	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
@@ -75,6 +76,12 @@ public class StarcieEternal extends FunEvent {
 		//Bukkit.getScheduler().runTaskLater(getPlugin(), () -> updateGlowTeam(GlowTeamType.AllForAll), 20L * 5);
 		endTimeSeconds = MAX_TIME_SECONDS;
 		bossBarStep = 0;
+		setOpenRedGate(false);
+		setOpenBlueGate(false);
+		startCountdown(10, () -> {
+			setOpenRedGate(true);
+			setOpenBlueGate(true);
+		});
 	}
 
 	public void oneSecondTimer() {
@@ -186,7 +193,52 @@ public class StarcieEternal extends FunEvent {
 				}
 			}
 		}
+	}
 
+	public void setOpenRedGate(boolean isOpen) {
+		if (redGateCoords.isEmpty()) {
+			for (int x = 247; x <= 253; x++) {
+				for (int y = 112; y <= 115; y++) {
+					redGateCoords.add(new Location(world_utility, x, y, 370));
+				}
+			}
+		}
+		redGateCoords.add(new Location(world_utility, 248, 116, 370));
+		redGateCoords.add(new Location(world_utility, 249, 116, 370));
+		redGateCoords.add(new Location(world_utility, 250, 116, 370));
+		redGateCoords.add(new Location(world_utility, 251, 116, 370));
+		redGateCoords.add(new Location(world_utility, 252, 116, 370));
+		redGateCoords.add(new Location(world_utility, 249, 117, 370));
+		redGateCoords.add(new Location(world_utility, 250, 117, 370));
+		redGateCoords.add(new Location(world_utility, 251, 117, 370));
+		redGateCoords.add(new Location(world_utility, 250, 118, 370));
+		//Manage
+		BlockData blockData = Material.IRON_BARS.createBlockData();
+		if (blockData instanceof MultipleFacing ironBars) {
+			ironBars.setFace(BlockFace.EAST, true);
+			ironBars.setFace(BlockFace.WEST, true);
+			if (isOpen) {
+				for (Location location : redGateCoords) {
+					world_utility.setBlockData(location, Material.AIR.createBlockData());
+					world_utility.spawnParticle(
+							Particle.BLOCK,
+							location.clone().add(0.5, 0.5, 0.5), // środek bloku
+							10, // ilość cząsteczek
+							0.2, 0.2, 0.2, // rozrzut
+							Material.IRON_BARS.createBlockData());
+					world_utility.playSound(
+							location,
+							Sound.BLOCK_IRON_DOOR_CLOSE,
+							1.0f,
+							1.0f
+					);
+				}
+			} else {
+				for (Location location : redGateCoords) {
+					world_utility.setBlockData(location, ironBars);
+				}
+			}
+		}
 	}
 
 	@Override

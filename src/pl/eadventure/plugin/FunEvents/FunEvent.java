@@ -14,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.API.PvpManagerAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
@@ -40,6 +41,7 @@ public abstract class FunEvent {
 	private Listener listener;
 	private boolean ownSet;
 	protected static World world_utility = Bukkit.getWorld("world_utility");
+	protected int countDown;
 
 	//STATUS
 	public interface Status {
@@ -55,6 +57,7 @@ public abstract class FunEvent {
 		this.maxPlayers = maxPlayers;
 		this.ownSet = ownSet;
 		this.listener = new Listeners();
+		this.countDown = -1;
 		Bukkit.getPluginManager().registerEvents(listener, getPlugin());
 		Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> oneSecondTimer(), 20L, 20L);
 	}
@@ -219,6 +222,7 @@ public abstract class FunEvent {
 		if (status == Status.FREE) {
 			players.clear();
 			winPlayers.clear();
+			countDown = -1;
 			clearPlayersVariables();
 		}
 		this.status = status;
@@ -353,6 +357,32 @@ public abstract class FunEvent {
 				}
 			}
 		}
+	}
+
+	//countdown
+	public void startCountdown(int seconds, CountDownEnd callback) {
+		if (this.countDown != -1) return;
+		if (seconds < 1) return;
+		this.countDown = seconds;
+		titleAll("<#FF0000><bold>" + this.countDown + "</bold>", " ");
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (countDown > 0) {
+					titleAll("<#FF0000><bold>" + countDown + "</bold>", " ");
+					countDown--;
+				} else {
+					countDown = -1;
+					titleAll("<#00FF00><bold>START!</bold>", " ");
+					callback.onCountDownEnd();
+					cancel();
+				}
+			}
+		}.runTaskTimer(getPlugin(), 20L, 20L);
+	}
+
+	public interface CountDownEnd {
+		void onCountDownEnd();
 	}
 
 	//******************************************************************************************************************
