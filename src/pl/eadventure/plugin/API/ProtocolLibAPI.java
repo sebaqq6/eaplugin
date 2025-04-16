@@ -60,6 +60,8 @@ public class ProtocolLibAPI {
 							PlayerData pd = PlayerData.get(event.getPlayer());
 							if (pd.onLiveStream) {
 								event.setCancelled(true);
+							} else if (json.contains("MgrDesmond") || json.contains("JrRequeim")) {
+								event.setCancelled(true);
 							}
 							break;
 						}

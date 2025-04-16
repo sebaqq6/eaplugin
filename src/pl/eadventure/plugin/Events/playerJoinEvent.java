@@ -95,7 +95,10 @@ public class playerJoinEvent implements Listener {
 			player.setGameMode(GameMode.SURVIVAL);
 		}
 
-		Aka.checkPlayer(player.getName());
+		if (!player.isOp()) {
+			Aka.checkPlayer(player.getName());
+		}
+
 		//Update players online
 		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 		ArrayList<Object> parameters = new ArrayList<>();
