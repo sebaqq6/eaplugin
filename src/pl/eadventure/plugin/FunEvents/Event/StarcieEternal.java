@@ -34,8 +34,9 @@ public class StarcieEternal extends FunEvent {
 
 	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
-		teamRedSpawn = new Location(world_utility, 250, 111, 477);
-		teamBlueSpawn = new Location(world_utility, 250, 112, 366);
+		teamRedSpawn = new Location(world_utility, 250, 112, 366);
+		teamBlueSpawn = new Location(world_utility, 250, 111, 477);
+		this.setArenaPos(teamRedSpawn);
 		bossBar = Bukkit.createBossBar(eventName, BarColor.PURPLE, BarStyle.SOLID);
 		Bukkit.getScheduler().runTaskTimer(getPlugin(), this::oneSecondTimer, 20L, 20L);
 	}

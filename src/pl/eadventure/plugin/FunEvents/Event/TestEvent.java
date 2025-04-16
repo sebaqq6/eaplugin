@@ -15,13 +15,13 @@ import pl.eadventure.plugin.Utils.print;
 import java.util.HashMap;
 
 public class TestEvent extends FunEvent {
+	Location eventLocation = new Location(Bukkit.getWorld("world_utility"), 250, 153, 420);
 
 	public TestEvent(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
-
+		this.setArenaPos(eventLocation);//ustawia pozycje areny (do debugowania)
 	}
 
-	Location eventLocation = new Location(Bukkit.getWorld("world_utility"), 250, 153, 420);
 
 	/*Przed start wykonywane jest:
 	actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);//ustawienie statusu na IN PROGRESS
@@ -31,7 +31,7 @@ public class TestEvent extends FunEvent {
 	 */
 	@Override
 	public void start() {
-		tpAll(eventLocation);
+		tpAll(eventLocation);//teleportuje wszystkich na arene
 		for (Player player : getPlayers()) {
 			getEvPlayer(player).setTeam(1);//ustawia team
 			clearPlayerInventory(player);//czyści wszystkim graczom eq

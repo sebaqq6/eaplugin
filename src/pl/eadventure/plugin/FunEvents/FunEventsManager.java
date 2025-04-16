@@ -28,10 +28,7 @@ import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FunEventsManager {
 	Plugin plugin;
@@ -143,6 +140,11 @@ public class FunEventsManager {
 		}
 	}//rejestracja eventy
 
+
+	public static List<String> getEventKeysAsList() {
+		return new ArrayList<>(events.keySet());
+	}
+	
 	public FunEvent getActualFunEvent() {
 		return actualFunEvent;
 	}

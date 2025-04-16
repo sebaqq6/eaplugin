@@ -42,6 +42,7 @@ public abstract class FunEvent {
 	private boolean ownSet;
 	protected static World world_utility = Bukkit.getWorld("world_utility");
 	protected int countDown;
+	protected Location arenaPos;
 
 	//STATUS
 	public interface Status {
@@ -359,6 +360,14 @@ public abstract class FunEvent {
 		}
 	}
 
+	protected void setArenaPos(Location arenaPos) {
+		this.arenaPos = arenaPos;
+	}
+
+	public Location getArenaPos() {
+		return this.arenaPos;
+	}
+
 	//countdown
 	public void startCountdown(int seconds, CountDownEnd callback) {
 		if (this.countDown != -1) return;
@@ -372,10 +381,10 @@ public abstract class FunEvent {
 					titleAll("<#FF0000><bold>" + countDown + "</bold>", " ");
 					countDown--;
 				} else {
+					cancel();
 					countDown = -1;
 					titleAll("<#00FF00><bold>START!</bold>", " ");
 					callback.onCountDownEnd();
-					cancel();
 				}
 			}
 		}.runTaskTimer(getPlugin(), 20L, 20L);
