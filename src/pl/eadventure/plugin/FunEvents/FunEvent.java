@@ -2,10 +2,7 @@ package pl.eadventure.plugin.FunEvents;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -378,12 +375,20 @@ public abstract class FunEvent {
 			@Override
 			public void run() {
 				if (countDown > 0) {
-					titleAll("<#FF0000><bold>" + countDown + "</bold>", " ");//odliczanie
+					for (Player player : getPlayers()) {
+						title(player, "<#FF0000><bold>" + countDown + "</bold>", " ");//odliczanie
+						player.playSound(player.getLocation(), "my_sounds:sounds.warning",
+								SoundCategory.MASTER, 1.0f, 1.5f);
+					}
 					countDown--;
 				} else {
 					cancel();
 					countDown = -1;
-					titleAll("<#00FF00><bold>START!</bold>", " ");//START!
+					for (Player player : getPlayers()) {
+						title(player, "<#00FF00><bold>START!</bold>", " ");//START!
+						player.playSound(player.getLocation(), "my_sounds:sounds.warning",
+								SoundCategory.MASTER, 1.0f, 0.8f);
+					}
 					callback.onCountDownEnd();
 				}
 			}
