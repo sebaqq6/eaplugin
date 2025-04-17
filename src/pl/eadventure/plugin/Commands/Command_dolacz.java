@@ -25,12 +25,12 @@ public class Command_dolacz implements CommandExecutor {
 				}
 				if (funEventManager.registerPlayer(player)) {
 					Component message = Utils.mm(String.format("" +
-							"<green><bold>Zapisałeś/aś</bold> się na: <blue><bold>%s</bold><green>. Wpisz ponownie <#FF0000>/dolacz</#FF0000> aby <bold>zrezygnować</bold>. ", funEventManager.getActualFunEvent().getEventName()));
+							"<green><bold>Zapisałeś/aś się na: <blue>%s<green>. Wpisz ponownie <#FF0000>/dolacz</#FF0000> aby zrezygnować</bold>. ", funEventManager.getActualFunEvent().getEventName()));
 					player.sendMessage(message);
 				} else if (funEventManager.unregisterPlayer(player)) {
-					player.sendMessage(Utils.mm("<#FF0000>Zrezygnowałeś/aś z zabawy: <blue><bold>" + funEventManager.getActualFunEvent().getEventName()));
+					player.sendMessage(Utils.mm("<grey>Zrezygnowałeś/aś z zabawy: <blue><bold>" + funEventManager.getActualFunEvent().getEventName()));
 				} else {
-					player.sendMessage(Utils.mm("<#FF0000>Brak wolnych miejsc, aby uczestniczyć w: <blue><bold>" + funEventManager.getActualFunEvent().getEventName()));
+					player.sendMessage(Utils.mm("<grey>Brak wolnych miejsc, aby uczestniczyć w: <blue><bold>" + funEventManager.getActualFunEvent().getEventName()));
 				}
 
 			}
