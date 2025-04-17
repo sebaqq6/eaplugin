@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
+import pl.eadventure.plugin.gVar;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class Command_redflag implements TabExecutor {
 	}
 
 	private void redFlagExecute(CommandSender sender, String[] args) {
+		String redflagToken = gVar.redFlagToken;
 		if (args.length == 0) {
 			Utils.commandUsageMessage(sender, "/redflag [status/start/stop/add (ip)]");
 			return;
@@ -32,13 +34,13 @@ public class Command_redflag implements TabExecutor {
 		String apiUrl = "";
 		switch (args[0]) {
 			case "status" -> {
-				apiUrl = "https://eadventure.pl/api/redflag.php?arg=status";
+				apiUrl = "https://eadventure.pl/api/redflag.php?arg=status&access_token=" + redflagToken;
 			}
 			case "start" -> {
-				apiUrl = "https://eadventure.pl/api/redflag.php?arg=start";
+				apiUrl = "https://eadventure.pl/api/redflag.php?arg=start&access_token=" + redflagToken;
 			}
 			case "stop" -> {
-				apiUrl = "https://eadventure.pl/api/redflag.php?arg=stop";
+				apiUrl = "https://eadventure.pl/api/redflag.php?arg=stop&access_token=" + redflagToken;
 			}
 			case "add" -> {
 				if (args.length < 2) {
@@ -47,7 +49,7 @@ public class Command_redflag implements TabExecutor {
 				}
 				String ip = args[1];
 				if (Utils.containsIPAddress(ip)) {
-					apiUrl = "https://eadventure.pl/api/redflag.php?arg=add&ip=" + ip;
+					apiUrl = "https://eadventure.pl/api/redflag.php?access_token=" + redflagToken + "&arg=add&ip=" + ip;
 				} else {
 					sender.sendMessage(Utils.mm("<#FF0000>Niepoprawny adres IP."));
 					return;

@@ -40,4 +40,5 @@ public class gVar {
 	public static ChatInputCapture chatInputCapture;
 	public static EqSaver eqSaver;
 	public static HashMap<UUID, Boolean> hiddenTabName = new HashMap<>();
+	public static String redFlagToken = "1234abcd";
 }

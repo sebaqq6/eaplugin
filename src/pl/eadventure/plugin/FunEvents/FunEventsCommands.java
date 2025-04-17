@@ -16,6 +16,7 @@ import java.util.*;
 public class FunEventsCommands {
 	private static final String mainCmd = "/fe";
 	public static FunEventsManager fem = gVar.funEventsManager;
+	public static int recordsTime = 60 * 5;
 
 	public static void onFunEventCommand(CommandSender sender, String[] args) {//need permission eadventureplugin.cmd.fe
 
@@ -45,7 +46,7 @@ public class FunEventsCommands {
 			return;
 		}
 		String eventName = args[1];
-		if (fem.startRecord(eventName, 15)) {
+		if (fem.startRecord(eventName, recordsTime)) {
 			sender.sendMessage(Utils.mm("<#00FF00>Otworzyłeś/aś zapisy na: <grey><bold>" + fem.getEvent(eventName).getEventName()));
 		} else {
 			sender.sendMessage(Utils.mm("<#FF0000>Błąd: Albo już trwają zapisy, albo zabawa już trwa."));

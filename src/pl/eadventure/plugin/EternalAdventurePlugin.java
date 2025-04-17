@@ -62,6 +62,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		config = getConfig();
 		config.addDefault("debug", false);
 		config.addDefault("leavesDecaySystem", false);
+		config.addDefault("redflagToken", "1234abcd");
 		config.addDefault("mysql.host", "127.0.0.1");
 		config.addDefault("mysql.port", 3306);
 		config.addDefault("mysql.database", "database");
@@ -219,6 +220,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		gVar.mysqlDatabase = config.getString("mysql.database");
 		gVar.mysqlUser = config.getString("mysql.user");
 		gVar.mysqlPassword = config.getString("mysql.password");
+		gVar.redFlagToken = config.getString("redflagToken");
 		new BukkitRunnable() {
 			@Override
 			public void run() {
