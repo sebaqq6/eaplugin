@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Utils.print;
 
 import java.util.HashMap;

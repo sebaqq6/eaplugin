@@ -22,7 +22,6 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.util.*;
-import java.util.List;
 
 public abstract class FunEvent {
 	private String eventName;

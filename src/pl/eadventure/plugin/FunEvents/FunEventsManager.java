@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.FunEvents;
 
-import dev.geco.gsit.api.GSitAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,8 +20,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.FunEvents.Event.StarcieEternal;
+import pl.eadventure.plugin.FunEvents.Event.TestEvent;
 import pl.eadventure.plugin.Modules.GearScoreCalculator;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;

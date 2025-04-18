@@ -6,9 +6,7 @@ import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.FunEvents.FunEventsCommands;
-import pl.eadventure.plugin.gVar;
 
-import java.util.Collections;
 import java.util.List;
 
 import static pl.eadventure.plugin.FunEvents.FunEventsCommands.onFunEventCommand;

@@ -1,6 +1,5 @@
 package pl.eadventure.plugin;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.AnnounceManager;

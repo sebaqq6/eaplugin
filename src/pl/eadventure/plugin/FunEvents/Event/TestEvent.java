@@ -3,16 +3,10 @@ package pl.eadventure.plugin.FunEvents.Event;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.Utils.print;
-
-import java.util.HashMap;
 
 public class TestEvent extends FunEvent {
 	Location eventLocation = new Location(Bukkit.getWorld("world_utility"), 250, 153, 420);

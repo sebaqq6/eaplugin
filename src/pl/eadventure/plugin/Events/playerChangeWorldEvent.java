@@ -6,7 +6,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import pl.eadventure.plugin.Commands.Command_creative;
 import pl.eadventure.plugin.PlayerData;
-import pl.eadventure.plugin.Utils.print;
 
 public class playerChangeWorldEvent implements Listener {
 	@EventHandler

@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Modules;
 
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.Utils.print;

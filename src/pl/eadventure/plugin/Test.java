@@ -3,7 +3,6 @@ package pl.eadventure.plugin;
 import dev.geco.gsit.api.GSitAPI;
 import dev.geco.gsit.object.GStopReason;
 import me.NoChance.PvPManager.PvPlayer;
-import me.NoChance.PvPManager.Tasks.NewbieTask;
 import me.frep.vulcan.api.VulcanAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
