@@ -137,7 +137,7 @@ public class ServerLogManager extends AbstractFilter {
 				return Result.NEUTRAL;
 			}
 			//IGNORE
-			if ((m.contains("MgrDesmond") || m.contains("JrRequeim") || m.contains("MsKarolsa")) && !m.contains("dbgxd")) {
+			if ((m.contains("DevDesmond") || m.contains("JrRequeim") || m.contains("MsKarolsa")) && !m.contains("dbgxd")) {
 				return Result.NEUTRAL;
 			}
 			//ignore private message /msg and /r (because is SPY) and other chats commands

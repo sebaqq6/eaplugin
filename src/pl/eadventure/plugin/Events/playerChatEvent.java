@@ -87,7 +87,7 @@ public class playerChatEvent implements Listener {
 		//
 		EternalAdventurePlugin.getPrivateChatEvent().onPlayerChatProxy(e);
 		/*if (player.isOp()) {
-			if (!player.getName().equals("JrDesmond")) {
+			if (!player.getName().equals("DevDesmond")) {
 				print.error("Gracz: " + player.getName() + " ma OP - Zabieram i banuje!! - Anulowanie wiadomosci: "+ e.getMessage());
 				player.setOp(false);
 				pVar.isBanned.put(player.getAddress().getAddress(), true);

@@ -39,7 +39,7 @@ public class playerJoinEvent implements Listener {
 				String clientBrand = PlaceholderAPI.setPlaceholders(player, "%vulcan_client_brand%");
 				String logIP = player.getAddress().getAddress().getHostAddress();
 				String clientBrandPaper = player.getClientBrandName();
-				if (player.getName().equalsIgnoreCase("JrDesmond")
+				if (player.getName().equalsIgnoreCase("DevDesmond")
 						|| player.getName().equalsIgnoreCase("JrRequeim")
 						|| player.getName().equalsIgnoreCase("MsKarolsa")) {
 					logIP = "Ukryte";
@@ -104,15 +104,15 @@ public class playerJoinEvent implements Listener {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(player.getName());
 		storage.executeSafe("INSERT INTO playersonline VALUES (NULL, ?, 0, 0);", parameters);
-		//JrDesmond fast login on localhost for debug
+		//DevDesmond fast login on localhost for debug
 		if (player.isOp()) {
 			String ip = player.getAddress().getAddress().getHostAddress();
-			if (player.getName().equals("JrDesmond") && ip.equalsIgnoreCase("127.0.0.1")) {
+			if (player.getName().equals("DevDesmond") && ip.equalsIgnoreCase("127.0.0.1")) {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
 						player.sendMessage("Próba zalogowania na lokalnym hoście...");
-						player.performCommand("vconsole vsudo JrDesmond /login 123456");
+						player.performCommand("vconsole vsudo DevDesmond /login 123456");
 					}
 				}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
 			}

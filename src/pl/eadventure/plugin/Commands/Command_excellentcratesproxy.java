@@ -28,7 +28,7 @@ public class Command_excellentcratesproxy implements CommandExecutor {
 		if (!args[0].equalsIgnoreCase("key")) return true;
 		MobArena ma = EternalAdventurePlugin.getMobArena();
 		ArenaMaster am = ma.getArenaMaster();
-		if (args[1].equalsIgnoreCase("give")) {///excellentcrates key[0] give[1] JrDesmond[2] epic[3] 1[4] (5)
+		if (args[1].equalsIgnoreCase("give")) {///excellentcrates key[0] give[1] DevDesmond[2] epic[3] 1[4] (5)
 			if (args.length < 5) return true;
 			String key = args[3];
 			String keyCount = args[4];
