@@ -213,6 +213,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("roll").setExecutor(new Command_roll());
 		this.getCommand("dolacz").setExecutor(new Command_dolacz());
 		this.getCommand("blueflag").setExecutor(new Command_blueflag());
+		Command_redflag.updatePlaceholder();
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
 		// MySQL
@@ -267,6 +268,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		plAPI = new ProtocolLibAPI(protocolManager, this);
 		///
 		// SCHEDULES
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, Command_redflag::updatePlaceholder, 100L, 20L * 60L);
 		/*
 		 * new BukkitRunnable() { public void run() {
 		 * print.debug("Wątek asynchroniczny!"); storage.

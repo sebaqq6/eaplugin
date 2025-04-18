@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import pl.eadventure.plugin.Commands.Command_redflag;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.Top.TopTimePlayerPlayed;
 import pl.eadventure.plugin.PlayerData;
@@ -54,6 +55,15 @@ public class Placeholders extends PlaceholderExpansion {
 		//%eaplugin_test%
 		if (params.equalsIgnoreCase("test")) {
 			return "Placeholdery EternalAdventurePlugin działają poprawnie!";
+		}
+		//%eaplugin_blueflag_status%
+		if (params.equalsIgnoreCase("blueflag_status")) {
+			if (gVar.whiteList.isEmpty()) return "off";
+			return "on";
+		}
+		//%eaplugin_redflag_status%
+		if (params.equalsIgnoreCase("redflag_status")) {
+			return Command_redflag.placeholderStatus;
 		}
 		//%topbb_x_name/count%
 		if (params.startsWith("topbb_")) {

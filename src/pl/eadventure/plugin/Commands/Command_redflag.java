@@ -14,6 +14,31 @@ import pl.eadventure.plugin.gVar;
 import java.util.List;
 
 public class Command_redflag implements TabExecutor {
+	public static String placeholderStatus = "init";
+
+	public static void updatePlaceholder() {
+		String redflagToken = gVar.redFlagToken;
+		String urlStatus = "https://eadventure.pl/api/redflag.php?arg=status&access_token=" + redflagToken;
+		Utils.sendHttpsRequest(urlStatus, "GET", null)
+				.thenAccept(response -> {
+					// Wyświetlenie odpowiedzi graczowi
+					String[] lines = response.split("<br>");
+					for (String line : lines) {
+						if (line.contains("wyłączony (tryb domyślny)")) {
+							placeholderStatus = "off";
+						} else if (line.contains("!URUCHOMIONY!")) {
+							placeholderStatus = "on";
+						}
+					}
+				})
+				.exceptionally(ex -> {
+					// Obsługa błędów
+					placeholderStatus = "off";
+					print.error("Wystąpił błąd podczas pobierania danych: " + ex.getMessage());
+					return null;
+				});
+	}
+
 	@Override
 	public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		new BukkitRunnable() {
@@ -67,12 +92,18 @@ public class Command_redflag implements TabExecutor {
 					// Wyświetlenie odpowiedzi graczowi
 					String[] lines = response.split("<br>");
 					for (String line : lines) {
+						if (line.contains("wyłączony.") || line.contains("wyłączony (tryb domyślny)")) {
+							placeholderStatus = "off";
+						} else if (line.contains("uruchomiony.") || line.contains("!URUCHOMIONY!")) {
+							placeholderStatus = "on";
+						}
 						sender.sendMessage(line);
 					}
 
 				})
 				.exceptionally(ex -> {
 					// Obsługa błędów
+					placeholderStatus = "off";
 					sender.sendMessage("Wystąpił błąd. Zgłoś to!");
 					print.error("Wystąpił błąd podczas pobierania danych: " + ex.getMessage());
 					return null;
