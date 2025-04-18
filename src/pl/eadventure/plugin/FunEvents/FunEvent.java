@@ -39,6 +39,7 @@ public abstract class FunEvent {
 	private Listener listener;
 	private boolean ownSet;
 	protected static World world_utility = Bukkit.getWorld("world_utility");
+	public static ChatColor colorSpawnProtect = ChatColor.GOLD;
 	protected int countDown;
 	protected Location arenaPos;
 
@@ -67,6 +68,7 @@ public abstract class FunEvent {
 		private int team = 0;
 		private ItemStack[] beforeJoinEq = null;
 		private boolean beforeJoinEqSaved = false;
+		private int spawnProtection = 0;
 		private final HashMap<String, String> strings = new HashMap<>();
 		private final HashMap<String, Integer> integers = new HashMap<>();
 		private final HashMap<String, Float> floatvar = new HashMap<>();
@@ -89,7 +91,7 @@ public abstract class FunEvent {
 			return strings.getOrDefault(key, "");
 		}
 
-		//Integer
+		// Integer
 		public void setInt(String key, int val) {
 			integers.put(key, val);
 		}
@@ -98,7 +100,15 @@ public abstract class FunEvent {
 			return integers.getOrDefault(key, 0);
 		}
 
-		//Float
+		public void addInt(String key, int val) {
+			integers.put(key, getInt(key) + val);
+		}
+
+		public void subtractInt(String key, int val) {
+			integers.put(key, getInt(key) - val);
+		}
+
+		// Float
 		public void setFloat(String key, Float val) {
 			floatvar.put(key, val);
 		}
@@ -107,6 +117,15 @@ public abstract class FunEvent {
 			return floatvar.getOrDefault(key, 0.0F);
 		}
 
+		public void addFloat(String key, Float val) {
+			floatvar.put(key, getFloat(key) + val);
+		}
+
+		public void subtractFloat(String key, Float val) {
+			floatvar.put(key, getFloat(key) - val);
+		}
+
+
 		//Others
 		public void setTeam(int team) {
 			this.team = team;
@@ -114,6 +133,14 @@ public abstract class FunEvent {
 
 		public int getTeam() {
 			return this.team;
+		}
+
+		public void setSpawnProtection(int seconds) {
+			this.spawnProtection = seconds;
+		}
+
+		public int getSpawnProtection() {
+			return this.spawnProtection;
 		}
 
 		public void saveEqBeforeJoin() {
@@ -364,21 +391,46 @@ public abstract class FunEvent {
 					if (ep.getTeam() != 0 & ep.getTeam() == eop.getTeam()) {
 						ChatColor color = ChatColor.WHITE;
 						if (ep.getTeam() == TEAM_RED) {
-							color = ChatColor.RED;
+							if (ep.getSpawnProtection() > 0) {
+								color = colorSpawnProtect;
+							} else {
+								color = ChatColor.RED;
+							}
 						} else if (ep.getTeam() == TEAM_BLUE) {
-							color = ChatColor.BLUE;
+							if (ep.getSpawnProtection() > 0) {
+								color = colorSpawnProtect;
+							} else {
+								color = ChatColor.BLUE;
+							}
 						}
-						GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+						if (player.isInvisible()) {
+							GlowAPI.unGlowPlayer(ep.getPlayer(), eop.getPlayer());
+						} else {
+							GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+						}
+
 					}
 				} else if (type == GlowTeamType.AllForAll) {//Show glow for all
 					if (ep.getTeam() != 0) {
 						ChatColor color = ChatColor.WHITE;
 						if (ep.getTeam() == TEAM_RED) {
-							color = ChatColor.RED;
+							if (ep.getSpawnProtection() > 0) {
+								color = colorSpawnProtect;
+							} else {
+								color = ChatColor.RED;
+							}
 						} else if (ep.getTeam() == TEAM_BLUE) {
-							color = ChatColor.BLUE;
+							if (ep.getSpawnProtection() > 0) {
+								color = colorSpawnProtect;
+							} else {
+								color = ChatColor.BLUE;
+							}
 						}
-						GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+						if (player.isInvisible()) {
+							GlowAPI.unGlowPlayer(ep.getPlayer(), eop.getPlayer());
+						} else {
+							GlowAPI.glowPlayer(ep.getPlayer(), eop.getPlayer(), color, 0);
+						}
 					}
 				}
 			}
@@ -431,9 +483,17 @@ public abstract class FunEvent {
 	//Timers
 	//******************************************************************************************************************
 	private void oneSecondTimer() {//ASYNC
+		if (getStatus() != Status.IN_PROGRESS) return;
 		for (Player player : getPlayers()) {
-			EvPlayer ep = getEvPlayer(player);
+			//count down spawn protect
+			spawnProtectProcess(player);
+		}
+	}
 
+	private void spawnProtectProcess(Player player) {
+		EvPlayer ep = getEvPlayer(player);
+		if (ep.getSpawnProtection() > 0) {
+			ep.setSpawnProtection(ep.getSpawnProtection() - 1);
 		}
 	}
 
@@ -455,6 +515,13 @@ public abstract class FunEvent {
 				if (damagerTeam != 0 && damagerTeam == victimTeam) {
 					event.setCancelled(true);
 					damager.sendMessage(Utils.mm("<grey>Nie możesz atakować członków swojej drużyny!"));
+					return;
+				}
+				//spawn protect
+				if (epVictim.getSpawnProtection() > 0) {
+					event.setCancelled(true);
+					damager.sendMessage(Utils.mm("<grey>Ten gracz posiada ochronę spawnu."));
+					return;
 				}
 			}
 		}

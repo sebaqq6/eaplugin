@@ -8,10 +8,17 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.permissions.Permission;
+import pl.eadventure.plugin.API.Placeholders;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 
 import java.io.*;
@@ -645,5 +652,19 @@ public class Utils {
 				}
 			}
 		});
+	}
+
+	//get killer
+	public static Player getPlayerKiller(PlayerDeathEvent e) {
+		Player player = e.getPlayer();
+		EntityDamageEvent lastDamage = player.getLastDamageCause();
+		//who kill
+		if (lastDamage instanceof EntityDamageByEntityEvent entityEvent) {
+			Entity damager = entityEvent.getDamager();
+			if (damager instanceof Player playerKiller) {
+				return playerKiller;
+			}
+		}
+		return null;
 	}
 }

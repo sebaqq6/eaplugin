@@ -19,6 +19,7 @@ import pl.eadventure.plugin.Utils.print;
 
 import java.util.*;
 
+//TODO: nie odświeża unbana
 public class Command_warn implements TabExecutor {
 	static HashMap<String, Long> warnCooldown = new HashMap<>();
 

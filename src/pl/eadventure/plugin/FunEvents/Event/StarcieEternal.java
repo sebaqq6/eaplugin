@@ -7,7 +7,11 @@ import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import pl.eadventure.plugin.API.GlowAPI;
@@ -18,6 +22,14 @@ import pl.eadventure.plugin.Utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+/*TODO:
+- Podsumowanie końca walki.
+- Zmienić ilość broni z 2 na 1.[done]
+- Wprowadzenie (info na czacie).
+- Spawn protection[done]
+- Wyłączać efekt glow przy niewidzialności.[done]
+- Zmienić fragi na punkty.
+ */
 
 public class StarcieEternal extends FunEvent {
 	Location teamRedSpawn;
@@ -250,22 +262,31 @@ public class StarcieEternal extends FunEvent {
 	@Override
 	public void playerDeath(PlayerDeathEvent e) {
 		Player player = e.getPlayer();
+		EvPlayer evPlayer = getEvPlayer(player);
+		evPlayer.subtractInt("deaths", 1);
 		e.setKeepInventory(true);
 		e.getDrops().clear();
-		if (getEvPlayer(player).getTeam() == TEAM_RED) {
+		if (evPlayer.getTeam() == TEAM_RED) {
 			fragsTeamBlue++;
-		} else if (getEvPlayer(player).getTeam() == TEAM_BLUE) {
+		} else if (evPlayer.getTeam() == TEAM_BLUE) {
 			fragsTeamRed++;
+		}
+		Player killer = Utils.getPlayerKiller(e);
+		if (killer != null && getPlayers().contains(killer)) {
+			EvPlayer evKillerPlayer = getEvPlayer(killer);
+			evKillerPlayer.addInt("kills", 1);
 		}
 	}
 
 	@Override
 	public void playerRespawn(PlayerRespawnEvent e) {
 		Player player = e.getPlayer();
-		if (getEvPlayer(player).getTeam() == TEAM_RED) {
+		EvPlayer evPlayer = getEvPlayer(player);
+		if (evPlayer.getTeam() == TEAM_RED) {
 			tp(player, teamRedSpawn);
-		} else if (getEvPlayer(player).getTeam() == TEAM_BLUE) {
+		} else if (evPlayer.getTeam() == TEAM_BLUE) {
 			tp(player, teamBlueSpawn);
 		}
+		evPlayer.setSpawnProtection(6);
 	}
 }
