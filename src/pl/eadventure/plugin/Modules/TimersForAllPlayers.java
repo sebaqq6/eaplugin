@@ -5,10 +5,13 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import pl.eadventure.plugin.Commands.Command_blueflag;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.PlayerUtils;
+import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.gVar;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -115,6 +118,11 @@ public class TimersForAllPlayers {
 		if (bd != null) {
 			String bannedMessage = PunishmentSystem.getBannedMessage(bd.nick(), bd.bannedByNick(), bd.reason(), bd.expiresTimestamp(), bd.bannedDate());
 			Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> player.kickPlayer(bannedMessage));
+		} else {
+			if (gVar.whiteList.isEmpty()) return;
+			if (gVar.whiteList.contains(player.getName())) return;
+			String kickMessage = Command_blueflag.kickMessage.replace("<player>", player.getName());
+			Bukkit.getScheduler().runTask(EternalAdventurePlugin.getInstance(), () -> player.kickPlayer(Utils.color(kickMessage)));
 		}
 	}
 }

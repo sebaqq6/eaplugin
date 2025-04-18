@@ -27,12 +27,7 @@ public class Command_blueflag implements TabExecutor {
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				blueFlagExecute(commandSender, args);
-			}
-		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
+		blueFlagExecute(commandSender, args);
 		return true;
 	}
 
@@ -66,11 +61,6 @@ public class Command_blueflag implements TabExecutor {
 							String nick = (String) rows.get(i).get("nick");
 							wl.add(nick);
 						}
-					}
-					//kick other players
-					for (Player player : Bukkit.getOnlinePlayers()) {
-						if (wl.contains(player.getName())) continue;
-						player.kickPlayer(Utils.color(kickMessage.replace("<player>", player.getName())));
 					}
 					sender.sendMessage(Utils.mm("<#0000FF><bold>System BlueFlag został: <green>WŁĄCZONY <grey>(Dodano: " + numRows + " wyjątków)"));
 				});
