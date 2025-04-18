@@ -136,6 +136,10 @@ commands:
     description: "Komenda do zarządzania tarczą Anty-DDoS."
     usage: "/<command>"
     permission: eadventureplugin.cmd.redflag
+  blueflag:
+    description: "Komenda kryzysowa - uniemożliwia grę graczom poniżej danego czasu."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.blueflag
   eqs:
     description: "Komenda do podglądu/przywracania EQ."
     usage: "/<command>"

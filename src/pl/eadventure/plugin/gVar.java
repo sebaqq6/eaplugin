@@ -1,5 +1,6 @@
 package pl.eadventure.plugin;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.AnnounceManager;
@@ -12,7 +13,9 @@ import pl.eadventure.plugin.Utils.ChatInputCapture;
 import pl.eadventure.plugin.Utils.ColorIssueResolverIA;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class gVar {
@@ -41,4 +44,5 @@ public class gVar {
 	public static EqSaver eqSaver;
 	public static HashMap<UUID, Boolean> hiddenTabName = new HashMap<>();
 	public static String redFlagToken = "1234abcd";
+	public static List<String> whiteList = new ArrayList<>();//blueflag
 }
