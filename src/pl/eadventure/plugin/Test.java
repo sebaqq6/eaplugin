@@ -1,5 +1,7 @@
 package pl.eadventure.plugin;
 
+import dev.geco.gsit.api.GSitAPI;
+import dev.geco.gsit.object.GStopReason;
 import me.NoChance.PvPManager.PvPlayer;
 import me.NoChance.PvPManager.Tasks.NewbieTask;
 import me.frep.vulcan.api.VulcanAPI;
@@ -45,6 +47,12 @@ public class Test {
 		//pvpManagerTest(player);
 		messageTest(player);
 		gateTest();
+		gSitApiTest(player);
+	}
+
+	public static Player testDoll() {
+		Player player = Bukkit.getPlayer("Test_doll2");
+		return player;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -53,6 +61,12 @@ public class Test {
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
+	public static void gSitApiTest(Player player) {
+		player.sendMessage("gSitApiTest");
+		GSitAPI.stopPlayerSit(testDoll(), GStopReason.PLUGIN);
+	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	public static void gateTest() {
 		FunEvent funEvent = gVar.funEventsManager.getEvent("starcieeternal");

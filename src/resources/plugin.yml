@@ -4,7 +4,7 @@ version: 1.21.1
 description: Plugin dedykowany dla EternalAdventure
 author: JrDesmond
 website: https://eadventure.pl
-depend: [ Vulcan, Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, ProtocolLib, ProtectionStones, MobArena, VentureChat, ComplexTurrets, PvPManager ]
+depend: [ Vulcan, Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, ProtocolLib, ProtectionStones, MobArena, VentureChat, ComplexTurrets, PvPManager, GSit ]
 api-version: '1.21'
 commands:
   eap:
