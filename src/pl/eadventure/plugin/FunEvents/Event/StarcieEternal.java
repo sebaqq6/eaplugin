@@ -62,14 +62,12 @@ public class StarcieEternal extends FunEvent {
 			ep.setTeam(teamSelector);
 			//teleport player to the team spawn
 			if (teamSelector == TEAM_RED) {
-				player.teleport(teamRedSpawn);
+				tp(player, teamRedSpawn);
 				title(player, "<#FF0000>Drużyna czerwona", "Należysz do drużyny czerwonej.");
+				teamSelector = TEAM_BLUE;
 			} else if (teamSelector == TEAM_BLUE) {
-				player.teleport(teamBlueSpawn);
+				tp(player, teamBlueSpawn);
 				title(player, "<#0000FF>Drużyna niebieska", "Należysz do drużyny niebieskiej.");
-			}
-			teamSelector++;
-			if (teamSelector >= 3) {
 				teamSelector = TEAM_RED;
 			}
 		}
@@ -134,9 +132,9 @@ public class StarcieEternal extends FunEvent {
 			}
 			//back to spawns
 			if (getEvPlayer(player).getTeam() == TEAM_RED) {
-				player.teleport(teamRedSpawn);
+				tp(player, teamRedSpawn);
 			} else if (getEvPlayer(player).getTeam() == TEAM_BLUE) {
-				player.teleport(teamBlueSpawn);
+				tp(player, teamBlueSpawn);
 			}
 
 			PlayerData.get(player).freeze = true;//FREEZE ALL
@@ -265,9 +263,9 @@ public class StarcieEternal extends FunEvent {
 	public void playerRespawn(PlayerRespawnEvent e) {
 		Player player = e.getPlayer();
 		if (getEvPlayer(player).getTeam() == TEAM_RED) {
-			player.teleport(teamRedSpawn);
+			tp(player, teamRedSpawn);
 		} else if (getEvPlayer(player).getTeam() == TEAM_BLUE) {
-			player.teleport(teamBlueSpawn);
+			tp(player, teamBlueSpawn);
 		}
 	}
 }

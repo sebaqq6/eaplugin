@@ -31,6 +31,7 @@ public class FunEventsCommands {
 			case "forcefinish" -> forcefinishCommand(sender, args);
 			case "world" -> worldCommand(sender, args);
 			case "tp" -> tpCommand(sender, args);
+			case "recordsduration" -> recordsdurationCommand(sender, args);
 			case "reload" -> reloadCommand(sender, args);
 		}
 	}
@@ -92,6 +93,10 @@ public class FunEventsCommands {
 	/*                                 /fe tp                          */
 	public static void tpCommand(CommandSender sender, String[] args) {
 		if (sender instanceof Player player) {
+			if (args.length < 2) {
+				Utils.commandUsageMessage(sender, "/fe tp [event]");
+				return;
+			}
 			String eventName = args[1];
 			if (!FunEventsManager.getEventKeysAsList().contains(eventName)) {
 				sender.sendMessage(Utils.mm("<grey>Taki event nie istnieje."));
@@ -99,6 +104,18 @@ public class FunEventsCommands {
 			}
 			player.teleport(fem.getEvent(eventName).getArenaPos());
 		}
+	}
+
+	/*                                 /fe recordsduration                          */
+	public static void recordsdurationCommand(CommandSender sender, String[] args) {
+		if (args.length < 2) {
+			Utils.commandUsageMessage(sender, "/fe recordsduration [ilość sekund]");
+			return;
+		}
+		String durationStr = args[1];
+		int duration = Integer.parseInt(durationStr);
+		recordsTime = duration;
+		sender.sendMessage(Utils.mm("<#FF0000>Ustawiono czas zapisów na: " + recordsTime + " sekund."));
 	}
 
 	/*                                 /fe reload                          */
@@ -109,7 +126,7 @@ public class FunEventsCommands {
 
 	//-------------------------------------TAB COMPLETE--------------------------------------
 	//next args >= 1
-	public static List<String> cmdlist = Arrays.asList("start", "stopzapisy", "forcefinish", "world", "reload", "tp");
+	public static List<String> cmdlist = Arrays.asList("start", "stopzapisy", "forcefinish", "recordsduration", "world", "reload", "tp");
 
 	public static List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 1)//args[0] - main commad

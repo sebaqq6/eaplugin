@@ -1,5 +1,7 @@
 package pl.eadventure.plugin.FunEvents;
 
+import dev.geco.gsit.api.GSitAPI;
+import dev.geco.gsit.object.GStopReason;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
@@ -303,9 +305,36 @@ public abstract class FunEvent {
 	public void tpAll(Location location) {
 		for (Player player : players) {
 			if (player.isOnline()) {
-				player.teleport(location);
+				GSitAPI.stopPlayerSit(player, GStopReason.PLUGIN);
 			}
 		}
+		final Location finalLocation = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (Player player : players) {
+					if (player.isOnline()) {
+						player.teleport(finalLocation);
+					}
+				}
+			}
+		}.runTaskLater(getPlugin(), 10L);
+	}
+
+	public void tp(Player player, Location location) {
+		if (player.isOnline()) {
+			GSitAPI.stopPlayerSit(player, GStopReason.PLUGIN);
+		}
+		new BukkitRunnable() {
+			final Location finalLocation = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+
+			@Override
+			public void run() {
+				if (player.isOnline()) {
+					player.teleport(finalLocation);
+				}
+			}
+		}.runTaskLater(getPlugin(), 10L);
 	}
 
 	public void saveEqBeforeJoinForAll() {

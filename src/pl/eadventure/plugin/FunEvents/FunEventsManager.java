@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.FunEvents;
 
+import dev.geco.gsit.api.GSitAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -144,7 +145,7 @@ public class FunEventsManager {
 	public static List<String> getEventKeysAsList() {
 		return new ArrayList<>(events.keySet());
 	}
-	
+
 	public FunEvent getActualFunEvent() {
 		return actualFunEvent;
 	}
@@ -196,7 +197,7 @@ public class FunEventsManager {
 				}
 			} else {
 				if (actualFunEvent.getPlayersCount() < actualFunEvent.getMinPlayers()) {//zbyt mało osób
-					actualFunEvent.msgAll(String.format("<grey>Niestety, na <blue><bold>%s</bold></blue> zapisało się <bold>zbyt mało osób</bold>, aby mogło się odbyć.", actualFunEvent.getEventName()));
+					actualFunEvent.msgAll(String.format("<grey>Niestety, na <blue><bold>%s</bold></blue> zapisało się zbyt mało osób, aby mogło się odbyć.", actualFunEvent.getEventName()));
 					actualFunEvent.setStatus(FunEvent.Status.FREE);
 				} else {
 					actualFunEvent.setStatus(FunEvent.Status.IN_PROGRESS);
@@ -332,7 +333,7 @@ public class FunEventsManager {
 			if (funEvent != null) {
 				Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> funEvent.playerRespawn(e), 20L);
 			} else {
-				if (worldEvents.getWorld().equals(player.getLocation().getWorld())) {
+				if (worldEvents.getWorld().equals(e.getRespawnLocation().getWorld())) {
 					if (worldEvents.distance(e.getRespawnLocation()) <= 1) {
 						Bukkit.getScheduler().runTaskLater(funEventManager.plugin, r -> player.teleport(spawnLocation), 20L);
 						print.error("Gracz " + player.getName() + " zrespawnował się na spawnie  " + worldEvents.getWorld().getName() + ". Teleportuje go na główny spawn w world.");
@@ -348,7 +349,7 @@ public class FunEventsManager {
 			Player player = e.getPlayer();
 			FunEvent funEvent = isPlayerSavedOnEvent(player);
 			if (funEvent != null && funEvent.isOwnSet()) {
-				player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
+				player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));
 				e.setCancelled(true);
 			}
 		}
@@ -359,7 +360,7 @@ public class FunEventsManager {
 			if (e.getPlayer() instanceof Player player) {
 				FunEvent funEvent = isPlayerSavedOnEvent(player);
 				if (funEvent != null && funEvent.isOwnSet()) {
-					player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
+					player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));
 					e.setCancelled(true);
 				}
 			}
@@ -383,7 +384,7 @@ public class FunEventsManager {
 			FunEvent funEvent = isPlayerSavedOnEvent(player);
 			if (e.getRightClicked() instanceof ItemFrame || e.getRightClicked() instanceof LivingEntity) {
 				if (funEvent != null && funEvent.isOwnSet()) {
-					player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
+					player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));
 					e.setCancelled(true);
 				}
 			}
@@ -399,7 +400,7 @@ public class FunEventsManager {
 			String command = args[0];
 			//block ah when player is saved on event
 			if (isPlayerSavedOnEvent(player) != null && command.equalsIgnoreCase("/ah")) {
-				player.sendMessage(Utils.mm("<grey>Jesteś zapisany na event - czynność niedozwolona."));
+				player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));
 				e.setCancelled(true);
 				return;
 			}
