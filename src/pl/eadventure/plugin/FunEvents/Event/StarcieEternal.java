@@ -1,5 +1,9 @@
 package pl.eadventure.plugin.FunEvents.Event;
 
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.scoreboard.Scoreboard;
+import me.neznamy.tab.api.scoreboard.ScoreboardManager;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -14,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.GlowAPI;
 import pl.eadventure.plugin.API.PvpManagerAPI;
 import pl.eadventure.plugin.FunEvents.FunEvent;
@@ -23,12 +28,14 @@ import pl.eadventure.plugin.Utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 /*TODO:
-- Podsumowanie końca walki.
+- Podsumowanie końca walki.[done]
+- Scoreboard.[done]
 - Zmienić ilość broni z 2 na 1.[done]
-- Wprowadzenie (info na czacie).
+- Wprowadzenie (info na czacie).[done]
 - Spawn protection[done]
 - Wyłączać efekt glow przy niewidzialności.[done]
-- Zmienić fragi na punkty.
+- Zmienić fragi na punkty.[done]
+- MVP - nagradzanie najlepszych graczy (najwyższe ratio)
  */
 
 public class StarcieEternal extends FunEvent {
@@ -43,6 +50,9 @@ public class StarcieEternal extends FunEvent {
 	int endTimeSeconds;
 	List<Location> blueGateCoords = new ArrayList<>();
 	List<Location> redGateCoords = new ArrayList<>();
+	ScoreboardManager scoreboardManager;
+	Scoreboard scoreboard;
+	List<Player> topPlayers = new ArrayList<>();
 
 	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
@@ -51,6 +61,18 @@ public class StarcieEternal extends FunEvent {
 		this.setArenaPos(teamRedSpawn);
 		bossBar = Bukkit.createBossBar(eventName, BarColor.PURPLE, BarStyle.SOLID);
 		Bukkit.getScheduler().runTaskTimer(getPlugin(), this::oneSecondTimer, 20L, 20L);
+		scoreboardManager = TabAPI.getInstance().getScoreboardManager();
+		updateScoreboard();
+	}
+
+	@Override
+	public void setStatus(int status) {
+		if (status == Status.RECORDS) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.sendMessage(Utils.mm("<green><bold>Zapisy na <dark_purple>Starcie Eternal <green>właśnie wystartowały! By wziąć udział, wyposaż się w <white>pancerz <green>i dowolną <red>broń <green>- następnie użyj polecenia <yellow>/dolacz<green>. Podczas bitwy <red>nie stracisz <green>swojego ekwipunku!"));
+			}
+		}
+		super.setStatus(status);
 	}
 
 	@Override
@@ -82,7 +104,11 @@ public class StarcieEternal extends FunEvent {
 				title(player, "<#0000FF>Drużyna niebieska", "Należysz do drużyny niebieskiej.");
 				teamSelector = TEAM_RED;
 			}
+			//show scoreboard
+			TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+			scoreboardManager.showScoreboard(tabPlayer, scoreboard);
 		}
+		updateScoreboard();
 		bossBar.setVisible(true);
 		//Bukkit.getScheduler().runTaskLater(getPlugin(), () -> updateGlowTeam(GlowTeamType.AllForAll), 20L * 5);
 		endTimeSeconds = MAX_TIME_SECONDS;
@@ -127,6 +153,21 @@ public class StarcieEternal extends FunEvent {
 		} else {//draw
 			msgAll(String.format("<bold><grey>[<dark_purple>%s<grey>]</bold><grey> Starcie zakończyło się <gradient:red:blue><bold>remisem</bold></gradient><grey>, wynik: <bold><red>%d <grey>- <blue>%d", getEventName(), fragsTeamRed, fragsTeamBlue));
 		}
+		//results
+		int lp = 1;
+		List<String> result = new ArrayList<>();
+		result.add("<gradient:#BF00FF:#7d00a7><bold>Wyniki:</bold>");
+		updateScoreboard();
+		for (Player oP : topPlayers) {
+			EvPlayer eoP = getEvPlayer(oP);
+			int kills = eoP.getInt("kills");
+			int deaths = eoP.getInt("deaths");
+			int ratio = kills - deaths;
+			String color = eoP.getTeam() == TEAM_RED ? "red" : "blue";
+			result.add(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<red>\uD83D\uDDE1 %s<grey> | <white>\uD83D\uDC80 %d<grey> | <green>\uD83C\uDF00 %d<gray>)", lp, color, oP.getName(), kills, deaths, ratio));
+			lp++;
+		}
+		//loop for all event players
 		for (Player player : getPlayers()) {
 			if (getEvPlayer(player).getTeam() == winTeam) {//win
 				winPlayers.add(player);
@@ -152,6 +193,10 @@ public class StarcieEternal extends FunEvent {
 			PlayerData.get(player).freeze = true;//FREEZE ALL
 			for (Player otherPlayer : getPlayers()) {
 				GlowAPI.unGlowPlayer(player, otherPlayer);
+			}
+			//show result
+			for (String msg : result) {
+				player.sendMessage(Utils.mm(msg));
 			}
 		}
 		bossBar.setVisible(false);
@@ -252,6 +297,44 @@ public class StarcieEternal extends FunEvent {
 		}
 	}
 
+	private void updateTopPlayers() {
+		List<Player> sortedPlayers = new ArrayList<>(getPlayers());
+		sortedPlayers.sort((p1, p2) -> {
+			EvPlayer ep1 = getEvPlayer(p1);
+			EvPlayer ep2 = getEvPlayer(p2);
+			int ratio1 = ep1.getInt("kills") - ep1.getInt("deaths");
+			int ratio2 = ep2.getInt("kills") - ep2.getInt("deaths");
+			return Integer.compare(ratio2, ratio1); // descending
+		});
+		topPlayers.clear();
+		topPlayers.addAll(sortedPlayers);
+	}
+
+	private void updateScoreboard() {
+		if (scoreboardManager != null && scoreboard == null) {
+			List<String> defaultList = new ArrayList<>();
+			for (int i = 1; i <= 10; i++) {
+				defaultList.add(String.format("<grey><bold>%d</bold>. ---", i));
+			}
+
+			scoreboard = scoreboardManager.createScoreboard("Starcie Eternal", "<gradient:#BF00FF:#7d00a7><bold>Starcie Eternal</bold>", defaultList);
+		}
+		updateTopPlayers();
+		if (scoreboard != null) {
+			int lp = 1;
+			for (Player oP : topPlayers) {
+				if (lp > 10) break;
+				EvPlayer eoP = getEvPlayer(oP);
+				int kills = eoP.getInt("kills");
+				int deaths = eoP.getInt("deaths");
+				int ratio = kills - deaths;
+				String color = eoP.getTeam() == TEAM_RED ? "red" : "blue";
+				scoreboard.getLines().get(lp - 1).setText(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<green>\uD83C\uDF00 %d<gray>)", lp, color, oP.getName(), ratio));
+				lp++;
+			}
+		}
+	}
+
 	@Override
 	public void playerQuit(Player player) {
 		if (getPlayersFromTeam(TEAM_RED).isEmpty() || getPlayersFromTeam(TEAM_BLUE).isEmpty()) {
@@ -263,19 +346,25 @@ public class StarcieEternal extends FunEvent {
 	public void playerDeath(PlayerDeathEvent e) {
 		Player player = e.getPlayer();
 		EvPlayer evPlayer = getEvPlayer(player);
-		evPlayer.subtractInt("deaths", 1);
+		int points = evPlayer.getInt("kills") - evPlayer.getInt("deaths");
+		if (points < 1) points = 1;
+		else if (points > 5) points = 5;
+		evPlayer.addInt("deaths", 1);
 		e.setKeepInventory(true);
 		e.getDrops().clear();
 		if (evPlayer.getTeam() == TEAM_RED) {
-			fragsTeamBlue++;
+			fragsTeamBlue += points;
 		} else if (evPlayer.getTeam() == TEAM_BLUE) {
-			fragsTeamRed++;
+			fragsTeamRed += points;
 		}
 		Player killer = Utils.getPlayerKiller(e);
 		if (killer != null && getPlayers().contains(killer)) {
 			EvPlayer evKillerPlayer = getEvPlayer(killer);
 			evKillerPlayer.addInt("kills", 1);
+			title(player, " ", "<white>☠</white> <gray>Zabił/a Cię <white>" + killer.getName() + "</white>");
+			title(killer, " ", "<red>\uD83D\uDDE1</red> <gray>Pokonałeś/aś <white>" + player.getName() + "</white> <grey>(+</grey><green>" + points + "<grey> pkt)");
 		}
+		updateScoreboard();
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package pl.eadventure.plugin.FunEvents;
 
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -304,6 +306,10 @@ public class FunEventsManager {
 				funEvent.removePlayer(player);
 				player.teleport(spawnLocation);
 				funEvent.playerQuit(player);
+				TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+				if (tabPlayer != null) {
+					Objects.requireNonNull(TabAPI.getInstance().getScoreboardManager()).resetScoreboard(tabPlayer);
+				}
 			} else {//only saved on event
 				funEvent = isPlayerSavedOnEvent(player);
 				if (funEvent != null) {

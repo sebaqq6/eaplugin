@@ -2,6 +2,8 @@ package pl.eadventure.plugin.FunEvents;
 
 import dev.geco.gsit.api.GSitAPI;
 import dev.geco.gsit.object.GStopReason;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
@@ -292,6 +294,11 @@ public abstract class FunEvent {
 							}
 						}
 					}
+					//restore scoreboard
+					TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+					if (tabPlayer != null) {
+						Objects.requireNonNull(TabAPI.getInstance().getScoreboardManager()).resetScoreboard(tabPlayer);
+					}
 					//save data
 					player.saveData();
 				}
@@ -325,7 +332,7 @@ public abstract class FunEvent {
 	}
 
 	public void title(Player p, String strTitle, String strSubtitle) {
-		p.showTitle(Title.title(Utils.mm(strTitle), Component.text(strSubtitle)));
+		p.showTitle(Title.title(Utils.mm(strTitle), Utils.mm(strSubtitle)));
 	}
 
 	public void tpAll(Location location) {
@@ -494,6 +501,11 @@ public abstract class FunEvent {
 		EvPlayer ep = getEvPlayer(player);
 		if (ep.getSpawnProtection() > 0) {
 			ep.setSpawnProtection(ep.getSpawnProtection() - 1);
+			if (ep.getSpawnProtection() == 0) {
+				title(player, " ", "<red>Koniec ochrony spawnu.");
+			} else {
+				title(player, " ", "<grey>Ochrona spawnu: <yellow>" + ep.getSpawnProtection() + " <grey>sekund.");
+			}
 		}
 	}
 
