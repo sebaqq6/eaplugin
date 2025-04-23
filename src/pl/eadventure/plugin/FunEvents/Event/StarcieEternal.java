@@ -61,8 +61,6 @@ public class StarcieEternal extends FunEvent {
 		this.setArenaPos(teamRedSpawn);
 		bossBar = Bukkit.createBossBar(eventName, BarColor.PURPLE, BarStyle.SOLID);
 		Bukkit.getScheduler().runTaskTimer(getPlugin(), this::oneSecondTimer, 20L, 20L);
-		scoreboardManager = TabAPI.getInstance().getScoreboardManager();
-		updateScoreboard();
 	}
 
 	@Override
@@ -77,6 +75,9 @@ public class StarcieEternal extends FunEvent {
 
 	@Override
 	public void start() {
+		scoreboardManager = TabAPI.getInstance().getScoreboardManager();//update scoreboardManager (fix for reload)
+		scoreboard = null;
+		updateScoreboard();
 		//reset points
 		fragsTeamRed = 0;
 		fragsTeamBlue = 0;
