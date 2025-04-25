@@ -49,7 +49,8 @@ public class Command_eap implements TabExecutor {
 					"rcl",
 					"disablegs",
 					"cachegs1",
-					"autofixmob");
+					"autofixmob",
+					"location");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
 		return Collections.emptyList();
@@ -143,6 +144,20 @@ public class Command_eap implements TabExecutor {
 				sender.sendMessage("Testowanie...");
 				Test.run(sender);
 				sender.sendMessage("Testowanie zakończone...");
+				/**/
+				break;
+			}
+			case "location": {
+				if (sender instanceof Player player) {
+					sender.sendMessage("Twoja lokacja:");
+					Location location = player.getLocation();
+					sender.sendMessage("X: " + location.getX());
+					sender.sendMessage("Y: " + location.getY());
+					sender.sendMessage("Z: " + location.getZ());
+					sender.sendMessage("Yaw: " + location.getYaw());
+					sender.sendMessage("Pitch: " + location.getPitch());
+				}
+
 				/**/
 				break;
 			}
