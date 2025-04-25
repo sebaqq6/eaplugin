@@ -39,7 +39,7 @@ import java.util.List;
 - Poprawić teleport aby teleportowało ustawionym do wyjścia.[done]
 - Naprawić projectile.[done]
 - Czasem nie telportuje wszystkich.[nie moge powtórzyć błędu]
-- MVP - nagradzanie najlepszych graczy (najwyższe ratio)
+- MVP - nagradzanie najlepszych graczy (najwyższe ratio)[jeszcze nie zrobione]
  */
 
 public class StarcieEternal extends FunEvent {

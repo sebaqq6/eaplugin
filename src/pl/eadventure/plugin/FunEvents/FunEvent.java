@@ -349,6 +349,7 @@ public abstract class FunEvent {
 				for (Player player : players) {
 					if (player.isOnline()) {
 						player.teleport(finalLocation);
+						print.info("Teleportowano gracza " + player.getName() + " na: " + getEventName());
 					}
 				}
 			}
@@ -366,6 +367,7 @@ public abstract class FunEvent {
 			public void run() {
 				if (player.isOnline()) {
 					player.teleport(finalLocation);
+					print.info("Teleportowano gracza " + player.getName() + " na: " + getEventName());
 				}
 			}
 		}.runTaskLater(getPlugin(), 10L);

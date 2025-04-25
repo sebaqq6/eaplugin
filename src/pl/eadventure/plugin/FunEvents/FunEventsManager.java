@@ -213,7 +213,7 @@ public class FunEventsManager {
 
 	public static boolean inventoryHasOnlySet(Player player) {
 		final int MAX_ARMORS = 4;
-		final int MAX_MAINHAND = 1;
+		final int MAX_MAINHAND = 2;
 		final int MAX_OFFHAND = 1;
 		final int MAX_OTHERITEMS = 0;
 		//check valid inventory
