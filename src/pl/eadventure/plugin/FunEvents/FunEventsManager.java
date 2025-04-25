@@ -116,6 +116,7 @@ public class FunEventsManager {
 		if (!fileRewards.exists()) {
 			yamlRewards.set(name + ".win", defaultCommands);
 			yamlRewards.set(name + ".lose", defaultCommands);
+			yamlRewards.set(name + ".mvp", defaultCommands);
 			Utils.saveConfig(fileRewards, yamlRewards);
 		} else {
 			//wczytanie nagród
@@ -138,6 +139,16 @@ public class FunEventsManager {
 				yamlRewards.set(name + ".lose", defaultCommands);
 				Utils.saveConfig(fileRewards, yamlRewards);
 				print.error("Nie znaleziono komend nagród przegranych dla: " + name);
+			}
+			//mvp
+			List<String> commandsMvp = yamlRewards.getStringList(name + ".mvp");
+			if (commandsMvp != null && !commandsMvp.isEmpty()) {
+				event.rewardCommandsMvp.addAll(commandsMvp);
+			} else {
+				event.rewardCommandsMvp.addAll(defaultCommands);
+				yamlRewards.set(name + ".mvp", defaultCommands);
+				Utils.saveConfig(fileRewards, yamlRewards);
+				print.error("Nie znaleziono komend nagród mvp dla: " + name);
 			}
 		}
 	}//rejestracja eventy

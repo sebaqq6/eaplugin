@@ -33,7 +33,9 @@ public abstract class FunEvent {
 	private HashMap<Player, ItemStack[]> ownSets = new HashMap<>();
 	protected List<String> rewardCommandsWin = new ArrayList<>();
 	protected List<String> rewardCommandsLose = new ArrayList<>();
+	protected List<String> rewardCommandsMvp = new ArrayList<>();
 	protected List<Player> winPlayers = new ArrayList<>();
+	protected List<Player> mostValuablePlayers = new ArrayList<>();
 	protected final int TEAM_RED = 1;
 	protected final int TEAM_BLUE = 2;
 	private int status;
@@ -291,6 +293,14 @@ public abstract class FunEvent {
 							for (String rewardCmd : rewardCommandsLose) {
 								String finalRewardCmd = rewardCmd.replace("%username%", player.getName());
 								print.info(String.format("[%s] Nagroda przegrana: %s", eventName, finalRewardCmd));
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalRewardCmd);
+							}
+						}
+						//mvp
+						if (mostValuablePlayers.contains(player)) {
+							for (String rewardCmd : rewardCommandsMvp) {
+								String finalRewardCmd = rewardCmd.replace("%username%", player.getName());
+								print.info(String.format("[%s] Nagroda MVP: %s", eventName, finalRewardCmd));
 								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalRewardCmd);
 							}
 						}
