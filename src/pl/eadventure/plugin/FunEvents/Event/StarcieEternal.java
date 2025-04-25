@@ -35,6 +35,10 @@ import java.util.List;
 - Spawn protection[done]
 - Wyłączać efekt glow przy niewidzialności.[done]
 - Zmienić fragi na punkty.[done]
+- Naprawić tab instance. [done]
+- Poprawić teleport aby teleportowało ustawionym do wyjścia.[done]
+- Naprawić projectile.[done]
+- Czasem nie telportuje wszystkich.[nie moge powtórzyć błędu]
 - MVP - nagradzanie najlepszych graczy (najwyższe ratio)
  */
 
@@ -56,8 +60,8 @@ public class StarcieEternal extends FunEvent {
 
 	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
-		teamRedSpawn = new Location(world_utility, 250, 112, 366);
-		teamBlueSpawn = new Location(world_utility, 250, 111, 477);
+		teamRedSpawn = new Location(world_utility, 250, 112, 366, 0.0F, 0.0F);
+		teamBlueSpawn = new Location(world_utility, 250, 111, 477, 180.0F, 0.0F);
 		this.setArenaPos(teamRedSpawn);
 		bossBar = Bukkit.createBossBar(eventName, BarColor.PURPLE, BarStyle.SOLID);
 		Bukkit.getScheduler().runTaskTimer(getPlugin(), this::oneSecondTimer, 20L, 20L);
