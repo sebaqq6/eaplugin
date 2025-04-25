@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -74,6 +75,12 @@ public class EqSaver {
 					killer = playerKiller.getName();
 				} else if (damager instanceof LivingEntity mob) {
 					killer = mob.getName();
+				} else if (damager instanceof ThrownPotion thrownPotion) {
+					if (thrownPotion.getShooter() instanceof Player shooter) {
+						killer = shooter.getName();
+					} else {
+						killer = damager.getType().toString();
+					}
 				} else {
 					killer = damager.getType().toString();
 				}

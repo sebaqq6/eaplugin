@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -514,9 +515,19 @@ public abstract class FunEvent {
 	//******************************************************************************************************************
 	public class Listeners implements Listener {
 		@EventHandler
-		public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {//damager = zadajacy obrażenia, victim = ofiara
 			if (status != Status.IN_PROGRESS) return;
-			if (event.getDamager() instanceof Player damager && event.getEntity() instanceof Player victim) {
+			//detect damager
+			Player damager = null;
+			if (event.getDamager() instanceof Player detectDamagerPlayer) {
+				damager = detectDamagerPlayer;
+			} else if (event.getDamager() instanceof ThrownPotion thrownPotion) {
+				if (thrownPotion.getShooter() instanceof Player shooter) {
+					damager = shooter;
+				}
+			}
+			//do other
+			if (event.getEntity() instanceof Player victim && damager != null) {
 				if (!isPlayerOnEvent(damager)) return;
 				if (!isPlayerOnEvent(victim)) return;
 				EvPlayer epDamager = getEvPlayer(damager);
@@ -526,7 +537,7 @@ public abstract class FunEvent {
 
 				if (damagerTeam != 0 && damagerTeam == victimTeam) {
 					event.setCancelled(true);
-					damager.sendMessage(Utils.mm("<grey>Nie możesz atakować członków swojej drużyny!"));
+					//damager.sendMessage(Utils.mm("<grey>Nie możesz atakować członków swojej drużyny!"));
 					return;
 				}
 				//spawn protect

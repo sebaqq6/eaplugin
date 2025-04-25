@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -657,14 +658,19 @@ public class Utils {
 	//get killer
 	public static Player getPlayerKiller(PlayerDeathEvent e) {
 		Player player = e.getPlayer();
+		Player killer = null;
 		EntityDamageEvent lastDamage = player.getLastDamageCause();
 		//who kill
 		if (lastDamage instanceof EntityDamageByEntityEvent entityEvent) {
 			Entity damager = entityEvent.getDamager();
 			if (damager instanceof Player playerKiller) {
-				return playerKiller;
+				killer = playerKiller;
+			} else if (damager instanceof ThrownPotion thrownPotion) {
+				if (thrownPotion.getShooter() instanceof Player shooter) {
+					killer = shooter;
+				}
 			}
 		}
-		return null;
+		return killer;
 	}
 }
