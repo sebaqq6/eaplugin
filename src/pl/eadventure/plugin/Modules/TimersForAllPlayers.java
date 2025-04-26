@@ -77,13 +77,16 @@ public class TimersForAllPlayers {
 			if (specTarget instanceof Player playerTarget) {
 				Location playerLocation = player.getLocation();
 				Location targetLocation = playerTarget.getLocation();
+				Timestamp playerLastTeleport = PlayerData.get(player).lastTeleport;
+				Timestamp targetLastTeleport = PlayerData.get(playerTarget).lastTeleport;
 				//player.setSpectatorTarget(playerTarget);
-				if (playerLocation.getWorld() != targetLocation.getWorld() || targetLocation.distance(playerLocation) > 10) {
+				if (playerLocation.getWorld() != targetLocation.getWorld() || playerLastTeleport.before(targetLastTeleport)) {
 					targetLocation.setY(targetLocation.getY() + 256);
 					player.teleport(targetLocation);
 					//player.setGameMode(GameMode.SPECTATOR);
 					//player.setSpectatorTarget(playerTarget);
 					player.setInvisible(true);
+					player.setGameMode(GameMode.SURVIVAL);
 					Bukkit.getScheduler().runTaskLater(EternalAdventurePlugin.getInstance(), () -> {
 						player.setInvisible(false);
 						player.setGameMode(GameMode.SPECTATOR);

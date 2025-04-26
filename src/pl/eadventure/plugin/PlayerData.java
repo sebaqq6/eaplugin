@@ -13,6 +13,7 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -44,6 +45,7 @@ public class PlayerData {
 	public Timestamp lastSpec = null;
 	public RollTool rollTool = null;
 	public boolean freeze = false;
+	public Timestamp lastTeleport = null;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
@@ -67,6 +69,7 @@ public class PlayerData {
 	public PlayerData(Player player) {
 		if (player == null) return;
 		this.player = player;
+		this.lastTeleport = Timestamp.from(Instant.now());
 		players.put(player.getUniqueId(), this);
 		print.debug("Gracz: " + player.getName() + " - stworzono instancje danych!");
 		loadDataFromMySQL(player);

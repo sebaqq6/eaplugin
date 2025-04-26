@@ -20,6 +20,7 @@ import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.Utils.print;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 
 /*
 DEVELOPER PLAYGROUND CLASS
@@ -44,9 +45,10 @@ public class Test {
 	public static void testPlayer(Player player) {
 		//glowTest(player);
 		//pvpManagerTest(player);
-		messageTest(player);
-		gateTest();
-		gSitApiTest(player);
+		//messageTest(player);
+		//gateTest();
+		//gSitApiTest(player);
+		specTest(player);
 	}
 
 	public static Player testDoll() {
@@ -137,18 +139,23 @@ public class Test {
 	//------------------------------------------------------------------------------------------------------------------
 	public static void specTest(Player player) {
 		//Entity specTarget = player.getSpectatorTarget();
-		Entity specTarget = Bukkit.getPlayer("JrRequeim");
+		Entity specTarget = Bukkit.getPlayer("Test_doll3");
 		if (specTarget instanceof Player playerTarget) {
 			player.sendMessage("Target name: " + playerTarget.getName());
 			Location playerLocation = player.getLocation();
 			Location targetLocation = playerTarget.getLocation();
+			Timestamp playerLastTeleport = PlayerData.get(player).lastTeleport;
+			Timestamp targetLastTeleport = PlayerData.get(playerTarget).lastTeleport;
 			//player.setSpectatorTarget(playerTarget);
-			if (playerLocation.getWorld() != targetLocation.getWorld() || targetLocation.distance(playerLocation) > 10) {
+			print.info("pd.before(targetPd) " + playerLastTeleport.before(targetLastTeleport));//BUG
+			if (playerLocation.getWorld() != targetLocation.getWorld() || playerLastTeleport.before(targetLastTeleport)) {
+				print.error("FIX SPEC???");
 				targetLocation.setY(targetLocation.getY() + 256);
 				player.teleport(targetLocation);
 				//player.setGameMode(GameMode.SPECTATOR);
 				//player.setSpectatorTarget(playerTarget);
 				player.setInvisible(true);
+				player.setGameMode(GameMode.SURVIVAL);
 				Bukkit.getScheduler().runTaskLater(EternalAdventurePlugin.getInstance(), () -> {
 					player.setInvisible(false);
 					player.setGameMode(GameMode.SPECTATOR);
