@@ -71,6 +71,7 @@ public class PlayerData {
 		this.player = player;
 		this.lastTeleport = Timestamp.from(Instant.now());
 		players.put(player.getUniqueId(), this);
+		if (player.getAddress().getAddress().getHostAddress() == null) return;
 		print.debug("Gracz: " + player.getName() + " - stworzono instancje danych!");
 		loadDataFromMySQL(player);
 	}

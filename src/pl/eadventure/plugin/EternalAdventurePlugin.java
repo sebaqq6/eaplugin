@@ -214,6 +214,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("roll").setExecutor(new Command_roll());
 		this.getCommand("dolacz").setExecutor(new Command_dolacz());
 		this.getCommand("blueflag").setExecutor(new Command_blueflag());
+		this.getCommand("autospec").setExecutor(new Command_autospec());
 
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
@@ -258,6 +259,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		ArrowFix.run(this);
 		MobFixer.load();
 		RollTool.loadRollTool(this);
+		new AutoSpectator(this);
 
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();
@@ -332,6 +334,10 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 
 	public static MobArena getMobArena() {
 		return mobarena;
+	}
+
+	public static ProtocolLibAPI getProtocolLibApi() {
+		return plAPI;
 	}
 
 	private void setupMobArena() {

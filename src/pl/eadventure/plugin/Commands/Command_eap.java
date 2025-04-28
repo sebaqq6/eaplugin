@@ -23,10 +23,7 @@ import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Command_eap implements TabExecutor {
 	@Override
@@ -150,12 +147,21 @@ public class Command_eap implements TabExecutor {
 			case "location": {
 				if (sender instanceof Player player) {
 					sender.sendMessage("Twoja lokacja:");
-					Location location = player.getLocation();
-					sender.sendMessage("X: " + location.getX());
-					sender.sendMessage("Y: " + location.getY());
-					sender.sendMessage("Z: " + location.getZ());
-					sender.sendMessage("Yaw: " + location.getYaw());
-					sender.sendMessage("Pitch: " + location.getPitch());
+					Location loc = player.getLocation();
+					sender.sendMessage("X: " + loc.getX());
+					sender.sendMessage("Y: " + loc.getY());
+					sender.sendMessage("Z: " + loc.getZ());
+					sender.sendMessage("Yaw: " + loc.getYaw());
+					sender.sendMessage("Pitch: " + loc.getPitch());
+					String formattedOutput = String.format(Locale.US, "new Location(%s, %.2f, %.2f, %.2f, %.2fF, %.2fF);",
+							loc.getWorld().getName(),
+							loc.getX(),
+							loc.getY(),
+							loc.getZ(),
+							loc.getYaw(),
+							loc.getPitch());
+
+					print.ok(formattedOutput);
 				}
 
 				/**/
