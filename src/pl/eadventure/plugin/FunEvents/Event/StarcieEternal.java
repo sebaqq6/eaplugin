@@ -57,6 +57,7 @@ public class StarcieEternal extends FunEvent {
 	ScoreboardManager scoreboardManager;
 	Scoreboard scoreboard;
 	List<Player> topPlayers = new ArrayList<>();
+	List<Player> mvPlayers = new ArrayList<>();
 
 	public StarcieEternal(String eventName, int minPlayers, int maxPlayers, boolean ownSet) {
 		super(eventName, minPlayers, maxPlayers, ownSet);
@@ -169,7 +170,9 @@ public class StarcieEternal extends FunEvent {
 			int deaths = eoP.getInt("deaths");
 			int ratio = kills - deaths;
 			String color = eoP.getTeam() == TEAM_RED ? "red" : "blue";
-			result.add(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<red>\uD83D\uDDE1 %s<grey> | <white>\uD83D\uDC80 %d<grey> | <green>\uD83C\uDF00 %d<gray>)", lp, color, oP.getName(), kills, deaths, ratio));
+			boolean isMvp = mvPlayers.contains(oP);
+			String mvpMark = "<gold>✫";
+			result.add(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<red>\uD83D\uDDE1 %s<grey> | <white>\uD83D\uDC80 %d<grey> | <green>\uD83C\uDF00 %d<gray>) %s", lp, color, oP.getName(), kills, deaths, ratio, isMvp ? mvpMark : ""));
 			lp++;
 		}
 		//loop for all event players
@@ -204,6 +207,8 @@ public class StarcieEternal extends FunEvent {
 				player.sendMessage(Utils.mm(msg));
 			}
 		}
+		mostValuablePlayers.clear();
+		mostValuablePlayers.addAll(mvPlayers);
 		bossBar.setVisible(false);
 		bossBar.removeAll();
 		Bukkit.getScheduler().runTaskLater(getPlugin(), super::finishEvent, 20L * 10);
@@ -313,6 +318,24 @@ public class StarcieEternal extends FunEvent {
 		});
 		topPlayers.clear();
 		topPlayers.addAll(sortedPlayers);
+		//find mvp players
+		mvPlayers.clear();
+		boolean findMvpInRedTeam = false;
+		boolean findMvpInBlueTeam = false;
+		for (Player p : topPlayers) {
+			EvPlayer evPlayer = getEvPlayer(p);
+			int ratio = evPlayer.getInt("kills") - evPlayer.getInt("deaths");
+			if (!findMvpInRedTeam && evPlayer.getTeam() == TEAM_RED && ratio > 0) {
+				findMvpInRedTeam = true;
+				mvPlayers.add(p);
+			} else if (!findMvpInBlueTeam && evPlayer.getTeam() == TEAM_BLUE && ratio > 0) {
+				findMvpInBlueTeam = true;
+				mvPlayers.add(p);
+			}
+			if (findMvpInRedTeam && findMvpInBlueTeam) {
+				break;
+			}
+		}
 	}
 
 	private void updateScoreboard() {
@@ -334,7 +357,9 @@ public class StarcieEternal extends FunEvent {
 				int deaths = eoP.getInt("deaths");
 				int ratio = kills - deaths;
 				String color = eoP.getTeam() == TEAM_RED ? "red" : "blue";
-				scoreboard.getLines().get(lp - 1).setText(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<green>\uD83C\uDF00 %d<gray>)", lp, color, oP.getName(), ratio));
+				boolean isMvp = mvPlayers.contains(oP);
+				String mvpMark = "<gold>✫";
+				scoreboard.getLines().get(lp - 1).setText(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<green>\uD83C\uDF00 %d<gray>) %s", lp, color, oP.getName(), ratio, isMvp ? mvpMark : ""));
 				lp++;
 			}
 		}
