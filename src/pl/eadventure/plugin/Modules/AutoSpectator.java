@@ -69,6 +69,7 @@ public class AutoSpectator {
 				.filter(pl -> !pl.equals(p)) // Nie siebie
 				.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
 				.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
+				.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
 				.filter(pl -> !pl.isDead()) // Jest żywy
 				.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
 				.collect(Collectors.toList());
