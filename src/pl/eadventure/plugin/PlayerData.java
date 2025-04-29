@@ -58,6 +58,7 @@ public class PlayerData {
 	public String mutedBy = " ";
 	public String mutedReason = " ";
 	public int breakBlocksCount = 0;
+	public int afkTime = 0;
 	//stream live
 	public int isStreamer = 0;
 	public String streamerService = " ";
@@ -195,8 +196,9 @@ public class PlayerData {
 		if (sessionId != 0) {
 			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(afkTime);
 			parameters.add(sessionId);
-			String sql = "UPDATE `sessions` SET `end`=CURRENT_TIMESTAMP WHERE `id`=?";
+			String sql = "UPDATE `sessions` SET `end`=CURRENT_TIMESTAMP, `afk`=? WHERE `id`=?";
 			storage.executeSafe(sql, parameters);
 		} else {
 			startSession();

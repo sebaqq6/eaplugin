@@ -49,6 +49,9 @@ public class TimersForAllPlayers {
 		PlayerData pd = PlayerData.get(player);
 		pd.onlineSeconds++;
 		pd.sessionOnlineSeconds++;
+		if (PlayerUtils.isAfk(player)) {
+			pd.afkTime++;
+		}
 		if (pd.maxSessionOnlineSeconds < pd.sessionOnlineSeconds) pd.maxSessionOnlineSeconds = pd.sessionOnlineSeconds;
 		if (pd.onlineSeconds > 59) {
 			pd.onlineSeconds = 0;
