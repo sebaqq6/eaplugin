@@ -1,5 +1,6 @@
 package pl.eadventure.plugin.Utils;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
@@ -179,5 +180,10 @@ public class PlayerUtils {
 			if (meta.asBoolean()) return true;
 		}
 		return false;
+	}
+
+	public static boolean isAfk(Player player) {
+		String afkPlaceholder = PlaceholderAPI.setPlaceholders(player, "%essentials_afk%");
+		return afkPlaceholder.equalsIgnoreCase("yes");
 	}
 }

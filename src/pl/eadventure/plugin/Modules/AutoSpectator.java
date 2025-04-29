@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
@@ -15,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.ProtocolLibAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.sql.Timestamp;
@@ -62,11 +64,13 @@ public class AutoSpectator {
 			return;
 		}
 
-		// Tworzymy listę żywych graczy
+		// Lista
 		List<Player> availablePlayers = Bukkit.getOnlinePlayers().stream()
 				.filter(pl -> !pl.equals(p)) // Nie siebie
 				.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
-				.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL || pl.getGameMode() == GameMode.ADVENTURE) // Tylko żywi
+				.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
+				.filter(pl -> !pl.isDead()) // Jest żywy
+				.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
 				.collect(Collectors.toList());
 
 		if (availablePlayers.isEmpty()) {
@@ -135,12 +139,8 @@ public class AutoSpectator {
 					@Override
 					public void run() {
 						print.info("Trwa logowanie automatyczne EternalCam...");
-						if (nLoginAPI.getApi().forceLogin("EternalCam")) {
-							print.info("Zalogowano automatycznie EternalCam - uruchamianie AutoSpec");
-							AutoSpectator.enable(player);
-						} else {
-							print.error("Nie udało się zalogować automatycznie EternalCam.");
-						}
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vconsole nlogin forcelogin EternalCam");
+						AutoSpectator.enable(player);
 					}
 				}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
 			}
@@ -152,6 +152,17 @@ public class AutoSpectator {
 			for (Player spectator : new ArrayList<>(instance.players)) {
 				if (instance.specNow.get(spectator) != null && instance.specNow.get(spectator).equals(e.getPlayer())) {
 					instance.updateCam(spectator);
+				}
+			}
+		}
+
+		@EventHandler
+		public void onGameModeChange(PlayerGameModeChangeEvent e) {
+			if (e.getNewGameMode() != GameMode.SURVIVAL) {
+				for (Player spectator : new ArrayList<>(instance.players)) {
+					if (instance.specNow.get(spectator) != null && instance.specNow.get(spectator).equals(e.getPlayer())) {
+						instance.updateCam(spectator);
+					}
 				}
 			}
 		}
