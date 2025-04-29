@@ -17,6 +17,7 @@ import pl.eadventure.plugin.API.ProtocolLibAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
+import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.sql.Timestamp;
@@ -135,15 +136,19 @@ public class AutoSpectator {
 		public void onPlayerJoin(PlayerJoinEvent e) {
 			Player player = e.getPlayer();
 			String ip = player.getAddress().getAddress().getHostAddress();
-			if (player.getName().equals("EternalCam") && ip.equalsIgnoreCase("51.38.148.6")) {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						print.info("Trwa logowanie automatyczne EternalCam...");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vconsole nlogin forcelogin EternalCam");
-						AutoSpectator.enable(player);
-					}
-				}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
+			if (player.getName().equals("EternalCam")) {
+				if (ip.equalsIgnoreCase("51.38.148.6")) {
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							print.info("Trwa logowanie automatyczne EternalCam...");
+							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vconsole nlogin forcelogin EternalCam");
+							AutoSpectator.enable(player);
+						}
+					}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
+				} else {
+					player.kick(Utils.mm("Konto zarezerwowane."));
+				}
 			}
 		}
 
