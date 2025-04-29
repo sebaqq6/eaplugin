@@ -46,7 +46,7 @@ public class AutoSpectator {
 		this.spawnCamera = new Location(world, 21.10, 178.34, -34.41, -46.62F, 31.80F);
 		this.listener = new Listeners();
 		Bukkit.getPluginManager().registerEvents(this.listener, plugin);
-		Bukkit.getScheduler().runTaskTimer(plugin, this::scheduler, 20L, 20L * 45L);
+		Bukkit.getScheduler().runTaskTimer(plugin, this::scheduler, 20L, 20L * 30L);
 		print.info("AutoSpectator - loaded.");
 	}
 
