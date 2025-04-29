@@ -65,6 +65,10 @@ public class AutoSpectator {
 			return;
 		}
 
+		if (p.getName().equalsIgnoreCase("EternalCam")) {
+			p.getInventory().clear();
+		}
+
 		// Lista
 		List<Player> availablePlayers = Bukkit.getOnlinePlayers().stream()
 				.filter(pl -> !pl.equals(p)) // Nie siebie
@@ -72,6 +76,7 @@ public class AutoSpectator {
 				.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
 				.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
 				.filter(pl -> !pl.isDead()) // Jest żywy
+				.filter(pl -> PlayerData.get(pl).unParticipateLive == 0) // Chce uczestniczyć w live.
 				.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
 				.collect(Collectors.toList());
 

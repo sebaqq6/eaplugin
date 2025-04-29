@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.Commands.Command_redflag;
+import pl.eadventure.plugin.Commands.Command_uczestnictwolive;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.Top.TopTimePlayerPlayed;
 import pl.eadventure.plugin.PlayerData;
@@ -270,6 +271,13 @@ public class Placeholders extends PlaceholderExpansion {
 				if (time[0] > 0) return String.format("%dh %dm", time[0], time[1]);
 				else return String.format("%dm", time[1]);
 			} else return "0m";
+		}
+		//uczestnictwolive
+		else if (params.equalsIgnoreCase("uczestnictwolive")) {
+			if (player != null) {
+				return Command_uczestnictwolive.placeholder(player);
+			} else
+				return "nie";
 		}
 		// money
 		else if (params.equalsIgnoreCase("money")) {

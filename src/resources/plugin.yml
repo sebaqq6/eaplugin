@@ -160,6 +160,10 @@ commands:
     description: "Automatyczny spectator."
     usage: "/<command>"
     permission: eadventureplugin.cmd.autospec
+  uczestnictwolive:
+    description: "Włączanie/Wyłączanie uczestnictwa w Live."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.uczestnictwolive
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

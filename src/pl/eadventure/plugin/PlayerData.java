@@ -59,6 +59,7 @@ public class PlayerData {
 	public String mutedReason = " ";
 	public int breakBlocksCount = 0;
 	public int afkTime = 0;
+	public int unParticipateLive = 0;
 	//stream live
 	public int isStreamer = 0;
 	public String streamerService = " ";
@@ -141,6 +142,7 @@ public class PlayerData {
 		isStreamer = (int) row.get("streamer");
 		streamerService = (String) row.get("streamer_service");
 		streamerURL = (String) row.get("streamer_url");
+		unParticipateLive = (int) row.get("unParticipateLive");
 		//Load data end
 		startSession();
 		//Update some information
