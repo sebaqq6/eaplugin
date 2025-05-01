@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 public class AutoSpectator {
 	public static AutoSpectator instance;
+	public static String liveOperatorNick = "EternalCam";
 	Plugin plugin;
 	List<Player> players = new ArrayList<>();
 	HashMap<Player, Player> specNow = new HashMap<>();
@@ -37,12 +38,16 @@ public class AutoSpectator {
 	Location spawnCamera;
 	Location spawnLocation;
 	World world;
+	World world_event;
+	World world_utility;
 
 	public AutoSpectator(Plugin plugin) {
 		if (instance != null) return;
 		this.plugin = plugin;
 		instance = this;
 		this.world = Bukkit.getWorld("world");
+		this.world_event = Bukkit.getWorld("world_event");
+		this.world_utility = Bukkit.getWorld("world_utility");
 		this.spawnLocation = new Location(world, 31, 169, -23);
 		this.spawnCamera = new Location(world, 21.10, 178.34, -34.41, -46.62F, 31.80F);
 		this.listener = new Listeners();
@@ -65,20 +70,49 @@ public class AutoSpectator {
 			return;
 		}
 
-		if (p.getName().equalsIgnoreCase("EternalCam")) {
+		boolean isLiveOperator = false;
+		if (p.getName().equalsIgnoreCase(liveOperatorNick)) {
+			isLiveOperator = true;
 			p.getInventory().clear();
 		}
-
+		List<Player> availablePlayers = new ArrayList<>();
+		print.debug("updateCam -> isOperator: " + isLiveOperator + ", isEvent: " + isEvent() + ", nick: " + p.getName());
 		// Lista
-		List<Player> availablePlayers = Bukkit.getOnlinePlayers().stream()
-				.filter(pl -> !pl.equals(p)) // Nie siebie
-				.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
-				.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
-				.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
-				.filter(pl -> !pl.isDead()) // Jest żywy
-				.filter(pl -> PlayerData.get(pl).unParticipateLive == 0) // Chce uczestniczyć w live.
-				.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
-				.collect(Collectors.toList());
+		if (isLiveOperator) {//for operator list
+			if (isEvent()) {//is event
+				List<Player> forOperatorListEvent = Bukkit.getOnlinePlayers().stream()
+						.filter(pl -> !pl.equals(p)) // Nie siebie
+						.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
+						.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
+						.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
+						.filter(pl -> !pl.isDead()) // Jest żywy
+						.filter(pl -> world_event.equals(pl.getWorld())) //Jest na evencie
+						.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
+						.collect(Collectors.toList());
+				availablePlayers.addAll(forOperatorListEvent);
+			} else {//no event
+				List<Player> forOperatorListStandard = Bukkit.getOnlinePlayers().stream()
+						.filter(pl -> !pl.equals(p)) // Nie siebie
+						.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
+						.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
+						.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
+						.filter(pl -> !pl.isDead()) // Jest żywy
+						.filter(pl -> PlayerData.get(pl).unParticipateLive == 0 || isSpecialWorld(pl)) // Chce uczestniczyć w live lub jest na evencie/arenie.
+						.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
+						.collect(Collectors.toList());
+				availablePlayers.addAll(forOperatorListStandard);
+			}
+		} else {//for admin list
+			List<Player> forAdminsList = Bukkit.getOnlinePlayers().stream()
+					.filter(pl -> !pl.equals(p)) // Nie siebie
+					.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
+					.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
+					.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
+					.filter(pl -> !pl.isDead()) // Jest żywy
+					.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
+					.collect(Collectors.toList());
+			availablePlayers.addAll(forAdminsList);
+		}
 
 		if (availablePlayers.isEmpty()) {
 			p.teleport(spawnCamera);
@@ -135,19 +169,37 @@ public class AutoSpectator {
 		return instance.players.contains(player);
 	}
 
+	private boolean isSpecialWorld(Player player) {
+		return (player.getWorld().equals(world_event) || player.getWorld().equals(world_utility));
+	}
+
+	public boolean isEvent() {
+		return (world_event.getPlayerCount() > 5);
+	}
+
+	private static long movedTooQuicklyLastPrint = 0;
+
+	public static void movedTooQuicklyEvent() {
+		long currentTime = System.currentTimeMillis();
+		if (currentTime - movedTooQuicklyLastPrint >= 1000) {
+			print.error(liveOperatorNick + " moved too quickly!");
+			movedTooQuicklyLastPrint = currentTime;
+		}
+	}
+
 	//LISTENER
 	public static class Listeners implements Listener {
 		@EventHandler
 		public void onPlayerJoin(PlayerJoinEvent e) {
 			Player player = e.getPlayer();
 			String ip = player.getAddress().getAddress().getHostAddress();
-			if (player.getName().equals("EternalCam")) {
+			if (player.getName().equals(liveOperatorNick)) {
 				if (ip.equalsIgnoreCase("51.38.148.6")) {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							print.info("Trwa logowanie automatyczne EternalCam...");
-							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vconsole nlogin forcelogin EternalCam");
+							print.info("Trwa logowanie automatyczne " + liveOperatorNick + "...");
+							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vconsole nlogin forcelogin " + liveOperatorNick);
 							AutoSpectator.enable(player);
 						}
 					}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
