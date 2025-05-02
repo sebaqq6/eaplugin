@@ -111,10 +111,10 @@ public class ServerLogManager extends AbstractFilter {
 			return Result.DENY;
 		}
 		//moved too quickly spam and detect (for livestream operator)
-		if (m.contains(AutoSpectator.liveOperatorNick + " moved too quickly!")) {
-			AutoSpectator.movedTooQuicklyEvent();
-			return Result.DENY;
-		}
+//		if (m.contains(AutoSpectator.liveOperatorNick + " moved too quickly!")) {
+//			AutoSpectator.movedTooQuicklyEvent();
+//			return Result.DENY;
+//		}
 		//String sender = event.getLoggerName();
 		/*if(m.contains("mfnalex")) {
 			return Result.DENY; // mfnalex is a ninja
