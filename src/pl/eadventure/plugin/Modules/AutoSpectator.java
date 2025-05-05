@@ -1,6 +1,8 @@
 package pl.eadventure.plugin.Modules;
 
 import com.nickuc.login.api.nLoginAPI;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -227,6 +229,8 @@ public class AutoSpectator {
 							print.info("Trwa logowanie automatyczne " + liveOperatorNick + "...");
 							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vconsole nlogin forcelogin " + liveOperatorNick);
 							AutoSpectator.enable(player);
+							TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+							TabAPI.getInstance().getScoreboardManager().setScoreboardVisible(tabPlayer, false, false);
 						}
 					}.runTaskLater(EternalAdventurePlugin.getInstance(), 20L);
 				} else {
