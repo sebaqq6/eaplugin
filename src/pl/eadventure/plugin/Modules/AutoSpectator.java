@@ -140,6 +140,7 @@ public class AutoSpectator {
 				p.setSpectatorTarget(nextTarget);
 			}, 20L);
 		}
+		p.setSpectatorTarget(null);
 		p.setSpectatorTarget(nextTarget);
 		specNow.put(p, nextTarget);
 		//
