@@ -673,4 +673,15 @@ public class Utils {
 		}
 		return killer;
 	}
+
+	//string to inte
+	public static int stringToInt(String str) {
+		int value = 0;
+		try {
+			value = Integer.valueOf(str);
+		} catch (NumberFormatException e) {
+			value = 0;
+		}
+		return value;
+	}
 }

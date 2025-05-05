@@ -228,7 +228,7 @@ public class MySQLStorage {
 			String valueStr = (param != null) ? param.toString() : "null";
 			int index = debugSQL.indexOf("?");
 			if (index != -1) {
-				debugSQL.replace(index, index + 1, valueStr);
+				debugSQL.replace(index, index + 1, "'" + valueStr + "'");
 			}
 		}
 
