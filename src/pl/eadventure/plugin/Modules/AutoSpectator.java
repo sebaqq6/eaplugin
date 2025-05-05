@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.ProtocolLibAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
@@ -90,6 +91,17 @@ public class AutoSpectator {
 						.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
 						.collect(Collectors.toList());
 				availablePlayers.addAll(forOperatorListEvent);
+			} else if (isFunEvent()) {//is funevent
+				List<Player> forOperatorListFunEvent = Bukkit.getOnlinePlayers().stream()
+						.filter(pl -> !pl.equals(p)) // Nie siebie
+						.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
+						.filter(pl -> !PlayerUtils.isAfk(pl)) // Bez AFK'ów
+						.filter(pl -> !PlayerUtils.isVanished(pl)) // Bez Vanisha
+						.filter(pl -> !pl.isDead()) // Jest żywy
+						.filter(pl -> world_utility.equals(pl.getWorld())) //Jest na FunEvencie
+						.filter(pl -> pl.getGameMode() == GameMode.SURVIVAL) // Tylko survival
+						.collect(Collectors.toList());
+				availablePlayers.addAll(forOperatorListFunEvent);
 			} else {//no event
 				List<Player> forOperatorListStandard = Bukkit.getOnlinePlayers().stream()
 						.filter(pl -> !pl.equals(p)) // Nie siebie
@@ -176,6 +188,19 @@ public class AutoSpectator {
 
 	public boolean isEvent() {
 		return (world_event.getPlayerCount() > 5);
+	}
+
+	public boolean isFunEvent() {
+		int playersCount = 0;
+		for (Player p : world_utility.getPlayers()) {
+			if (FunEventsManager.isPlayerOnEvent(p) != null) {
+				playersCount++;
+				if (playersCount >= 4) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static long movedTooQuicklyLastPrint = 0;
