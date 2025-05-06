@@ -84,10 +84,10 @@ public class RegionCommandLooper {
 		for (RegionData region : regions) {
 			if (wgAPI.isOnRegion(player, region.name)) {
 				if (looping && countEnd > 0) {
-					//print.debug("countdown: " + countEnd);
+					//print.debug("[RGC] Player: " + player.getName() + ", RegionName: " + region.name + ", CountDown: " + countEnd);
 					countEnd--;
 					if (lastRegion != null && !region.name.equalsIgnoreCase(lastRegion.name)) {//change region
-						//print.debug("[RGC] Changed region: " + region.name + " -> " + lastRegion.name);
+						print.debug("[RGC] Changed region: " + region.name + " -> " + lastRegion.name + ", by player: " + player.getName());
 						performCommand(lastRegion.commandExit);
 						performCommand(region.command);
 						countEnd = region.time;
@@ -95,14 +95,14 @@ public class RegionCommandLooper {
 					}
 				} else if (looping && countEnd == 0) {
 					performCommand(region.command);
-					//print.debug("[RGC] RESTART");
+					print.debug("[RGC] RESTART play. Player: " + player.getName() + ", RegionName: " + region.name);
 					countEnd = region.time;
 				} else if (!looping) {
 					performCommand(region.command);
 					countEnd = region.time;
 					looping = true;
 					lastRegion = region;
-					//print.debug("[RGC] START!");
+					print.debug("[RGC] START play. Player: " + player.getName() + ", RegionName: " + region.name);
 				}
 				regionFound = true;
 				break;
@@ -113,7 +113,7 @@ public class RegionCommandLooper {
 			if (looping && lastRegion != null) {
 				looping = false;
 				performCommand(lastRegion.commandExit);
-				//print.debug("STOPP");
+				print.debug("[RGC] STOP play. Player: " + player.getName() + ", RegionName: " + lastRegion.name);
 				lastRegion = null;
 			}
 		}
