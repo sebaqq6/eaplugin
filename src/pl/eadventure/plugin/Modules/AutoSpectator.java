@@ -34,9 +34,11 @@ import java.util.stream.Collectors;
 public class AutoSpectator {
 	public static AutoSpectator instance;
 	public static String liveOperatorNick = "EternalCam";
+	public static int changeTime = 30;//seconds
 	Plugin plugin;
 	List<Player> players = new ArrayList<>();
 	HashMap<Player, Player> specNow = new HashMap<>();
+	HashMap<Player, Integer> specCountdown = new HashMap<>();
 	Listener listener;
 	Location spawnCamera;
 	Location spawnLocation;
@@ -55,7 +57,7 @@ public class AutoSpectator {
 		this.spawnCamera = new Location(world, 21.10, 178.34, -34.41, -46.62F, 31.80F);
 		this.listener = new Listeners();
 		Bukkit.getPluginManager().registerEvents(this.listener, plugin);
-		Bukkit.getScheduler().runTaskTimer(plugin, this::scheduler, 20L, 20L * 30L);
+		Bukkit.getScheduler().runTaskTimer(plugin, this::scheduler, 20L, 20L);
 		print.info("AutoSpectator - loaded.");
 	}
 
@@ -72,6 +74,12 @@ public class AutoSpectator {
 			specNow.put(p, null);
 			return;
 		}
+		//timer section - start
+		if (timeGoNextGet(p) > 0) {
+			decreaseTimeGoNext(p, 1);
+			return;
+		}
+		//timer section - end
 
 		boolean isLiveOperator = false;
 		if (p.getName().equalsIgnoreCase(liveOperatorNick)) {
@@ -79,7 +87,7 @@ public class AutoSpectator {
 			p.getInventory().clear();
 		}
 		List<Player> availablePlayers = new ArrayList<>();
-		print.debug("updateCam -> isOperator: " + isLiveOperator + ", isEvent: " + isEvent() + ", nick: " + p.getName());
+		print.debug("updateCam -> isOperator: " + isLiveOperator + ", isEvent: " + isEvent() + ", nick: " + p.getName() + ", timeGoNext: " + timeGoNextGet(p));
 		// Lista
 		if (isLiveOperator) {//for operator list
 			if (isEvent()) {//is event
@@ -131,6 +139,7 @@ public class AutoSpectator {
 		if (availablePlayers.isEmpty()) {
 			p.teleport(spawnCamera);
 			specNow.put(p, null);
+			//timeGoNextSet(p, 5);
 			return;
 		}
 
@@ -143,6 +152,8 @@ public class AutoSpectator {
 		}
 
 		Player nextTarget = availablePlayers.get(nextIndex);
+		//set new target
+		timeGoNextSet(p, changeTime);
 		if (nextTarget.equals(currentTarget)) return;
 		if (!nextTarget.getWorld().equals(p.getWorld())) {//other world?
 			p.setInvisible(true);
@@ -166,6 +177,7 @@ public class AutoSpectator {
 	public static boolean enable(Player player) {
 		if (instance.players.contains(player)) return false;
 		instance.players.add(player);
+		instance.timeGoNextSet(player, changeTime);
 		instance.updateCam(player);
 		return true;
 	}
@@ -174,6 +186,7 @@ public class AutoSpectator {
 		if (!instance.players.contains(player)) return false;
 		instance.players.remove(player);
 		instance.specNow.remove(player);
+		instance.specCountdown.remove(player);
 		player.teleport(instance.spawnLocation);
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setInvisible(false);
@@ -213,6 +226,22 @@ public class AutoSpectator {
 			print.error(liveOperatorNick + " moved too quickly!");
 			movedTooQuicklyLastPrint = currentTime;
 		}
+	}
+
+	private int timeGoNextGet(Player player) {
+		return specCountdown.getOrDefault(player, 0);
+	}
+
+	private void timeGoNextSet(Player player, int value) {
+		specCountdown.put(player, value);
+	}
+
+	private void decreaseTimeGoNext(Player player, int value) {
+		timeGoNextSet(player, timeGoNextGet(player) - value);
+	}
+
+	private void increaseTimeGoNext(Player player, int value) {
+		timeGoNextSet(player, timeGoNextGet(player) + value);
 	}
 
 	//LISTENER
