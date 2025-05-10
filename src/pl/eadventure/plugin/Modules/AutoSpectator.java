@@ -273,6 +273,17 @@ public class AutoSpectator {
 			disable(e.getPlayer());
 			for (Player spectator : new ArrayList<>(instance.players)) {
 				if (instance.specNow.get(spectator) != null && instance.specNow.get(spectator).equals(e.getPlayer())) {
+					instance.timeGoNextSet(spectator, 0);
+					instance.updateCam(spectator);
+				}
+			}
+		}
+
+		@EventHandler
+		public void onPlayerDeath(PlayerQuitEvent e) {
+			for (Player spectator : new ArrayList<>(instance.players)) {
+				if (instance.specNow.get(spectator) != null && instance.specNow.get(spectator).equals(e.getPlayer())) {
+					instance.timeGoNextSet(spectator, 0);
 					instance.updateCam(spectator);
 				}
 			}
@@ -283,6 +294,7 @@ public class AutoSpectator {
 			if (e.getNewGameMode() != GameMode.SURVIVAL) {
 				for (Player spectator : new ArrayList<>(instance.players)) {
 					if (instance.specNow.get(spectator) != null && instance.specNow.get(spectator).equals(e.getPlayer())) {
+						instance.timeGoNextSet(spectator, 0);
 						instance.updateCam(spectator);
 					}
 				}
