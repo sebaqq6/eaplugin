@@ -325,7 +325,7 @@ public abstract class FunEvent {
 	}
 
 	public void msgAll(String msg) {
-		print.debug("[msgAll-" + eventName + "] " + msg);
+		Bukkit.getConsoleSender().sendMessage(Utils.mm(msg));
 		for (Player player : players) {
 			if (player.isOnline()) {
 				player.sendMessage(Utils.mm(msg));

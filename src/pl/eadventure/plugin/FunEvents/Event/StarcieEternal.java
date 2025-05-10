@@ -24,6 +24,7 @@ import pl.eadventure.plugin.API.PvpManagerAPI;
 import pl.eadventure.plugin.FunEvents.FunEvent;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,6 +175,9 @@ public class StarcieEternal extends FunEvent {
 			String mvpMark = "<gold>✫";
 			result.add(String.format("<grey><bold>%d</bold>. <%s>%s <grey>(<red>\uD83D\uDDE1 %s<grey> | <white>\uD83D\uDC80 %d<grey> | <green>\uD83C\uDF00 %d<gray>) %s", lp, color, oP.getName(), kills, deaths, ratio, isMvp ? mvpMark : ""));
 			lp++;
+		}
+		for (String msg : result) {
+			Bukkit.getConsoleSender().sendMessage(Utils.mm(msg));
 		}
 		//loop for all event players
 		for (Player player : getPlayers()) {
