@@ -68,18 +68,19 @@ public class AutoSpectator {
 	}
 
 	public void updateCam(Player p) {
+		//timer section - start
+		if (timeGoNextGet(p) > 0) {
+			decreaseTimeGoNext(p, 1);
+			return;
+		}
+		timeGoNextSet(p, 5);
+		//timer section - end
 		if (p.getGameMode() != GameMode.SPECTATOR) {
 			p.setGameMode(GameMode.SPECTATOR);
 			p.teleport(spawnCamera);
 			specNow.put(p, null);
 			return;
 		}
-		//timer section - start
-		if (timeGoNextGet(p) > 0) {
-			decreaseTimeGoNext(p, 1);
-			return;
-		}
-		//timer section - end
 
 		boolean isLiveOperator = false;
 		if (p.getName().equalsIgnoreCase(liveOperatorNick)) {
@@ -139,7 +140,6 @@ public class AutoSpectator {
 		if (availablePlayers.isEmpty()) {
 			p.teleport(spawnCamera);
 			specNow.put(p, null);
-			//timeGoNextSet(p, 5);
 			return;
 		}
 
@@ -179,6 +179,11 @@ public class AutoSpectator {
 		instance.players.add(player);
 		instance.timeGoNextSet(player, changeTime);
 		instance.updateCam(player);
+		if (player.getGameMode() != GameMode.SPECTATOR) {
+			player.setGameMode(GameMode.SPECTATOR);
+			player.teleport(instance.spawnCamera);
+			instance.specNow.put(player, null);
+		}
 		return true;
 	}
 
