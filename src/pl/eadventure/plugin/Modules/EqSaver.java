@@ -56,6 +56,7 @@ public class EqSaver {
 				taskRestoreInventory();
 			}
 		}.runTaskTimerAsynchronously(plugin, 20L, 20L);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, EqSaver::cleanup, 20 * 5L);
 	}
 
 	//***************************************************************************************************LISTENERS
@@ -324,6 +325,26 @@ public class EqSaver {
 		mainGui.open(player);
 	}
 
+	//**************************************************************************************************CLEANUP
+	public static void cleanup() {
+		gVar.eqSaver.storage.execute("UPDATE invback SET status = 300 WHERE status != 301 AND date < NOW() - INTERVAL 60 DAY;");
+		gVar.eqSaver.storage.query("SELECT id FROM invback WHERE status = 300 LIMIT 1000;", queryResult -> {
+			int numRows = (int) queryResult.get("num_rows");
+			@SuppressWarnings("unchecked")
+			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
+			int deletedFiles = 0;
+			if (numRows > 0) {
+				for (int i = 0; i < numRows; i++) {
+					int id = (int) rows.get(i).get("id");
+					deleteInventoryFile(String.valueOf(id));
+					gVar.eqSaver.storage.execute("UPDATE invback SET status = 301 WHERE id=" + id);
+					deletedFiles++;
+				}
+			}
+			print.ok("[cleanup][EqSaver] Usunięto " + deletedFiles + " kopii zapasowych ekwpiunku (starsze niż 60 dni).");
+		});
+	}
+
 	//**************************************************************************************************UTILS
 	public static void saveInventoryToFile(ItemStack[] inventory, String fileName) {
 		File folder = new File("plugins/EternalAdventurePlugin/inventory_backups");
@@ -359,5 +380,21 @@ public class EqSaver {
 
 		List<ItemStack> itemList = (List<ItemStack>) config.get("inventory");
 		return itemList != null ? itemList.toArray(new ItemStack[0]) : new ItemStack[0];
+	}
+
+	public static boolean deleteInventoryFile(String fileName) {
+		File folder = new File("plugins/EternalAdventurePlugin/inventory_backups");
+		File file = new File(folder, fileName + ".yml");
+
+		if (file.exists()) {
+			boolean deleted = file.delete();
+			if (!deleted) {
+				print.error("Nie udało się usunąć pliku: " + fileName);
+			}
+			return deleted;
+		} else {
+			print.error("deleteInventoryFile: nie znaleziono pliku: " + fileName);
+			return false;
+		}
 	}
 }
