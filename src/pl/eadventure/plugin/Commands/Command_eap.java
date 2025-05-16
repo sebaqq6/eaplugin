@@ -47,6 +47,7 @@ public class Command_eap implements TabExecutor {
 					"disablegs",
 					"cachegs1",
 					"autofixmob",
+					"invbackcleanup",
 					"location");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
@@ -313,6 +314,11 @@ public class Command_eap implements TabExecutor {
 					gVar.antiBot = true;
 					sender.sendMessage("antiBot: ENABLED!");
 				}
+				break;
+			}
+			case "invbackcleanup": {
+				sender.sendMessage("Czyszczenie starych backupów eq (więcej info w konsoli!)...");
+				EqSaver.cleanup();
 				break;
 			}
 			case "rcl": {
