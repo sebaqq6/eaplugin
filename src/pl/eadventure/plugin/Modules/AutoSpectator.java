@@ -82,11 +82,8 @@ public class AutoSpectator {
 			return;
 		}
 
-		boolean isLiveOperator = false;
-		if (p.getName().equalsIgnoreCase(liveOperatorNick)) {
-			isLiveOperator = true;
-			p.getInventory().clear();
-		}
+		boolean isLiveOperator = isLiveOperator(p);
+		
 		List<Player> availablePlayers = new ArrayList<>();
 		print.debug("updateCam -> isOperator: " + isLiveOperator + ", isEvent: " + isEvent() + ", nick: " + p.getName() + ", timeGoNext: " + timeGoNextGet(p));
 		// Lista
@@ -231,6 +228,14 @@ public class AutoSpectator {
 			print.error(liveOperatorNick + " moved too quickly!");
 			movedTooQuicklyLastPrint = currentTime;
 		}
+	}
+
+	public static boolean isLiveOperator(Player p) {
+		if (p.getName().equalsIgnoreCase(liveOperatorNick)) {
+			p.getInventory().clear();
+			return true;
+		}
+		return false;
 	}
 
 	private int timeGoNextGet(Player player) {

@@ -1,6 +1,7 @@
 package pl.eadventure.plugin.Modules;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -81,8 +82,15 @@ public class RegionCommandLooper {
 
 	private void check() {
 		boolean regionFound = false;
+		Player regionCheckPlayer = player;
+		if (player.getGameMode() == GameMode.SPECTATOR) {
+			if (player.getSpectatorTarget() instanceof Player specTarget) {
+				regionCheckPlayer = specTarget;
+				print.debug("[RGC] regionCheckPlayer from '" + player.getName() + "' changed to '" + regionCheckPlayer.getName() + "'.");
+			}
+		}
 		for (RegionData region : regions) {
-			if (wgAPI.isOnRegion(player, region.name)) {
+			if (wgAPI.isOnRegion(regionCheckPlayer, region.name)) {
 				if (looping && countEnd > 0) {
 					//print.debug("[RGC] Player: " + player.getName() + ", RegionName: " + region.name + ", CountDown: " + countEnd);
 					countEnd--;
