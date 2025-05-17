@@ -51,7 +51,7 @@ public class playerChatEvent implements Listener {
 		}
 		//event ann chat
 		if (pd.eventAnnChat) {
-			if (isPlayerInEvent(player)) {
+			/*if (isPlayerInEvent(player)) {
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					if (isPlayerInEvent(players)) {
 						players.showTitle(Title.title(Utils.mm(""),
@@ -77,7 +77,26 @@ public class playerChatEvent implements Listener {
 						ChatColor.translateAlternateColorCodes('&', "&7Od teraz wiadomości będą wysyłane na czat."));
 				pd.eventAnnChat = false;
 				e.setCancelled(true);
+			}*/
+			for (Player players : Bukkit.getOnlinePlayers()) {
+				if (player.getWorld().equals(players.getWorld())) {
+					if (player.getLocation().distance(players.getLocation()) < 300)
+						players.showTitle(Title.title(Utils.mm(""),
+								Utils.mm("<#FF0000>" + e.getMessage()),
+								Title.Times.times(Duration.ofMillis(500),
+										Duration.ofMillis(7000),
+										Duration.ofMillis(500))));
+					players.playSound(
+							players.getLocation(),                     // Lokalizacja odtworzenia dźwięku
+							"my_sounds:sounds.warning",              // Ścieżka do dźwięku (namespace:sound)
+							SoundCategory.MASTER,                    // Kategoria dźwięku
+							0.15f,                                    // Głośność
+							1.0f                                     // Ton (1.0 = standardowy ton)
+					);
+				}
 			}
+			isAnnMessage = true;
+			e.setCancelled(true);
 		}
 		//logging:
 		if (isAnnMessage) {

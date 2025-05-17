@@ -219,11 +219,14 @@ public class Command_evtools implements TabExecutor {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Wiadomości na środku ekranu: &c&lwyłączone&7."));
 						pd.eventAnnChat = false;
 					} else {
-						if (isPlayerInEvent(player, null)) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Wiadomości na środku ekranu: &a&lwłączone&7."));
+						pd.eventAnnChat = true;
+						/*if (isPlayerInEvent(player, null)) {
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Wiadomości na środku ekranu: &a&lwłączone&7."));
 							pd.eventAnnChat = true;
-						} else
+						} else {
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Nie jesteś na evencie."));
+						}*/
 
 					}
 				} else {
