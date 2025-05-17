@@ -22,18 +22,18 @@ import java.util.List;
 public class Command_rozsypanka implements TabExecutor {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-		if(args.length == 1) {
+		if (args.length == 1) {
 			List<String> cmdlist = new ArrayList<>();
 			cmdlist = Arrays.asList("500", "1000", "5000");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
-		}
-		else if (args.length == 2) {
+		} else if (args.length == 2) {
 			List<String> cmdlist = new ArrayList<>();
 			cmdlist = Arrays.asList("MASŁO", "HASŁO", "DRZEWO");
 			return StringUtil.copyPartialMatches(args[1], cmdlist, new ArrayList<>());
 		} else
 			return Collections.emptyList();
 	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 0) {
@@ -48,31 +48,30 @@ public class Command_rozsypanka implements TabExecutor {
 		double money = 0.0;
 		try {
 			money = Double.parseDouble(args[0]);
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			sender.sendMessage("Nieprawidłowa kwota (wartość nie jest cyfrą).");
 			return true;
 		}
-		if(money > 50000 || money < 100) {
+		if (money > 50000 || money < 100) {
 			sender.sendMessage("Nieprawidłowa kwota (od 100$ do 50000$).");
 			return true;
 		}
 		//hasło
-		if(args[1].length() < 3) {
+		if (args[1].length() < 3) {
 			sender.sendMessage("Hasło jest za krótkie.");
 			return true;
 		}
-		if(args[1].length() > 10) {
+		if (args[1].length() > 15) {
 			sender.sendMessage("Hasło jest za długie.");
 			return true;
 		}
-		print.debug("Rozsypanka: " + args[1]);
+		print.info("[Cheat] Hasło z rozsypanki: " + args[1]);
 		String shuffledPassword = Utils.shuffleString(args[1].toUpperCase());
 		int errorShuffleCount = 0;
-		while(args[1].equals(shuffledPassword))
-		{
+		while (args[1].equals(shuffledPassword)) {
 			shuffledPassword = Utils.shuffleString(args[1].toUpperCase());
 			errorShuffleCount++;
-			if(errorShuffleCount > 10) {
+			if (errorShuffleCount > 10) {
 				sender.sendMessage("Nie można ułożyć hasła z podanych liter: " + shuffledPassword);
 				return true;
 			}
@@ -86,13 +85,13 @@ public class Command_rozsypanka implements TabExecutor {
 	public static void autoInit() {
 		//load data from YML
 		File file = new File("plugins/EternalAdventurePlugin/rozsypanka.yml");
-		if(!file.exists()) {
+		if (!file.exists()) {
 			print.error("Nie znaleziono rozsypanka.yml");
 			return;
 		}
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		List<String> commandParam = new ArrayList<>();
-		commandParam =  config.getStringList("params");
+		commandParam = config.getStringList("params");
 		print.ok("Wczytano rozsypanka.yml");
 		/*for (String entry : commandList) {
 			print.debug(entry);
@@ -102,15 +101,16 @@ public class Command_rozsypanka implements TabExecutor {
 		new BukkitRunnable() {
 			final int endIndex = finalCommandParam.size();
 			int actualIndex = 0;
+
 			@Override
 			public void run() {
 				String commandLine = "rozsypanka " + finalCommandParam.get(actualIndex);
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandLine);
 				//print.debug(commandLine);
 				actualIndex++;
-				if(actualIndex >= endIndex) actualIndex = 0;
+				if (actualIndex >= endIndex) actualIndex = 0;
 			}
-		//}.runTaskTimer(EternalAdventurePlugin.getInstance(), 20L*60L, 20*60L);
-		}.runTaskTimer(EternalAdventurePlugin.getInstance(), 20L*60L*30L, 20L*60L*30L);
+			//}.runTaskTimer(EternalAdventurePlugin.getInstance(), 20L*60L, 20*60L);
+		}.runTaskTimer(EternalAdventurePlugin.getInstance(), 20L * 60L * 30L, 20L * 60L * 30L);
 	}
 }
