@@ -83,7 +83,7 @@ public class AutoSpectator {
 		}
 
 		boolean isLiveOperator = isLiveOperator(p);
-		
+
 		List<Player> availablePlayers = new ArrayList<>();
 		print.debug("updateCam -> isOperator: " + isLiveOperator + ", isEvent: " + isEvent() + ", nick: " + p.getName() + ", timeGoNext: " + timeGoNextGet(p));
 		// Lista
@@ -151,6 +151,7 @@ public class AutoSpectator {
 		Player nextTarget = availablePlayers.get(nextIndex);
 		//set new target
 		timeGoNextSet(p, changeTime);
+		p.sendMessage(Utils.mm("<bold><grey>Obserwujesz gracza: <red>" + nextTarget.getName()));
 		if (nextTarget.equals(currentTarget)) return;
 		if (!nextTarget.getWorld().equals(p.getWorld())) {//other world?
 			p.setInvisible(true);
