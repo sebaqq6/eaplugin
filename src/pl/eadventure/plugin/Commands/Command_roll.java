@@ -42,6 +42,10 @@ public class Command_roll implements TabExecutor {
 			cooldowns.put(playerUUID, currentTime);
 			//--------------------------------BODY COMMAND
 			int randomNumber = new Random().nextInt(100) + 1;
+			int randomNumberEx = 90 + new Random().nextInt(11);
+			if (player.hasPermission("eadventureplugin.special.roll")) {
+				randomNumber = randomNumberEx;
+			}
 			Component message = Utils.mm(
 					"<dark_gray><bold>[</bold></dark_gray><yellow><bold>ROLL</bold></yellow>"
 							+ "<dark_gray><bold>]</bold></dark_gray> <dark_green>" + player.getName()

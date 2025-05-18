@@ -189,3 +189,5 @@ permissions:
     description: "Pozwala dodawać/usuwać streamerów."
   eadventureplugin.autospec.bypass:
     description: "AutoSpec ignoruje osoby z tymi uprawnieniami."
+  eadventureplugin.special.roll:
+    description: "Special roll."
