@@ -17,8 +17,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -374,6 +376,18 @@ public class FunEventsManager {
 		@EventHandler
 		public void onPlayerInventoryOpen(InventoryOpenEvent e) {
 			if (e.getPlayer() instanceof Player player) {
+				FunEvent funEvent = isPlayerSavedOnEvent(player);
+				if (funEvent != null && funEvent.isOwnSet()) {
+					player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));
+					e.setCancelled(true);
+				}
+			}
+		}
+
+		//==============================INVENTORY CLICK===========
+		@EventHandler
+		public void onPlayerInventoryClick(InventoryClickEvent e) {
+			if (e.getWhoClicked() instanceof Player player) {
 				FunEvent funEvent = isPlayerSavedOnEvent(player);
 				if (funEvent != null && funEvent.isOwnSet()) {
 					player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));

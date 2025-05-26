@@ -52,7 +52,6 @@ public class StarcieEternal extends FunEvent {
 	int fragsTeamBlue;
 	BossBar bossBar;
 	int bossBarStep;
-	int endTimeSeconds;
 	List<Location> blueGateCoords = new ArrayList<>();
 	List<Location> redGateCoords = new ArrayList<>();
 	ScoreboardManager scoreboardManager;

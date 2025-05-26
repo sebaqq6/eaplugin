@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -39,6 +40,7 @@ public abstract class FunEvent {
 	protected final int TEAM_RED = 1;
 	protected final int TEAM_BLUE = 2;
 	private int status;
+	protected int endTimeSeconds;
 	private int minPlayers;
 	private int maxPlayers;
 	private Listener listener;
@@ -234,6 +236,7 @@ public abstract class FunEvent {
 	public void setOwnSet(Player player) {
 		ItemStack[] items = ownSets.getOrDefault(player, null);
 		if (items != null) {
+			player.getInventory().clear();
 			player.getInventory().setContents(items);
 		} else {
 			print.error("Nie udało się ustawić własnego seta (FunEvent->setOwnSet) dla gracza: " + player.getName());
@@ -349,6 +352,7 @@ public abstract class FunEvent {
 	public void tpAll(Location location) {
 		for (Player player : players) {
 			if (player.isOnline()) {
+				player.closeInventory();
 				GSitAPI.stopPlayerSit(player, GStopReason.PLUGIN);
 			}
 		}
@@ -369,6 +373,7 @@ public abstract class FunEvent {
 	public void tp(Player player, Location location) {
 		if (player.isOnline()) {
 			GSitAPI.stopPlayerSit(player, GStopReason.PLUGIN);
+			player.closeInventory();
 		}
 		new BukkitRunnable() {
 			final Location finalLocation = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -557,6 +562,21 @@ public abstract class FunEvent {
 					event.setCancelled(true);
 					damager.sendMessage(Utils.mm("<grey>Ten gracz posiada ochronę spawnu."));
 					return;
+				}
+			}
+		}
+
+		//==============================INVENTORY CLICK===========
+		@EventHandler
+		public void onPlayerInventoryClick(InventoryClickEvent e) {
+			if (status != Status.IN_PROGRESS) return;
+			if (endTimeSeconds < 60) {
+				if (e.getWhoClicked() instanceof Player player) {
+					if (!getPlayers().contains(player)) return;
+					if (isOwnSet()) {
+						player.sendMessage(Utils.mm("<grey>Jesteś zapisany/a na event - czynność niedozwolona."));
+						e.setCancelled(true);
+					}
 				}
 			}
 		}
