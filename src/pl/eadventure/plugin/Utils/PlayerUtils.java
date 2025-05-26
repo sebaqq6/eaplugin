@@ -160,7 +160,12 @@ public class PlayerUtils {
 					}
 				}
 			}
-			return playerPermission != null && targetPermission != null && Utils.isAdminPermissionHigherThan(playerPermission, targetPermission);
+			boolean isAdminPermissionHigherThan = false;
+			if (playerPermission != null && targetPermission != null) {
+				isAdminPermissionHigherThan = Utils.isAdminPermissionHigherThan(playerPermission, targetPermission);
+			}
+			print.debug("isAdminPermissionHasHigher(" + playerName + ", " + targetName + ") -> {playerPermission = " + playerPermission + ", targetPermission = " + targetPermission + ", isAdminPermissionHigherThan = " + isAdminPermissionHigherThan + "}");
+			return playerPermission != null && targetPermission != null && isAdminPermissionHigherThan;
 		}
 		return false;
 	}
