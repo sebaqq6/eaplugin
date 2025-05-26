@@ -86,7 +86,7 @@ public class RegionCommandLooper {
 		if (player.getGameMode() == GameMode.SPECTATOR) {
 			if (player.getSpectatorTarget() instanceof Player specTarget) {
 				regionCheckPlayer = specTarget;
-				print.debug("[RGC] regionCheckPlayer from '" + player.getName() + "' changed to '" + regionCheckPlayer.getName() + "'.");
+				//print.debug("[RGC] regionCheckPlayer from '" + player.getName() + "' changed to '" + regionCheckPlayer.getName() + "'.");
 			}
 		}
 		for (RegionData region : regions) {
