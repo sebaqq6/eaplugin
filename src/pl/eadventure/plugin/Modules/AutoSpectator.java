@@ -88,7 +88,14 @@ public class AutoSpectator {
 		print.debug("updateCam -> isOperator: " + isLiveOperator + ", isEvent: " + isEvent() + ", nick: " + p.getName() + ", timeGoNext: " + timeGoNextGet(p));
 		// Lista
 		if (isLiveOperator) {//for operator list
-			if (isEvent()) {//is event
+			if (!OneVsOneBossBars.getActiveWarriors().isEmpty()) {
+				//availablePlayers.addAll(OneVsOneBossBars.getActiveWarriors());
+				p.setGameMode(GameMode.SPECTATOR);
+				p.teleport(new Location(world_utility, 133.43, 74.17, -284.84, 90.00F, 30.30F));
+				specNow.put(p, null);
+				timeGoNextSet(p, 30);
+				return;
+			} else if (isEvent()) {//is event
 				List<Player> forOperatorListEvent = Bukkit.getOnlinePlayers().stream()
 						.filter(pl -> !pl.equals(p)) // Nie siebie
 						.filter(pl -> !pl.hasPermission("eadventureplugin.autospec.bypass")) // Bez bypassa
