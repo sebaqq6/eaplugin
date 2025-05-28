@@ -261,6 +261,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		MobFixer.load();
 		RollTool.loadRollTool(this);
 		new AutoSpectator(this);
+		new OneVsOneBossBars(this);
 
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();

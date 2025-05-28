@@ -231,5 +231,12 @@
             <version>3.18.44</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.ssomar.score</groupId>
+            <artifactId>SCore</artifactId>
+            <version>5.25.5.27</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/SCore.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
