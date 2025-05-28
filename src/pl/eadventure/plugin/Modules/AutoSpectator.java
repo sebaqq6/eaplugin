@@ -90,8 +90,15 @@ public class AutoSpectator {
 		if (isLiveOperator) {//for operator list
 			if (!OneVsOneBossBars.getActiveWarriors().isEmpty()) {
 				//availablePlayers.addAll(OneVsOneBossBars.getActiveWarriors());
-				p.setGameMode(GameMode.SPECTATOR);
 				p.teleport(new Location(world_utility, 133.43, 74.17, -284.84, 90.00F, 30.30F));
+				p.setGameMode(GameMode.SPECTATOR);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						p.teleport(new Location(world_utility, 133.43, 74.17, -284.84, 90.00F, 30.30F));
+						p.setGameMode(GameMode.SPECTATOR);
+					}
+				}.runTaskLater(plugin, 20L);
 				specNow.put(p, null);
 				timeGoNextSet(p, 30);
 				return;
