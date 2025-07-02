@@ -216,6 +216,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("blueflag").setExecutor(new Command_blueflag());
 		this.getCommand("autospec").setExecutor(new Command_autospec());
 		this.getCommand("uczestnictwolive").setExecutor(new Command_uczestnictwolive());
+		this.getCommand("banlistlite").setExecutor(new Command_banlistlite());
 
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());

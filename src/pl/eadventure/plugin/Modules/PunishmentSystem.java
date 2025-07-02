@@ -367,7 +367,7 @@ public class PunishmentSystem {
 		return String.format("%dd, %dg, %dm", remainingTime[0], remainingTime[1], remainingTime[2]);
 	}
 
-	public static void showBanListGUI(Player p, Integer page) {
+	public static void showBanListGUI(Player p, Integer page, boolean playerMode) {
 		int playersPerPage = 45; // Limit of players per page
 		int startIndex = (page - 1) * playersPerPage;
 		int endIndex = Math.min(startIndex + playersPerPage, getListPlayersCanBeUnbanned().size());
@@ -381,15 +381,20 @@ public class PunishmentSystem {
 				ArrayList<String> playerDescription = new ArrayList<>();
 				BanData tempBanData = BanData.getByNick(playerBannedName);
 				if (tempBanData == null) continue;
-				playerDescription.add(Utils.color(String.format("&r&7Powód: &3%s", tempBanData.reason())));
-				playerDescription.add(Utils.color(String.format("&r&7Nadał/a: &3%s", tempBanData.bannedByNick())));
-				playerDescription.add(Utils.color(String.format("&r&7Nadano: &3%s", tempBanData.bannedDate())));
-				playerDescription.add(Utils.color(String.format("&r&7Pozostało: &3%s", getFormatedExpiresShort(tempBanData.expiresTimestamp()))));
-				playerDescription.add(" ");
-				playerDescription.add(Utils.color(String.format("&r&7Ban na nick: %s", (tempBanData.nick() != null) ? "&a✔" : "&c✘")));
-				playerDescription.add(Utils.color(String.format("&r&7Ban na UUID: %s", (tempBanData.uuid() != null) ? "&a✔" : "&c✘")));
-				playerDescription.add(Utils.color(String.format("&r&7Ban na IP: %s", (tempBanData.ip() != null) ? "&a✔" : "&c✘")));
-				if (p.hasPermission("eadventureplugin.cmd.unban")) {
+				if (!playerMode) {
+					playerDescription.add(Utils.color(String.format("&r&7Powód: &3%s", tempBanData.reason())));
+					playerDescription.add(Utils.color(String.format("&r&7Nadał/a: &3%s", tempBanData.bannedByNick())));
+					playerDescription.add(Utils.color(String.format("&r&7Nadano: &3%s", tempBanData.bannedDate())));
+					playerDescription.add(Utils.color(String.format("&r&7Pozostało: &3%s", getFormatedExpiresShort(tempBanData.expiresTimestamp()))));
+					playerDescription.add(" ");
+					playerDescription.add(Utils.color(String.format("&r&7Ban na nick: %s", (tempBanData.nick() != null) ? "&a✔" : "&c✘")));
+					playerDescription.add(Utils.color(String.format("&r&7Ban na UUID: %s", (tempBanData.uuid() != null) ? "&a✔" : "&c✘")));
+					playerDescription.add(Utils.color(String.format("&r&7Ban na IP: %s", (tempBanData.ip() != null) ? "&a✔" : "&c✘")));
+				} else {
+					playerDescription.add(Utils.color(String.format("&r&7Nadano: &3%s", tempBanData.bannedDate())));
+					playerDescription.add(Utils.color(String.format("&r&7Pozostało: &3%s", getFormatedExpiresShort(tempBanData.expiresTimestamp()))));
+				}
+				if (p.hasPermission("eadventureplugin.cmd.unban") && !playerMode) {
 					playerDescription.add(" ");
 					playerDescription.add(Utils.color("&r&c&lSHIFT+PPM &7- aby odbanować."));
 				}
@@ -397,7 +402,7 @@ public class PunishmentSystem {
 
 				banListGUI.addItem(playerHead, (player, gui, slot, type) -> {
 					if (ClickType.SHIFT_RIGHT == type) {
-						if (player.hasPermission("eadventureplugin.cmd.unban")) {
+						if (player.hasPermission("eadventureplugin.cmd.unban") && !playerMode) {
 							player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
 							p.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("&7Gracz &2%s &7został &2pomyślnie &7odbanowany.", playerBannedName)));
 							unbanPlayer(playerBannedName);
@@ -415,7 +420,7 @@ public class PunishmentSystem {
 					ItemStack navButton = Utils.itemWithDisplayName(gVar.customItems.get("hArrowLeft"), Utils.color("&r&7&lPoprzednia strona"), null);
 					banListGUI.setItem(x, navButton, (player, gui, slot, type) -> {
 						player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
-						showBanListGUI(p, page - 1);
+						showBanListGUI(p, page - 1, playerMode);
 					});
 				} else {
 					ItemStack navButton = Utils.itemWithDisplayName(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ", null);
@@ -433,7 +438,7 @@ public class PunishmentSystem {
 					banListGUI.setItem(x, navButton, (player, gui, slot, type) -> {
 						player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0F, 1.5F);
 						int nextPage = page + 1;
-						showBanListGUI(p, nextPage);
+						showBanListGUI(p, nextPage, playerMode);
 					});
 				} else {
 					ItemStack navButton = Utils.itemWithDisplayName(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ", null);

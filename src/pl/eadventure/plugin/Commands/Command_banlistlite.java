@@ -7,11 +7,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 
-public class Command_banlist implements CommandExecutor {
+public class Command_banlistlite implements CommandExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (sender instanceof Player player) {
-			PunishmentSystem.showBanListGUI(player, 1, false);
+			PunishmentSystem.showBanListGUI(player, 1, true);
 		}
 		return true;
 	}

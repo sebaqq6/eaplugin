@@ -164,6 +164,10 @@ commands:
     description: "Włączanie/Wyłączanie uczestnictwa w Live."
     usage: "/<command>"
     permission: eadventureplugin.cmd.uczestnictwolive
+  banlistlite:
+    description: "Minimalistyczna lista banów."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.banlistlite
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."
