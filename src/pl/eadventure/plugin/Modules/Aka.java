@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.StringJoiner;
 
 public class Aka {
-	static final MySQLStorage storage = EternalAdventurePlugin.getMySQL();
+
 
 	public static void checkPlayer(String playerName) {
+		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 		List<String> akaPlayers = new ArrayList<>();
 		String sql = "SELECT p2.nick, p2.banned AS banned " +
 				"FROM players p1 " +
