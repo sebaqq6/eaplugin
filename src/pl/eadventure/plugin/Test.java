@@ -43,12 +43,12 @@ public class Test {
 
 
 	public static void testPlayer(Player player) {
-		//glowTest(player);
+		glowTest(player);
 		//pvpManagerTest(player);
 		//messageTest(player);
 		//gateTest();
 		//gSitApiTest(player);
-		specTest(player);
+		//specTest(player);
 	}
 
 	public static Player testDoll() {
