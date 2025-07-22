@@ -1,10 +1,10 @@
 name: EternalAdventurePlugin
 main: pl.eadventure.plugin.EternalAdventurePlugin
-version: 1.21.1
+version: 1.21.5
 description: Plugin dedykowany dla EternalAdventure
 author: DevDesmond
 website: https://eadventure.pl
-depend: [ Vulcan, Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, ProtocolLib, ProtectionStones, MobArena, VentureChat, ComplexTurrets, PvPManager, GSit, ExecutableItems, SCore ]
+depend: [ Vulcan, Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, ProtocolLib, ProtectionStones, MobArena, ComplexTurrets, PvPManager, GSit, ExecutableItems, SCore ]
 api-version: '1.21'
 commands:
   eap:
@@ -168,6 +168,32 @@ commands:
     description: "Minimalistyczna lista banów."
     usage: "/<command>"
     permission: eadventureplugin.cmd.banlistlite
+  adminczat:
+    description: "Czat adminów."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.adminczat
+  czatglobalny:
+    description: "Czat globalny."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.czatglobalny
+    default: true
+  czatlokalny:
+    description: "Czat lokalny."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.czatlokalny
+    default: true
+  ignore:
+    description: "Ignorowanie gracza."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.ignore
+  msg:
+    description: "Wysyłanie prywatnej wiadomości."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.msg
+  r:
+    description: "Odpowiedź na prywatną wiadomość."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.r
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

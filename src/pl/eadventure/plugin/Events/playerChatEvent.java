@@ -112,15 +112,8 @@ public class playerChatEvent implements Listener {
 			ServerLogManager.log(strLog, ServerLogManager.LogType.Chat);
 		}
 		//
-		EternalAdventurePlugin.getPrivateChatEvent().onPlayerChatProxy(e);
-		if (e.getMessage().contains("[item]")) {
-			ItemStack itemStack = player.getInventory().getItemInMainHand();
-			if (itemStack != null && !itemStack.getType().isAir()) {
-				Component itemName = itemStack.displayName();
-				String formattedItemName = LegacyComponentSerializer.legacySection().serialize(itemName);
-				e.setMessage(e.getMessage().replace("[item]", formattedItemName));
-			}
-		}
+		//EternalAdventurePlugin.getPrivateChatEvent().onPlayerChatProxy(e);
+
 		/*if (player.isOp()) {
 			if (!player.getName().equals("DevDesmond")) {
 				print.error("Gracz: " + player.getName() + " ma OP - Zabieram i banuje!! - Anulowanie wiadomosci: "+ e.getMessage());

@@ -23,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.API.*;
 import pl.eadventure.plugin.Commands.*;
+import pl.eadventure.plugin.Commands.Chat.*;
 import pl.eadventure.plugin.Events.*;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.*;
@@ -172,6 +173,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new playerMoveEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerCheatDetectEvent(), this);
 		getServer().getPluginManager().registerEvents(new playerTeleportEvent(), this);
+		getServer().getPluginManager().registerEvents(new Chat(), this);
 
 		//CHANNEL FOR VELCITY
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "velocity:relay");
@@ -217,6 +219,12 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("autospec").setExecutor(new Command_autospec());
 		this.getCommand("uczestnictwolive").setExecutor(new Command_uczestnictwolive());
 		this.getCommand("banlistlite").setExecutor(new Command_banlistlite());
+		this.getCommand("adminczat").setExecutor(new Command_adminczat());
+		this.getCommand("czatglobalny").setExecutor(new Command_czatglobalny());
+		this.getCommand("czatlokalny").setExecutor(new Command_czatlokalny());
+		this.getCommand("ignore").setExecutor(new Command_ignore());
+		this.getCommand("msg").setExecutor(new Command_msg());
+		this.getCommand("r").setExecutor(new Command_r());
 
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());

@@ -117,7 +117,7 @@ public class playerCommandPreprocessEvent implements Listener {
 				e.setCancelled(true);
 			}
 		}
-		EternalAdventurePlugin.getPrivateChatEvent().onPlayerCommandProxy(e);
+		//EternalAdventurePlugin.getPrivateChatEvent().onPlayerCommandProxy(e);
 		/*if (player.isOp() == true) {
 			if (!player.getName().equals("DevDesmond")) {
 				print.error("Gracz: " + player.getName() + " ma OP - leci ban! - Anulowanie komendy: " + command);

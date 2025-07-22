@@ -63,6 +63,9 @@ public class ServerLogManager extends AbstractFilter {
 		if (m.contains("EternalAntibot")) {//block console spam
 			return Result.DENY;
 		}
+		if (m.contains("[Not Secure]")) {//block original [Not Secure] for chat
+			return Result.DENY;
+		}
 		//console spam from Pocket Games
 		if (/*m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:228)")
 				|| m.contains("at java.base/jdk.internal.reflect.FieldAccessorImpl.throwSetIllegalArgumentException(FieldAccessorImpl.java:232)")
