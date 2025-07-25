@@ -6,6 +6,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -60,6 +61,7 @@ public class Chat implements Listener, ChatRenderer { // Implement the ChatRende
 
 		//Final component
 		Component finalMessage = Utils.mm(beforeMessage).append(message);
+		//Component finalMessage = Utils.mm(beforeMessage).append(message.color(TextColor.fromHexString("#e6fffe")));
 		//Console new message (not secure tag blocked)
 		if (viewer instanceof ConsoleCommandSender) {
 			Bukkit.getConsoleSender().sendMessage(finalMessage);
