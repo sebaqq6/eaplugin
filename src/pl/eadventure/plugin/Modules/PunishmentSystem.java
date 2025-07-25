@@ -348,8 +348,8 @@ public class PunishmentSystem {
 				String.format("&cPozostało: &7%s\n", getFormatedExpires(expiresTimestamp)) +
 				"\n" +
 				"&8Apeluj od kary na discordzie.\n" +
-				"&5Discord: &5&ndiscord.eadventure.pl\n" +
-				"&8Lub wykup unbana: &7&nsklep.eadventure.pl";
+				"&5Discord: &5&ndiscord.eadventure.pl\n";// +
+		//"&8Lub wykup unbana: &7&nsklep.eadventure.pl";
 		return ChatColor.translateAlternateColorCodes('&', finalMessage);
 	}
 
