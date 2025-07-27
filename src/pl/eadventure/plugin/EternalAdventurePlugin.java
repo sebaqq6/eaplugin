@@ -27,6 +27,7 @@ import pl.eadventure.plugin.Commands.Chat.*;
 import pl.eadventure.plugin.Events.*;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.Modules.*;
+import pl.eadventure.plugin.Modules.Chat.Chat;
 import pl.eadventure.plugin.Modules.Top.TopBreakBlocks;
 import pl.eadventure.plugin.Modules.Top.TopDonate;
 import pl.eadventure.plugin.Modules.Top.TopGearScore;
