@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.ServerLogManager;
+import pl.eadventure.plugin.Utils.print;
 
 import java.util.Arrays;
 
@@ -25,7 +26,10 @@ public class playerPrivateChatEvent {
 			@Override
 			public void run() {
 				MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
-				if (mcp == null) return;
+				if (mcp == null) {
+					print.error("VentureChat error: mcp == null [onPlayerChatProxy]");
+					return;
+				}
 
 				String chat = event.getMessage();
 
