@@ -25,6 +25,8 @@ public class playerPrivateChatEvent {
 			@Override
 			public void run() {
 				MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
+				if (mcp == null) return;
+
 				String chat = event.getMessage();
 
 				if (mcp.hasConversation() && !mcp.isQuickChat()) {
