@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class playerPrivateChatEvent {
 	//==================================================================================================================
-	private void onPlayerSendPrivateMessage(String source, String target, String message) {
+	public static void onPlayerSendPrivateMessage(String source, String target, String message) {
 		String pmLog = String.format("[SPY] %s -> %s: %s", source, target, message);
 		ServerLogManager.log(pmLog, ServerLogManager.LogType.Chat);
 	}

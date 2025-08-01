@@ -28,18 +28,11 @@ public class Chat implements Listener, ChatRenderer { // Implement the ChatRende
 		Component originalMessage = e.message();
 		Component updatedMessage = originalMessage;
 		String messageString = PlainTextComponentSerializer.plainText().serialize(originalMessage);
-		//placeholder [item]
-		if (messageString.contains("[item]")) {
-			ItemStack itemStack = e.getPlayer().getInventory().getItemInMainHand();
-			if (itemStack != null && !itemStack.getType().isAir()) {
-				Component itemName = itemStack.displayName();
-				updatedMessage = originalMessage.replaceText(builder -> builder
-						.matchLiteral("[item]")
-						.replacement(itemName)
-				);
-			}
-		}
+		//placeholders
+		updatedMessage = parseChatPlaceholders(e.getPlayer(), originalMessage);
+		//modify messsage
 		e.message(updatedMessage);
+		//set renderer
 		e.renderer(this);
 	}
 
@@ -61,6 +54,24 @@ public class Chat implements Listener, ChatRenderer { // Implement the ChatRende
 			Bukkit.getConsoleSender().sendMessage(finalMessage);
 		}
 		return finalMessage;
+	}
+
+	public static Component parseChatPlaceholders(Player player, Component message) {
+		Component updatedMessage = message;
+		String messageString = PlainTextComponentSerializer.plainText().serialize(message);
+		//placeholder [item]
+		if (messageString.contains("[item]")) {
+			ItemStack itemStack = player.getInventory().getItemInMainHand();
+			if (itemStack != null && !itemStack.getType().isAir()) {
+				Component itemName = itemStack.displayName();
+				updatedMessage = message.replaceText(builder -> builder
+						.matchLiteral("[item]")
+						.replacement(itemName)
+				);
+			}
+		}
+		//next one
+		return updatedMessage;
 	}
 
 	public static String convertToMiniMessage(String input) {

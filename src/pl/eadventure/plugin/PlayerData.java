@@ -46,6 +46,7 @@ public class PlayerData {
 	public RollTool rollTool = null;
 	public boolean freeze = false;
 	public Timestamp lastTeleport = null;
+	public String replayMsgNick = null;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
