@@ -141,9 +141,9 @@ public class AnnounceManager {
 				"announcements " +
 				"LEFT JOIN players ON announcements.author=players.id " +
 				"ORDER BY expire DESC;";
-		print.debug(sql);
+		//print.debug(sql);
 		storage.query(sql, queryResult -> {
-			print.debug("Dane: " + queryResult);
+			//print.debug("Dane: " + queryResult);
 			int numRows = (int) queryResult.get("num_rows");
 			@SuppressWarnings("unchecked")
 			ArrayList<HashMap<?, ?>> rows = (ArrayList<HashMap<?, ?>>) queryResult.get("rows");
