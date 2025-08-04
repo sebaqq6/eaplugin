@@ -11,6 +11,7 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.Modules.AutoSpectator;
 import pl.eadventure.plugin.Modules.RollTool;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
@@ -72,6 +73,7 @@ public class Command_evtools implements TabExecutor {
 
 				ArrayList<Player> playersInEventWorld = new ArrayList<>();
 				for (Player player : Bukkit.getOnlinePlayers()) {
+					if (AutoSpectator.isLiveOperator(player)) continue;
 					if (isPlayerInEvent(player, sender)) {
 						playersInEventWorld.add(player);
 						startRollingPlayerEffect(player);
@@ -133,8 +135,10 @@ public class Command_evtools implements TabExecutor {
 			case "countplayers" -> {
 				ArrayList<Player> playersInEventWorld = new ArrayList<Player>();
 				for (Player players : Bukkit.getOnlinePlayers()) {
-					if (isPlayerInEvent(players, sender))
+					if (AutoSpectator.isLiveOperator(players)) continue;
+					if (isPlayerInEvent(players, sender)) {
 						playersInEventWorld.add(players);
+					}
 				}
 				String message = "&7&lW evencie uczestniczy &a&l" + playersInEventWorld.size() + " &7&lgraczy.";
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
@@ -189,6 +193,7 @@ public class Command_evtools implements TabExecutor {
 				Collections.shuffle(playerList);
 
 				for (Player players : playerList) {
+					if (AutoSpectator.isLiveOperator(players)) continue;
 					if (isPlayerInEvent(players, sender)) {
 						if (team == 0) {
 							//selectedTeam = teamRed;
