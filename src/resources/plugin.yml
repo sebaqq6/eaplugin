@@ -176,12 +176,10 @@ commands:
     description: "Czat globalny."
     usage: "/<command>"
     permission: eadventureplugin.cmd.czatglobalny
-    default: true
   czatlokalny:
     description: "Czat lokalny."
     usage: "/<command>"
     permission: eadventureplugin.cmd.czatlokalny
-    default: true
   ignore:
     description: "Ignorowanie gracza."
     usage: "/<command>"

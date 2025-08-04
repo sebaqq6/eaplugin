@@ -11,49 +11,107 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
+import pl.eadventure.plugin.Utils.print;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Chat implements Listener, ChatRenderer { // Implement the ChatRenderer and Listener interface
+public class Chat implements Listener { // Implement the ChatRenderer and Listener interface
+	public static Channel globalChannel;
 
-	// Listen for the AsyncChatEvent
-	// Global processing
+	public static void init() {
+		//create channels
+		Channel channelTemp = null;
+		//global
+		channelTemp = new Channel("Globalny", "/czatglobalny", null, true);
+		channelTemp.setChannelPrefix("");
+		channelTemp.setFormat("%eaplugin_chatchannel_prefix% %vault_prefix%%player_displayname%<#FFFFFF>: ");
+		globalChannel = channelTemp;
+		//local
+		channelTemp = new Channel("Lokalny", "/czatlokalny", null, true);
+		channelTemp.setDistance(100);
+		channelTemp.setChannelPrefix("<#D4FF00>[Lokalny]</#D4FF00>");
+		channelTemp.setFormat("<yellow>%eaplugin_chatchannel_prefix% <#FFAA00>%player_displayname%</#FFAA00><#FFFFFF>:</#FFFFFF> ");
+		//admin
+		channelTemp = new Channel("Admin", "/adminczat", "venturechat.adminchat", false);
+		channelTemp.setChannelPrefix("<#AA0000>[Adminchat]</#AA0000>");
+		channelTemp.setFormat("<red>%eaplugin_chatchannel_prefix% <#D70000>%player_displayname%</#D70000><#FFFFFF>:</#FFFFFF> ");
+	}
+
 	@EventHandler
 	public void onChat(AsyncChatEvent e) {
 		Component originalMessage = e.message();
 		Component updatedMessage = originalMessage;
+		Player sourcePlayer = e.getPlayer();
 		String messageString = PlainTextComponentSerializer.plainText().serialize(originalMessage);
+		String sourceDisplayNameString = PlainTextComponentSerializer.plainText().serialize(sourcePlayer.displayName());
+		PlayerData sourcePlayerData = PlayerData.get(sourcePlayer);
+		Channel sourceChannel = sourcePlayerData.chatChannel == null ? (globalChannel) : (sourcePlayerData.chatChannel);
+		//channel other than global?
+		if (sourceChannel != globalChannel) {
+			//cancel send message when not permission
+			if (sourceChannel.getChannelPermission() != null && !sourcePlayer.hasPermission(sourceChannel.getChannelPermission())) {
+				e.setCancelled(true);
+				return;
+			}
+			//filter players
+			Iterator<Audience> iterator = e.viewers().iterator();
+			while (iterator.hasNext()) {
+				Audience viewer = iterator.next();
+				if (viewer instanceof Player targetViewer) {
+					if (!sourceChannel.getViewers(sourcePlayer).contains(targetViewer)) {
+						iterator.remove();
+					}
+				}
+			}
+		}
 		//placeholders
-		updatedMessage = parseChatPlaceholders(e.getPlayer(), originalMessage);
+		updatedMessage = parseChatPlaceholders(sourcePlayer, originalMessage);
 		//modify messsage
 		e.message(updatedMessage);
-		//set renderer
-		e.renderer(this);
+
+		//=-=-=-=-=-=-=-=-=-=-=-=-=Renderer section=-=-=-=-=-=-=-=-=-=-=-=-=
+
+		e.renderer((source, sourceDisplayName, message, viewer) -> {
+			/*Channel targetChannel = null;
+			PlayerData playerDataTarget = null;
+			if (viewer instanceof Player target) {
+				playerDataTarget = PlayerData.get(target);
+				targetChannel = PlayerData.get(target).chatChannel == null ? (globalChannel) : (playerDataTarget.chatChannel);
+			}*/
+			String format = PlaceholderAPI.setPlaceholders(source, sourceChannel.getFormat());
+			//parse message
+			String beforeMessage = String.format("%s: %s", sourceDisplayNameString, messageString);
+			// beforeMessage = String.format("%s<!bold>%s<white>: ", convertToMiniMessage(vaultPrefix), sourceDisplayNameString);
+			beforeMessage = String.format("%s", format);
+
+			//set final component
+			Component finalMessage = Utils.mm(beforeMessage).append(message);
+			//Component finalMessage = Utils.mm(beforeMessage).append(message.color(TextColor.fromHexString("#e6fffe")));
+			//Console new message (not secure tag blocked)
+			if (viewer instanceof ConsoleCommandSender) {
+				Bukkit.getConsoleSender().sendMessage(finalMessage);
+			}
+			return finalMessage;
+		});
 	}
 
-	// Render per player
-	@Override
-	public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
-		String sourceDisplayNameString = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
-		String messageString = PlainTextComponentSerializer.plainText().serialize(message);
-		String vaultPrefix = PlaceholderAPI.setPlaceholders(source, "%vault_prefix%");
-
-		String beforeMessage = String.format("%s: %s", sourceDisplayNameString, messageString);
-		beforeMessage = String.format("%s<!bold>%s<white>: ", convertToMiniMessage(vaultPrefix), sourceDisplayNameString);
-
-		//Final component
-		Component finalMessage = Utils.mm(beforeMessage).append(message);
-		//Component finalMessage = Utils.mm(beforeMessage).append(message.color(TextColor.fromHexString("#e6fffe")));
-		//Console new message (not secure tag blocked)
-		if (viewer instanceof ConsoleCommandSender) {
-			Bukkit.getConsoleSender().sendMessage(finalMessage);
+	//auto join to channels
+	public static void autoJoinChannels(Player player) {
+		PlayerData pd = PlayerData.get(player);
+		for (Channel channel : Channel.channelList) {
+			if (channel.autoJoin || (channel.getChannelPermission() != null && player.hasPermission(channel.getChannelPermission()))) {
+				pd.joinedChatChannels.add(channel);
+				print.debug("Gracz " + player.getName() + " dołącza do czatu: " + channel.getChannelName());
+			}
 		}
-		return finalMessage;
 	}
 
 	public static Component parseChatPlaceholders(Player player, Component message) {

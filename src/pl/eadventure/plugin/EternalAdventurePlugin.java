@@ -272,6 +272,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		RollTool.loadRollTool(this);
 		new AutoSpectator(this);
 		new OneVsOneBossBars(this);
+		Chat.init();
 
 		//CrackComplexTurret.runBypassForCracked(this);
 		gVar.colorIssueResolverIA = new ColorIssueResolverIA();

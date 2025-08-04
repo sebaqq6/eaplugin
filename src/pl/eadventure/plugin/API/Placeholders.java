@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.Commands.Command_redflag;
 import pl.eadventure.plugin.Commands.Command_uczestnictwolive;
 import pl.eadventure.plugin.EternalAdventurePlugin;
+import pl.eadventure.plugin.Modules.Chat.Channel;
+import pl.eadventure.plugin.Modules.Chat.Chat;
 import pl.eadventure.plugin.Modules.Top.TopTimePlayerPlayed;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
@@ -335,6 +337,22 @@ public class Placeholders extends PlaceholderExpansion {
 		else if (params.equalsIgnoreCase("glowcolor")) {
 			if (player != null) {
 				return GlowAPI.getGlowColor(player);
+			} else return null;
+		}
+		//chat channel prefix
+		else if (params.equalsIgnoreCase("chatchannel_prefix")) {
+			if (player != null) {
+				PlayerData sourcePlayerData = PlayerData.get(player);
+				Channel sourceChannel = sourcePlayerData.chatChannel == null ? (Chat.globalChannel) : (sourcePlayerData.chatChannel);
+				return sourceChannel.getChannelPrefix();
+			} else return null;
+		}
+		//chat channel name
+		else if (params.equalsIgnoreCase("chatchannel_name")) {
+			if (player != null) {
+				PlayerData sourcePlayerData = PlayerData.get(player);
+				Channel sourceChannel = sourcePlayerData.chatChannel == null ? (Chat.globalChannel) : (sourcePlayerData.chatChannel);
+				return sourceChannel.getChannelName();
 			} else return null;
 		}
 		return null; //

@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import pl.eadventure.plugin.Modules.Chat.Channel;
+import pl.eadventure.plugin.Modules.Chat.Chat;
 import pl.eadventure.plugin.Modules.HomesInterface;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.RegionCommandLooper;
@@ -16,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class PlayerData {
@@ -47,6 +50,8 @@ public class PlayerData {
 	public boolean freeze = false;
 	public Timestamp lastTeleport = null;
 	public String replayMsgNick = null;
+	public Channel chatChannel = null;
+	public List<Channel> joinedChatChannels = new ArrayList<>();
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID
@@ -193,6 +198,7 @@ public class PlayerData {
 			String sql = "INSERT INTO `sessions` (`uid`) VALUES (?);";
 			sessionId = storage.executeGetInsertID(sql, parameters);
 		}
+		Chat.autoJoinChannels(player);
 	}
 
 	public void updateSession() {
