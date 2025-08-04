@@ -40,7 +40,7 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 		channelTemp.setChannelPrefix("<#D4FF00>[Lokalny]</#D4FF00>");
 		channelTemp.setFormat("<yellow>%eaplugin_chatchannel_prefix% <#FFAA00>%player_displayname%</#FFAA00><#FFFFFF>:</#FFFFFF> ");
 		//admin
-		channelTemp = new Channel("Admin", "/adminczat", "venturechat.adminchat", false);
+		channelTemp = new Channel("Admin", "/adminczat", "eadventureplugin.cmd.adminczat", false);
 		channelTemp.setChannelPrefix("<#AA0000>[Adminchat]</#AA0000>");
 		channelTemp.setFormat("<red>%eaplugin_chatchannel_prefix% <#D70000>%player_displayname%</#D70000><#FFFFFF>:</#FFFFFF> ");
 	}
