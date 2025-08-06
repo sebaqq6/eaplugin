@@ -5,14 +5,23 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.Events.playerPrivateChatEvent;
+import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
 
-public class Command_msg implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Command_msg implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 0) {//get target nick args[0]
@@ -48,10 +57,29 @@ public class Command_msg implements CommandExecutor {
 		//save for replay
 		if (sender instanceof Player senderPlayer) {
 			PlayerData.get(senderPlayer).replayMsgNick = targetPlayer.getName();
+			PlayerData.get(targetPlayer).replayMsgNick = senderPlayer.getName();
 		}
 		//log?
 		playerPrivateChatEvent.onPlayerSendPrivateMessage(sender.getName(), targetPlayer.getName(), message);
-		//TODO SPY
 		return true;
 	}
+
+	@Override
+	public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+		if (args.length == 1) {
+			if (args[0].isEmpty()) {
+				return List.of("Wpisz nazwe gracza..."); // Prompt for input
+			}
+
+			List<String> playerNames = Bukkit.getOnlinePlayers().stream()
+					.filter(player -> !PlayerUtils.isVanished(player))
+					.map(Player::getName)
+					.collect(Collectors.toList());
+
+			return StringUtil.copyPartialMatches(args[0], playerNames, new ArrayList<>());
+		} else {
+			return Collections.emptyList(); // No suggestions for other arguments
+		}
+	}
+
 }
