@@ -38,6 +38,11 @@ public class Command_msg implements TabExecutor {
 			sender.sendMessage(Utils.mm("<grey>Gracz " + targetName + " <grey>jest offline."));
 			return true;
 		}
+		PlayerData pdt = PlayerData.get(targetPlayer);
+		if (pdt.disabledMsg) {
+			sender.sendMessage(Utils.mm("<gray>Gracz <gold>" + targetPlayer.getName() + " <gray>ma <red>wyłączone <gray>otrzymywanie prywatnych wiadomości."));
+			return true;
+		}
 		if (args.length == 1) {//message args[1]
 			Utils.commandUsageMessage(sender, String.format("/%s %s [wiadomość]", label, targetName));
 			return true;
@@ -56,11 +61,15 @@ public class Command_msg implements TabExecutor {
 		targetPlayer.playSound(targetPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 		//save for replay
 		if (sender instanceof Player senderPlayer) {
-			PlayerData.get(senderPlayer).replayMsgNick = targetPlayer.getName();
-			PlayerData.get(targetPlayer).replayMsgNick = senderPlayer.getName();
+			PlayerData pd = PlayerData.get(senderPlayer);
+			pd.replayMsgNick = targetPlayer.getName();
+			if (pd.disabledMsg) {
+				sender.sendMessage(Utils.mm("<grey>Masz wyłączone otrzymywanie prywatnych wiadomości (<red>/msgtog</red>), gracz może Ci nie odpowiedzieć."));
+			}
+			pdt.replayMsgNick = senderPlayer.getName();
 		}
 		//log?
-		playerPrivateChatEvent.onPlayerSendPrivateMessage(sender.getName(), targetPlayer.getName(), message);
+		playerPrivateChatEvent.onPlayerSendPrivateMessage(sender, targetPlayer, message);
 		return true;
 	}
 

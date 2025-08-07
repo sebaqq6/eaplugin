@@ -66,6 +66,9 @@ public class PlayerData {
 	public int breakBlocksCount = 0;
 	public int afkTime = 0;
 	public int unParticipateLive = 0;
+	public boolean disabledMsg = false;
+	public boolean enabledSpy = false;
+	public boolean enabledRangedSpy = false;
 	//stream live
 	public int isStreamer = 0;
 	public String streamerService = " ";
@@ -82,6 +85,13 @@ public class PlayerData {
 		if (player.getAddress().getAddress().getHostAddress() == null) return;
 		print.debug("Gracz: " + player.getName() + " - stworzono instancje danych!");
 		loadDataFromMySQL(player);
+		//join chat channels delay
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Chat.autoJoinChannels(player);
+			}
+		}.runTaskLater(EternalAdventurePlugin.getInstance(), 50L);
 	}
 
 	public static PlayerData get(Player player) {
@@ -149,6 +159,17 @@ public class PlayerData {
 		streamerService = (String) row.get("streamer_service");
 		streamerURL = (String) row.get("streamer_url");
 		unParticipateLive = (int) row.get("unParticipateLive");
+		disabledMsg = (int) row.get("disabledMsg") == 1;
+		//load spy config - start
+		if (player.hasPermission("eadventureplugin.cmd.spy")) {
+			enabledSpy = (int) row.get("enabledSpy") == 1;
+		}
+		if (player.hasPermission("eadventureplugin.cmd.rangedspy")) {
+			enabledRangedSpy = (int) row.get("enabledRangedSpy") == 1;
+		}
+		//load spy config - end
+
+
 		//Load data end
 		startSession();
 		//Update some information
@@ -198,7 +219,6 @@ public class PlayerData {
 			String sql = "INSERT INTO `sessions` (`uid`) VALUES (?);";
 			sessionId = storage.executeGetInsertID(sql, parameters);
 		}
-		Chat.autoJoinChannels(player);
 	}
 
 	public void updateSession() {

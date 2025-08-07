@@ -26,22 +26,22 @@ import java.util.regex.Pattern;
 
 /*
 kolorowanie '&a' na czacie.
-/msg <nick> - prywatna wiadomosc
-/r - reply
+/msg <nick> - prywatna wiadomosc [DONE]
+/r - reply [DONE]
 /ignoruj <nick>, /ignoruj lista - wycina wiadomości gracza z czatu + zapobiega otrzymywaniu MSG od danego gracza.
-/czatlokalny, /cl - kanał lokalny promień 100kratek żółta kolorystyka, mniej rygorystyczny antispam.
-/czatglobalny, /cg - kanał globalny / anti spam / 1 wiadomość na 3s? + bypass dla administracji.
+/czatlokalny, /cl - kanał lokalny promień 100kratek żółta kolorystyka, mniej rygorystyczny antispam. [DONE]
+/czatglobalny, /cg - kanał globalny / anti spam / 1 wiadomość na 3s? + bypass dla administracji. [DONE]
 kanał eventowy dla uczestników - może być automatycznie włączany na world_event.
 kanał prowadzącego event - /czatevent
 /force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
 cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze.e
 emotikony.
 niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału.
-/spy - podgląd MSG graczy LIVE.
-/rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś.
+/spy - podgląd MSG graczy LIVE. [DONE]
+/rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś. [DONE]
 ukrywanie podpowiadania nicków /msg <nick>, /r <odpowiedź> gdy ktoś jest na vanishu. Jakieś powiadomienie, ten gracz jest offline jeśli ktoś na sztywno wpisze.
 placeholder aktualnego kanału.
-/msgtog - włączanie, wyłaczanie prywatnych wiadomości
+/msgtog - włączanie, wyłaczanie prywatnych wiadomości [DONE]
 * */
 public class Chat implements Listener { // Implement the ChatRenderer and Listener interface
 	public static Channel globalChannel;
@@ -52,7 +52,7 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 		//global
 		channelTemp = new Channel("Globalny", "/czatglobalny", null, true);
 		channelTemp.setChannelPrefix("");
-		channelTemp.setFormat("%eaplugin_chatchannel_prefix% %vault_prefix%%player_displayname%<#FFFFFF>: ");
+		channelTemp.setFormat("%vault_prefix%%player_displayname%<#FFFFFF>: ");
 		globalChannel = channelTemp;
 		//local
 		channelTemp = new Channel("Lokalny", "/czatlokalny", null, true);
@@ -91,6 +91,20 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 					}
 				}
 			}
+			//spy ranged chat
+			if (sourceChannel.distance != 0) {
+				Bukkit.getOnlinePlayers().forEach(p -> {
+					if (!e.viewers().contains(p)) {
+						PlayerData pd = PlayerData.get(p);
+						if (pd.enabledRangedSpy) {
+							String format = PlaceholderAPI.setPlaceholders(sourcePlayer, sourceChannel.getFormat());
+							Component finalMessage = Utils.mm(String.format("[SPY] %s", format)).append(e.message());
+							p.sendMessage(finalMessage);
+						}
+					}
+				});
+			}
+
 		}
 		//placeholders
 		updatedMessage = parseChatPlaceholders(sourcePlayer, originalMessage);

@@ -2,25 +2,42 @@ package pl.eadventure.plugin.Events;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.ServerLogManager;
+import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.Utils;
 
 import java.util.Arrays;
 
 public class playerPrivateChatEvent {
 	//==================================================================================================================
-	public static void onPlayerSendPrivateMessage(String source, String target, String message) {
-		String pmLog = String.format("[SPY] %s -> %s: %s", source, target, message);
-		ServerLogManager.log(pmLog, ServerLogManager.LogType.Chat);
+	public static void onPlayerSendPrivateMessage(CommandSender source, Player target, String message) {
+		if (source instanceof Player player) {
+			if (!player.hasPermission("eadventureplugin.spyoverride")) {
+				//log
+				String pmLog = String.format("[SPY] %s -> %s: %s", source, target, message);
+				ServerLogManager.log(pmLog, ServerLogManager.LogType.Chat);
+				//spy
+				Bukkit.getOnlinePlayers().forEach(p -> {
+					PlayerData pd = PlayerData.get(p);
+					if (pd.enabledSpy) {
+						String msg = String.format("<#666699>%s <#66ff33>-> <#666699>%s:<#ffd966> %s", source.getName(), target.getName(), message);
+						p.sendMessage(Utils.mm(msg));
+					}
+				});
+			}
+		}
 	}
 
 	//==================================================================================================================
 	//----------------------------------------------ON PLAYER CHAT PROXY
-	public void onPlayerChatProxy(AsyncPlayerChatEvent event) {
+	/*public void onPlayerChatProxy(AsyncPlayerChatEvent event) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -54,9 +71,9 @@ public class playerPrivateChatEvent {
 			}
 		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
 	}
-
+*/
 	//-----------------------------------------------------------COMMAND PROXY
-	public void onPlayerCommandProxy(PlayerCommandPreprocessEvent e) {
+	/*public void onPlayerCommandProxy(PlayerCommandPreprocessEvent e) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -128,4 +145,5 @@ public class playerPrivateChatEvent {
 			}
 		}.runTaskAsynchronously(EternalAdventurePlugin.getInstance());
 	}
+	 */
 }

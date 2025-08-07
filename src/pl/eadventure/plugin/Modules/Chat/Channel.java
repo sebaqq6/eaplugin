@@ -7,7 +7,9 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Channel {
 	public static List<Channel> channelList = new ArrayList<>();
@@ -40,20 +42,24 @@ public class Channel {
 	}
 
 	public List<Player> getViewers(Player sourcePlayer) {
-		List<Player> listViewers = new ArrayList<>();
+		Set<Player> setViewers = new HashSet<>();
 		PlayerData sourcePlayerData = PlayerData.get(sourcePlayer);
+
 		for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
 			PlayerData targetPlayerData = PlayerData.get(targetPlayer);
+
 			if (targetPlayerData.joinedChatChannels.contains(sourcePlayerData.chatChannel)) {
 				if (distance == 0) {
-					listViewers.add(targetPlayer);
+					setViewers.add(targetPlayer);
 				} else if (sourcePlayer.getLocation().distance(targetPlayer.getLocation()) < distance) {
-					listViewers.add(targetPlayer);
+					setViewers.add(targetPlayer);
 				}
 			}
 		}
-		return listViewers;
+
+		return new ArrayList<>(setViewers);
 	}
+
 
 	public String getChannelName() {
 		return channelName;
