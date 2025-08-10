@@ -180,7 +180,7 @@ commands:
     description: "Czat lokalny."
     usage: "/<command>"
     permission: eadventureplugin.cmd.czatlokalny
-  ignoruj:
+  ignore:
     description: "Ignorowanie gracza."
     usage: "/<command>"
     permission: eadventureplugin.cmd.ignore

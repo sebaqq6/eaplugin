@@ -223,7 +223,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("adminczat").setExecutor(new Command_adminczat());
 		this.getCommand("czatglobalny").setExecutor(new Command_czatglobalny());
 		this.getCommand("czatlokalny").setExecutor(new Command_czatlokalny());
-		this.getCommand("ignoruj").setExecutor(new Command_ignore());
+		this.getCommand("ignore").setExecutor(new Command_ignore());
 		this.getCommand("msg").setExecutor(new Command_msg());
 		this.getCommand("msgtog").setExecutor(new Command_msgtog());
 		this.getCommand("r").setExecutor(new Command_r());
