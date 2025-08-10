@@ -238,5 +238,10 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/SCore.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>7.0.1</version>
+        </dependency>
     </dependencies>
 </project>

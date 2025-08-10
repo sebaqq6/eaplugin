@@ -247,7 +247,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 					print.ok("Połączono z bazą danych MySQL!");
 					TimersForAllPlayers.startTimers(getInstance());
 					TopTimePlayerPlayed.load(storage, 20);
-					PunishmentSystem.init(new MySQLStorage(gVar.mysqlHost, gVar.mysqlPort, gVar.mysqlDatabase, gVar.mysqlUser, gVar.mysqlPassword, "#PUNISHMENT"));
+					PunishmentSystem.init(storage);
 					ServerLogManager.enable(storage);
 					gVar.topBreakBlocks = new TopBreakBlocks(storage, 20);
 					gVar.announceManager = new AnnounceManager(instance, storage);
@@ -313,6 +313,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		HomesInterface.tryUnload();
 		ServerLogManager.disable();
 		GlowAPI.getInstance().unload();
+		storage.close();
 		print.info("[EternalAdventurePlugin] Plugin został wyłączony!");
 	}
 

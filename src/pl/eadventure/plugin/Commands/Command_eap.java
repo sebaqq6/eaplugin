@@ -41,7 +41,6 @@ public class Command_eap implements TabExecutor {
 					"armorfixreload",
 					"reloadgs",
 					"plist",
-					"reconnectdb",
 					"reloadanns",
 					"rcl",
 					"disablegs",
@@ -373,11 +372,6 @@ public class Command_eap implements TabExecutor {
 			case "reloadgs": {
 				GearScoreCalculator.loadConfig();
 				sender.sendMessage("Przeładowano config GearScoreCalculator!");
-				return true;
-			}
-			case "reconnectdb": {
-				EternalAdventurePlugin.getMySQL().reconnect();
-				sender.sendMessage(Component.text("Wykonano reconnect z bazą danych!"));
 				return true;
 			}
 			case "cachegs1": {
