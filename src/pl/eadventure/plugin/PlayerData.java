@@ -84,7 +84,6 @@ public class PlayerData {
 		players.put(player.getUniqueId(), this);
 		if (player.getAddress().getAddress().getHostAddress() == null) return;
 		print.debug("Gracz: " + player.getName() + " - stworzono instancje danych!");
-		loadDataFromMySQL(player);
 		//join chat channels delay
 		new BukkitRunnable() {
 			@Override
@@ -92,6 +91,8 @@ public class PlayerData {
 				Chat.autoJoinChannels(player);
 			}
 		}.runTaskLater(EternalAdventurePlugin.getInstance(), 50L);
+		//load data from mysql
+		loadDataFromMySQL(player);
 	}
 
 	public static PlayerData get(Player player) {
@@ -106,13 +107,13 @@ public class PlayerData {
 	}
 
 	public void loadDataFromMySQL(Player player) {
-		//load WarnData
-		warnData = new PunishmentSystem.WarnData();
-		warnData.load(player.getUniqueId());
 		regionCommandLooper = new RegionCommandLooper(player);
-
 		MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 		if (storage.isConnect()) {
+			//load WarnData
+			warnData = new PunishmentSystem.WarnData();
+			warnData.load(player.getUniqueId());
+			//load warn data end
 			UUID uuid = player.getUniqueId();
 			String sql = "SELECT * FROM `players` WHERE `uuid`='" + uuid + "';";
 
