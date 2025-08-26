@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 kolorowanie '&a' na czacie.
 /msg <nick> - prywatna wiadomosc [DONE]
 /r - reply [DONE]
-/ignoruj <nick>, /ignoruj lista - wycina wiadomości gracza z czatu + zapobiega otrzymywaniu MSG od danego gracza. [WIP]
+/ignoruj <nick>, /ignoruj lista - wycina wiadomości gracza z czatu + zapobiega otrzymywaniu MSG od danego gracza. [DONE]
 /czatlokalny, /cl - kanał lokalny promień 100kratek żółta kolorystyka, mniej rygorystyczny antispam. [DONE]
 /czatglobalny, /cg - kanał globalny / anti spam / 1 wiadomość na 3s? + bypass dla administracji. [DONE]
 kanał eventowy dla uczestników - może być automatycznie włączany na world_event.
@@ -41,8 +41,9 @@ niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od t
 /spy - podgląd MSG graczy LIVE. [DONE]
 /rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś. [DONE]
 ukrywanie podpowiadania nicków /msg <nick>, /r <odpowiedź> gdy ktoś jest na vanishu. Jakieś powiadomienie, ten gracz jest offline jeśli ktoś na sztywno wpisze.
-placeholder aktualnego kanału.
+placeholder aktualnego kanału. [DONE]
 /msgtog - włączanie, wyłaczanie prywatnych wiadomości [DONE]
+/broadcast - normalny
 * */
 public class Chat implements Listener { // Implement the ChatRenderer and Listener interface
 	public static Channel globalChannel;
@@ -105,7 +106,19 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 					}
 				});
 			}
-
+		} else { //global channel
+			//filter players (ignore system on global chat)
+			Iterator<Audience> iterator = e.viewers().iterator();
+			while (iterator.hasNext()) {
+				Audience viewer = iterator.next();
+				if (viewer instanceof Player targetViewer) {
+					PlayerData targetPlayerData = PlayerData.get(targetViewer);
+					int ignoredType = targetPlayerData.ignoreList.isIgnored(sourcePlayer.getName());
+					if (ignoredType == IgnoreList.EntryType.ALL || ignoredType == IgnoreList.EntryType.GLOBAL_CHAT) {
+						iterator.remove();
+					}
+				}
+			}
 		}
 		//placeholders
 		updatedMessage = parseChatPlaceholders(sourcePlayer, originalMessage);

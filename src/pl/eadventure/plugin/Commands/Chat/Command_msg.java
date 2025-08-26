@@ -11,6 +11,7 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.eadventure.plugin.Events.playerPrivateChatEvent;
+import pl.eadventure.plugin.Modules.Chat.IgnoreList;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
@@ -41,6 +42,11 @@ public class Command_msg implements TabExecutor {
 		PlayerData pdt = PlayerData.get(targetPlayer);
 		if (pdt.disabledMsg) {
 			sender.sendMessage(Utils.mm("<gray>Gracz <gold>" + targetPlayer.getName() + " <gray>ma <red>wyłączone <gray>otrzymywanie prywatnych wiadomości."));
+			return true;
+		}
+		int ignoredType = pdt.ignoreList.isIgnored(sender.getName());
+		if (ignoredType == IgnoreList.EntryType.ALL || ignoredType == IgnoreList.EntryType.PRIVATE) {
+			sender.sendMessage(Utils.mm("<gray>Gracz <gold>" + targetPlayer.getName() + " <red>ignoruje <gray>Twoje wiadomości."));
 			return true;
 		}
 		if (args.length == 1) {//message args[1]

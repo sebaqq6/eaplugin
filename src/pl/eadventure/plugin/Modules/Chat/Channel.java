@@ -4,6 +4,7 @@ import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pl.eadventure.plugin.PlayerData;
+import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
@@ -47,6 +48,10 @@ public class Channel {
 
 		for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
 			PlayerData targetPlayerData = PlayerData.get(targetPlayer);
+			int ignoredType = targetPlayerData.ignoreList.isIgnored(sourcePlayer.getName());
+			if (ignoredType == IgnoreList.EntryType.ALL || ignoredType == IgnoreList.EntryType.GLOBAL_CHAT) {
+				continue;
+			}
 
 			if (targetPlayerData.joinedChatChannels.contains(sourcePlayerData.chatChannel)) {
 				if (distance == 0) {
