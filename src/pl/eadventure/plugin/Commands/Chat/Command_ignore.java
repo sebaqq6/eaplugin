@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pl.eadventure.plugin.Modules.Chat.IgnoreList;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
+import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 
 import java.util.ArrayList;
@@ -20,9 +22,10 @@ public class Command_ignore implements TabExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (sender instanceof Player player) {
+			PlayerData pd = PlayerData.get(player);
 			if (args.length == 0) {//get target nick args[0]
 				//show menu
-				sender.sendMessage("Bum! tu ma sie pojawić gui");
+				pd.ignoreList.showGui(player, 1);
 				return true;
 			}
 			String targetName = args[0];
@@ -31,7 +34,13 @@ public class Command_ignore implements TabExecutor {
 				return true;
 			}
 			//add/remove player
-			sender.sendMessage("Dodawanie/Usuwanie gracza: " + targetName);
+			if (pd.ignoreList.add(targetName, IgnoreList.EntryType.ALL)) {
+				sender.sendMessage(Utils.mm("<grey>Dodano do ignorowanych gracza:<red> " + targetName));
+			} else if (pd.ignoreList.remove(targetName)) {
+				sender.sendMessage(Utils.mm("<grey>Usunięto z ignorowanych gracza:<green> " + targetName));
+			} else {
+				sender.sendMessage("<grey>Wystąpił nieoczekiwany błąd.");
+			}
 		}
 		return true;
 	}

@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.Modules.Chat.Channel;
 import pl.eadventure.plugin.Modules.Chat.Chat;
+import pl.eadventure.plugin.Modules.Chat.IgnoreList;
 import pl.eadventure.plugin.Modules.HomesInterface;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Modules.RegionCommandLooper;
@@ -69,6 +70,7 @@ public class PlayerData {
 	public boolean disabledMsg = false;
 	public boolean enabledSpy = false;
 	public boolean enabledRangedSpy = false;
+	public IgnoreList ignoreList = null;
 	//stream live
 	public int isStreamer = 0;
 	public String streamerService = " ";
@@ -213,6 +215,8 @@ public class PlayerData {
 	}
 
 	public void startSession() {
+		//load ignore list
+		ignoreList = new IgnoreList(dbid);
 		if (dbid != 0 && sessionId == 0) {
 			MySQLStorage storage = EternalAdventurePlugin.getMySQL();
 			ArrayList<Object> parameters = new ArrayList<>();
