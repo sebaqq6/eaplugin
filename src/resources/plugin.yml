@@ -204,6 +204,10 @@ commands:
     description: "Włącza/Wyłącza podgląd czatu lokalnego niezależnie gdzie jesteś."
     usage: "/<command>"
     permission: eadventureplugin.cmd.rangedspy
+  broadcast:
+    description: "Wysyła wiadomość na czacie wszystkim."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.broadcast
 permissions:
   eadventureplugin.apanel:
     description: "Dostęp do GUI admina."

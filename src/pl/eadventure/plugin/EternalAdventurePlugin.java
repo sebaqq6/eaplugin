@@ -229,6 +229,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("r").setExecutor(new Command_r());
 		this.getCommand("spy").setExecutor(new Command_spy());
 		this.getCommand("rangedspy").setExecutor(new Command_rangedspy());
+		this.getCommand("broadcast").setExecutor(new Command_broadcast());
 
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());

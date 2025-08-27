@@ -43,7 +43,7 @@ niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od t
 ukrywanie podpowiadania nicków /msg <nick>, /r <odpowiedź> gdy ktoś jest na vanishu. Jakieś powiadomienie, ten gracz jest offline jeśli ktoś na sztywno wpisze.
 placeholder aktualnego kanału. [DONE]
 /msgtog - włączanie, wyłaczanie prywatnych wiadomości [DONE]
-/broadcast - normalny
+/broadcast - normalny [DONE]
 * */
 public class Chat implements Listener { // Implement the ChatRenderer and Listener interface
 	public static Channel globalChannel;
