@@ -38,7 +38,7 @@ kanał prowadzącego event - /czatevent
 /force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
 cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze. [DONE]
 emotikony.
-cenzura IP
+cenzura IP [DONE]
 niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału.
 /spy - podgląd MSG graczy LIVE. [DONE]
 /rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś. [DONE]
