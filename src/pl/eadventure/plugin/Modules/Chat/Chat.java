@@ -18,7 +18,9 @@ import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
 import pl.eadventure.plugin.Utils.print;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +36,7 @@ kolorowanie '&a' na czacie.
 kanał eventowy dla uczestników - może być automatycznie włączany na world_event.
 kanał prowadzącego event - /czatevent
 /force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
-cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze.
+cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze. [DONE]
 emotikony.
 cenzura IP
 niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału.
@@ -47,6 +49,7 @@ placeholder aktualnego kanału. [DONE]
 * */
 public class Chat implements Listener { // Implement the ChatRenderer and Listener interface
 	public static Channel globalChannel;
+	public static Censor censor;
 
 	public static void init() {
 		//create channels
@@ -65,6 +68,9 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 		channelTemp = new Channel("Admin", "/adminczat", "eadventureplugin.cmd.adminczat", false);
 		channelTemp.setChannelPrefix("<#AA0000>[Adminchat]</#AA0000>");
 		channelTemp.setFormat("<red>%eaplugin_chatchannel_prefix% <#D70000>%player_displayname%</#D70000><#FFFFFF>:</#FFFFFF> ");
+		//init censored words
+		censor = new Censor("plugins/EternalAdventurePlugin/censor.yml");
+		censor.loadFilters();
 	}
 
 	@EventHandler
@@ -177,6 +183,8 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 			}
 		}
 		//next one
+		//censor
+		updatedMessage = censor.filterMessage(updatedMessage);
 		return updatedMessage;
 	}
 

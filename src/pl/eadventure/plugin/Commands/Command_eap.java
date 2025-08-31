@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
 import pl.eadventure.plugin.Modules.*;
+import pl.eadventure.plugin.Modules.Chat.Chat;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Test;
 import pl.eadventure.plugin.Utils.MySQLStorage;
@@ -47,6 +48,7 @@ public class Command_eap implements TabExecutor {
 					"cachegs1",
 					"autofixmob",
 					"invbackcleanup",
+					"reloadcensor",
 					"location");
 			return StringUtil.copyPartialMatches(args[0], cmdlist, new ArrayList<>());
 		}
@@ -372,6 +374,11 @@ public class Command_eap implements TabExecutor {
 			case "reloadgs": {
 				GearScoreCalculator.loadConfig();
 				sender.sendMessage("Przeładowano config GearScoreCalculator!");
+				return true;
+			}
+			case "reloadcensor": {
+				Chat.censor.reload();
+				sender.sendMessage("Przeładowano cenzure!");
 				return true;
 			}
 			case "cachegs1": {
