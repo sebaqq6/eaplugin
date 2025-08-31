@@ -33,25 +33,27 @@ import java.util.regex.Pattern;
 
 
 /*
-kolorowanie '&a' na czacie.[DONE]
-/msg <nick> - prywatna wiadomosc [DONE]
-/r - reply [DONE]
-/ignoruj <nick>, /ignoruj lista - wycina wiadomości gracza z czatu + zapobiega otrzymywaniu MSG od danego gracza. [DONE]
-/czatlokalny, /cl - kanał lokalny promień 100kratek żółta kolorystyka, mniej rygorystyczny antispam. [DONE]
-/czatglobalny, /cg - kanał globalny / anti spam / 1 wiadomość na 3s? + bypass dla administracji. [DONE]
-kanał eventowy dla uczestników - może być automatycznie włączany na world_event.
-kanał prowadzącego event - /czatevent
-/force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
-cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze. [DONE]
-emotikony.
-cenzura IP [DONE]
-niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału. [DONE]
-/spy - podgląd MSG graczy LIVE. [DONE]
-/rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś. [DONE]
-ukrywanie podpowiadania nicków /msg <nick>, /r <odpowiedź> gdy ktoś jest na vanishu. Jakieś powiadomienie, ten gracz jest offline jeśli ktoś na sztywno wpisze.
-placeholder aktualnego kanału. [DONE]
-/msgtog - włączanie, wyłaczanie prywatnych wiadomości [DONE]
-/broadcast - normalny [DONE]
+//TODO
+- [WIP]AntySpam
+- [WIP]kanał eventowy dla uczestników - może być automatycznie włączany na world_event.
+- [WIP]kanał prowadzącego event - /czatevent
+- [WIP]Emotikony
+- [WIP]/force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
+- [DONE]kolorowanie '&a' na czacie.
+- [DONE]/msg <nick> - prywatna wiadomosc
+- [DONE]/r - reply
+- [DONE]/ignoruj <nick>, /ignoruj lista - wycina wiadomości gracza z czatu + zapobiega otrzymywaniu MSG od danego gracza.
+- [DONE]/czatlokalny, /cl - kanał lokalny promień 100kratek żółta kolorystyka, mniej rygorystyczny antispam.
+- [DONE]/czatglobalny, /cg - kanał globalny / anti spam / 1 wiadomość na 3s? + bypass dla administracji.
+- [DONE]cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze.
+- [DONE]cenzura IP
+- [DONE]niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału.
+- [DONE]/spy - podgląd MSG graczy LIVE.
+- [DONE]/rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś.
+- [DONE]ukrywanie podpowiadania nicków /msg <nick>, /r <odpowiedź> gdy ktoś jest na vanishu. Jakieś powiadomienie, ten gracz jest offline jeśli ktoś na sztywno wpisze.
+- [DONE]placeholder aktualnego kanału.
+- [DONE]/msgtog - włączanie, wyłaczanie prywatnych wiadomości
+- [DONE]/broadcast - normalny
 * */
 public class Chat implements Listener { // Implement the ChatRenderer and Listener interface
 	public static Channel globalChannel;
