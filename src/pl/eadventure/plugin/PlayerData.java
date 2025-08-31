@@ -53,6 +53,7 @@ public class PlayerData {
 	public String replayMsgNick = null;
 	public Channel chatChannel = null;
 	public List<Channel> joinedChatChannels = new ArrayList<>();
+	public boolean rainbowChat = false;
 	//MySQL data
 	String nick;
 	public int dbid = 0;//database ID

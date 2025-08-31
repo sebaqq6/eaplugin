@@ -230,6 +230,7 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		this.getCommand("spy").setExecutor(new Command_spy());
 		this.getCommand("rangedspy").setExecutor(new Command_rangedspy());
 		this.getCommand("broadcast").setExecutor(new Command_broadcast());
+		this.getCommand("rb").setExecutor(new Command_rb());
 
 		//
 		ComplexTurretsAPI.registerApiTargetValidations(this, new ComplexTurretValidation());
@@ -302,6 +303,10 @@ public final class EternalAdventurePlugin extends JavaPlugin {
 		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "| |___| ||  __/ |  | | | | (_| | |  / ___ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/\n");
 		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "|_____|\\__\\___|_|  |_| |_|\\__,_|_| /_/   \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\n");
 		print.info("[EternalAdventurePlugin] Wczytywanie pluginu zakończone!");
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (!player.isOp()) continue;
+			player.sendMessage(Utils.mm("<#FF0000>[EternalAdventurePlugin] Wczytywanie pluginu zakończone!"));
+		}
 	}
 
 	@Override

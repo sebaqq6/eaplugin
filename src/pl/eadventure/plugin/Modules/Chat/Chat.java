@@ -5,6 +5,12 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
@@ -27,7 +33,7 @@ import java.util.regex.Pattern;
 
 
 /*
-kolorowanie '&a' na czacie.
+kolorowanie '&a' na czacie.[DONE]
 /msg <nick> - prywatna wiadomosc [DONE]
 /r - reply [DONE]
 /ignoruj <nick>, /ignoruj lista - wycina wiadomości gracza z czatu + zapobiega otrzymywaniu MSG od danego gracza. [DONE]
@@ -39,7 +45,7 @@ kanał prowadzącego event - /czatevent
 cenzura, może jakaś baza z neta albo z configu venturechat, fajnie by było gdyby podmieniało na " !@^!#%!$!# " - komicznie wygląda w grze. [DONE]
 emotikony.
 cenzura IP [DONE]
-niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału.
+niestandardowe formatowanie IA dla EVP. Jakaś cmd, np przełącznik /rb  - od teraz EVP pisze tęczowo na czacie niezależnie od kanału. [DONE]
 /spy - podgląd MSG graczy LIVE. [DONE]
 /rangedspy - podgląd czatu lokalnego niezależnie gdzie jesteś. [DONE]
 ukrywanie podpowiadania nicków /msg <nick>, /r <odpowiedź> gdy ktoś jest na vanishu. Jakieś powiadomienie, ten gracz jest offline jeśli ktoś na sztywno wpisze.
@@ -126,14 +132,15 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 				}
 			}
 		}
-		//placeholders
-		updatedMessage = parseChatPlaceholders(sourcePlayer, originalMessage);
+		//parse chat
+		updatedMessage = parseChat(sourcePlayer, originalMessage);
 		//modify messsage
 		e.message(updatedMessage);
 
 		//=-=-=-=-=-=-=-=-=-=-=-=-=Renderer section=-=-=-=-=-=-=-=-=-=-=-=-=
 
 		e.renderer((source, sourceDisplayName, message, viewer) -> {
+			PlayerData pd = PlayerData.get(source);
 			/*Channel targetChannel = null;
 			PlayerData playerDataTarget = null;
 			if (viewer instanceof Player target) {
@@ -148,6 +155,9 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 
 			//set final component
 			Component finalMessage = Utils.mm(beforeMessage).append(message);
+			if (pd.rainbowChat) {
+				finalMessage = Utils.mm(beforeMessage).append(message.color(TextColor.fromHexString("#e6fffe")));
+			}
 			//Component finalMessage = Utils.mm(beforeMessage).append(message.color(TextColor.fromHexString("#e6fffe")));
 			//Console new message (not secure tag blocked)
 			if (viewer instanceof ConsoleCommandSender) {
@@ -168,15 +178,19 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 		}
 	}
 
-	public static Component parseChatPlaceholders(Player player, Component message) {
+	public static Component parseChat(Player player, Component message) {
 		Component updatedMessage = message;
 		String messageString = PlainTextComponentSerializer.plainText().serialize(message);
+		//parse legacy colors
+		if (player.hasPermission("eadventureplugin.chatformat")) {
+			updatedMessage = parseLegacyColors(updatedMessage);
+		}
 		//placeholder [item]
 		if (messageString.contains("[item]")) {
 			ItemStack itemStack = player.getInventory().getItemInMainHand();
 			if (itemStack != null && !itemStack.getType().isAir()) {
 				Component itemName = itemStack.displayName();
-				updatedMessage = message.replaceText(builder -> builder
+				updatedMessage = updatedMessage.replaceText(builder -> builder
 						.matchLiteral("[item]")
 						.replacement(itemName)
 				);
@@ -186,6 +200,15 @@ public class Chat implements Listener { // Implement the ChatRenderer and Listen
 		//censor
 		updatedMessage = censor.filterMessage(updatedMessage);
 		return updatedMessage;
+	}
+
+	public static Component parseLegacyColors(Component message) {
+		// Serializujemy Component do plain text, żeby wziąć wszystkie &-kody
+		String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
+				.serialize(message);
+
+		// LegacyComponentSerializer poprawnie konwertuje &-kolory na Component
+		return LegacyComponentSerializer.legacyAmpersand().deserialize(plain);
 	}
 
 	public static String convertToMiniMessage(String input) {

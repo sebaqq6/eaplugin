@@ -204,6 +204,10 @@ commands:
     description: "Włącza/Wyłącza podgląd czatu lokalnego niezależnie gdzie jesteś."
     usage: "/<command>"
     permission: eadventureplugin.cmd.rangedspy
+  rb:
+    description: "Pozwala na pisania w kolorze tęczy."
+    usage: "/<command>"
+    permission: eadventureplugin.cmd.rb
   broadcast:
     description: "Wysyła wiadomość na czacie wszystkim."
     usage: "/<command>"
@@ -236,4 +240,6 @@ permissions:
   eadventureplugin.special.roll:
     description: "Special roll."
   eadventureplugin.spyoverride:
+    description: "Uniemożliwia podglądanie wiadomości przez SPY."
+  eadventureplugin.chatformat:
     description: "Uniemożliwia podglądanie wiadomości przez SPY."
