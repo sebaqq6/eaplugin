@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 - [WIP]kanał eventowy dla uczestników - może być automatycznie włączany na world_event.
 - [WIP]kanał prowadzącego event - /czatevent
 - [WIP]Emotikony
-- [WIP]/force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
+- [DONE]/force <nick> <treść> - przymuszanie gracza do wpisywania treści bądź komendy. (zachowa integralność z starymi systemami, jeśli tak samo będzie skonstruowana cmd + możliwość używania z konsoli.
 - [DONE]kolorowanie '&a' na czacie.
 - [DONE]/msg <nick> - prywatna wiadomosc
 - [DONE]/r - reply
