@@ -1,19 +1,12 @@
 package pl.eadventure.plugin.Events;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.PunishmentSystem;
@@ -21,10 +14,8 @@ import pl.eadventure.plugin.Modules.ServerLogManager;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
-import java.awt.*;
 import java.time.Duration;
 
 public class playerChatEvent implements Listener {

@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Modules;
 
-import com.nickuc.login.api.nLoginAPI;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.Bukkit;
@@ -15,7 +14,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.API.ProtocolLibAPI;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.FunEvents.FunEventsManager;
 import pl.eadventure.plugin.PlayerData;

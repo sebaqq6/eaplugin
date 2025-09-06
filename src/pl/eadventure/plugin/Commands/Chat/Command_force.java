@@ -1,7 +1,6 @@
 package pl.eadventure.plugin.Commands.Chat;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -9,8 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.eadventure.plugin.Events.playerPrivateChatEvent;
-import pl.eadventure.plugin.Modules.Chat.IgnoreList;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.PlayerUtils;
 import pl.eadventure.plugin.Utils.Utils;

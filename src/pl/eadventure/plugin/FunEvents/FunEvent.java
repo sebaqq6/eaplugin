@@ -4,7 +4,6 @@ import dev.geco.gsit.api.GSitAPI;
 import dev.geco.gsit.object.GStopReason;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

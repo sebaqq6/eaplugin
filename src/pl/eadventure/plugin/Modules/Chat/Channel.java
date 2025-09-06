@@ -1,11 +1,8 @@
 package pl.eadventure.plugin.Modules.Chat;
 
-import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pl.eadventure.plugin.PlayerData;
-import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 
 import java.util.ArrayList;
 import java.util.HashSet;

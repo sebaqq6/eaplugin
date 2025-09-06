@@ -172,20 +172,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>mineverse.Aust1n46.chat</groupId>
-            <artifactId>VentureChat</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>ct.ajneb97</groupId>
             <artifactId>ComplexTurrets</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ct.ajneb97</groupId>
-            <artifactId>Interactions</artifactId>
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>

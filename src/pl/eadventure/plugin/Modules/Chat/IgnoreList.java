@@ -10,10 +10,11 @@ import pl.eadventure.plugin.Modules.PunishmentSystem;
 import pl.eadventure.plugin.Utils.MagicGUI;
 import pl.eadventure.plugin.Utils.MySQLStorage;
 import pl.eadventure.plugin.Utils.Utils;
-import pl.eadventure.plugin.Utils.print;
 import pl.eadventure.plugin.gVar;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class IgnoreList {
 	public static MySQLStorage storage = EternalAdventurePlugin.getMySQL();

@@ -1,19 +1,11 @@
 package pl.eadventure.plugin.Events;
 
-import mineverse.Aust1n46.chat.api.MineverseChatAPI;
-import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Modules.ServerLogManager;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Utils.Utils;
-
-import java.util.Arrays;
 
 public class playerPrivateChatEvent {
 	//==================================================================================================================

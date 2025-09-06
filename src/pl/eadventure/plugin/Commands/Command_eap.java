@@ -1,6 +1,5 @@
 package pl.eadventure.plugin.Commands;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,8 +13,8 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import pl.eadventure.plugin.EternalAdventurePlugin;
 import pl.eadventure.plugin.Events.leavesDecayEvent;
-import pl.eadventure.plugin.Modules.*;
 import pl.eadventure.plugin.Modules.Chat.Chat;
+import pl.eadventure.plugin.Modules.*;
 import pl.eadventure.plugin.PlayerData;
 import pl.eadventure.plugin.Test;
 import pl.eadventure.plugin.Utils.MySQLStorage;
